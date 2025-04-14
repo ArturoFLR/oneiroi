@@ -1,0 +1,13 @@
+{
+  "out": "docs",
+  "entryPoints": ["./src/classes/sound/SoundStore.tsx"],
+  "exclude": ["**/__tests__/**", "**/*.stories.tsx", "**/types/**"],
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "hideGenerator": true,
+  "plugin": ["typedoc-plugin-markdown"],
+  "categorizeByGroup": true,
+  "readme": "none",
+  "name": "Documentación Completa",
+  "tsconfig": "tsconfig.json"
+}
