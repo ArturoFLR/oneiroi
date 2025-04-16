@@ -44,9 +44,7 @@ export default class SoundscapesCreator {
           for (const soundscape in this.soundscapesLibrary[env]) {
             this.soundscapesLibrary[env][soundscape] = this.soundscapesLibrary[
               env
-            ][soundscape].filter((sound) => {
-              sound !== soundName;
-            });
+            ][soundscape].filter((sound) => sound !== soundName);
 
             if (this.soundscapesLibrary[env][soundscape].length === 0) {
               delete this.soundscapesLibrary[env][soundscape];
