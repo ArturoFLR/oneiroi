@@ -100,7 +100,7 @@ describe("The createHowlInstance method works as expected", () => {
 
 describe("The createAudioStoreEntry method works as expected", () => {
   beforeEach(() => {
-    (SoundStore1 as any).createAudioStoreEntry(
+    (SoundStore1 as unknown as SoundStorePrivate).createAudioStoreEntry(
       AudioEnvironment.Map,
       "music",
       "testEntry",
@@ -124,7 +124,7 @@ describe("The createAudioStoreEntry method works as expected", () => {
 
 describe("The createInterfaceSoundInstance method works as expected", () => {
   beforeEach(() => {
-    (SoundStore1 as any).createInterfaceSoundInstance(
+    SoundStore1.createInterfaceSoundInstance(
       "interfaceTestSound",
       goodSrc,
       genericConfigHtml5
@@ -140,7 +140,7 @@ describe("The createInterfaceSoundInstance method works as expected", () => {
   it("Does not overwrite a HowlInstance if one with the same name already exists => It does not call the createHowlInstance or createAudioStoreEntry methods.", () => {
     vi.clearAllMocks();
 
-    (SoundStore1 as any).createInterfaceSoundInstance(
+    SoundStore1.createInterfaceSoundInstance(
       "interfaceTestSound",
       goodSrc,
       genericConfigHtml5
@@ -153,7 +153,7 @@ describe("The createInterfaceSoundInstance method works as expected", () => {
   it("Creates the instance overwriting incorrect configuration => preload must be true, html5 must be false", () => {
     const configData = (
       SoundStore1.audioStore.interfacePreloaded.sounds.interfaceTestSound
-        .instance as any as HowlMock
+        .instance as unknown as HowlMock
     ).getOptions();
 
     expect(configData.preload).toBe(true);
@@ -163,7 +163,7 @@ describe("The createInterfaceSoundInstance method works as expected", () => {
   it("Creates the instance applying the correct volume and rate settings.", () => {
     const configData = (
       SoundStore1.audioStore.interfacePreloaded.sounds.interfaceTestSound
-        .instance as any as HowlMock
+        .instance as unknown as HowlMock
     ).getOptions();
 
     expect(configData.volume).toBe(genericConfigHtml5.volume);
@@ -204,7 +204,7 @@ describe("The createSoundInstance method works as expected", () => {
 
   it("Removes the promise from the promise map when the instance is created.", () => {
     const promieStillExists: boolean = (
-      SoundStore1 as any
+      SoundStore1 as unknown as SoundStorePrivate
     ).pendingInstances.has("minigame-soundscapes-testSound");
     expect(promieStillExists).toBe(false);
   });
@@ -221,7 +221,7 @@ describe("The createSoundInstance method works as expected", () => {
 
     expect(newInstance).toBe(false);
     const promieStillExists: boolean = (
-      SoundStore1 as any
+      SoundStore1 as unknown as SoundStorePrivate
     ).pendingInstances.has("minigame-soundscapes-testSound");
 
     expect(promieStillExists).toBe(false);
@@ -257,7 +257,7 @@ describe("The createSoundInstance method works as expected", () => {
   it("Assign the correct settings to volume and rate.", () => {
     const configData = (
       SoundStore1.audioStore.minigame.soundscapes.testSound
-        .instance as any as HowlMock
+        .instance as unknown as HowlMock
     ).getOptions();
     expect(configData.volume).toBe(genericConfigHtml5.volume);
     expect(configData.rate).toBe(genericConfigHtml5.rate);
@@ -266,7 +266,7 @@ describe("The createSoundInstance method works as expected", () => {
   it("Overwrites the instance config and sets html5 to 'false'.", () => {
     const configData = (
       SoundStore1.audioStore.minigame.soundscapes.testSound
-        .instance as any as HowlMock
+        .instance as unknown as HowlMock
     ).getOptions();
     expect(configData.html5).toBe(false);
   });
@@ -274,7 +274,7 @@ describe("The createSoundInstance method works as expected", () => {
   it("Set preload = true when SoundCategory = soundscapes", () => {
     const configData = (
       SoundStore1.audioStore.minigame.soundscapes.testSound
-        .instance as any as HowlMock
+        .instance as unknown as HowlMock
     ).getOptions();
     expect(configData.preload).toBe(true);
   });
@@ -291,7 +291,7 @@ describe("The createSoundInstance method works as expected", () => {
 
     const configData = (
       SoundStore1.audioStore.minigame.sounds.testSound3
-        .instance as any as HowlMock
+        .instance as unknown as HowlMock
     ).getOptions();
 
     expect(configData.preload).toBe("metadata");
@@ -342,7 +342,7 @@ describe("The unloadInstance method works as expected", async () => {
   });
 
   it("Does not call the unload method of the instance or remove it from the audiostore if there are still pending plays (the instance has play ids)", () => {
-    (SoundStore1 as any).unloadInstance(
+    (SoundStore1 as unknown as SoundStorePrivate).unloadInstance(
       AudioEnvironment.Cinematic,
       "sounds",
       "normalSound"
@@ -355,7 +355,7 @@ describe("The unloadInstance method works as expected", async () => {
   });
 
   it("Does not call the unload method of the instance or remove it from the audiostore if the sound environment is 'interfacePreloaded'", () => {
-    (SoundStore1 as any).unloadInstance(
+    (SoundStore1 as unknown as SoundStorePrivate).unloadInstance(
       AudioEnvironment.InterfacePreloaded,
       "sounds",
       "interfaceSound"
@@ -370,7 +370,7 @@ describe("The unloadInstance method works as expected", async () => {
   it("Calls the unload method of the instance and remove it from the audiostore if the sound environment is != 'interfacePreloaded' and the instance has no play ids", () => {
     SoundStore1.audioStore.cinematic.sounds.normalSound.ids = [];
 
-    (SoundStore1 as any).unloadInstance(
+    (SoundStore1 as unknown as SoundStorePrivate).unloadInstance(
       AudioEnvironment.Cinematic,
       "sounds",
       "normalSound"

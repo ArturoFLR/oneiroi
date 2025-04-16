@@ -7,6 +7,7 @@ import {
 } from "../../../../classes/sound/soundTypes";
 import { PausableInterval } from "../../../../utils/PausableInterval";
 import { PausableTimeout } from "../../../../utils/PausableTimeout";
+import { HowlMock } from "../../../../../__mocks__/howler";
 
 export interface SoundStorePrivate {
   pendingInstances: Map<string, Promise<boolean>>;
@@ -17,7 +18,7 @@ export interface SoundStorePrivate {
     env: AudioEnvironment,
     category: SoundCategory,
     soundName: string,
-    instance: Howl
+    instance: HowlMock
   ) => void;
 
   stopSoundAnimationFrames: (
