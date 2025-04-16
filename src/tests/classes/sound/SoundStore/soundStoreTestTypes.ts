@@ -4,6 +4,8 @@ import {
   SoundCategory,
   TimeoutActions,
 } from "../../../../classes/sound/soundTypes";
+import { PausableInterval } from "../../../../utils/PausableInterval";
+import { PausableTimeout } from "../../../../utils/PausableTimeout";
 
 export interface SoundStorePrivate {
   stopSoundAnimationFrames: (
@@ -37,5 +39,12 @@ export interface SoundStorePrivate {
     env: AudioEnvironment,
     category: SoundCategory,
     name: string
+  ) => void;
+
+  addTimerToSound: (
+    env: AudioEnvironment,
+    category: SoundCategory,
+    soundName: string,
+    timer: number | PausableTimeout | PausableInterval
   ) => void;
 }
