@@ -59,4 +59,6 @@ export interface SoundStorePrivate {
     soundName: string,
     timer: number | PausableTimeout | PausableInterval
   ) => void;
+
+  handleLoadError: (soundName: string, error: unknown) => void;
 }
