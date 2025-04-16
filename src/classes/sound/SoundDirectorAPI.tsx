@@ -110,7 +110,7 @@ export default class SoundDirectorAPI {
         return minStereo;
       } else return value;
     } else {
-      let newFadeValues: FadeValuesType = {
+      const newFadeValues: FadeValuesType = {
         ...(value as FadeValuesType),
       };
       if (newFadeValues.final > maxVolumeAndFade) {
