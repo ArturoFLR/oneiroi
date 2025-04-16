@@ -15,6 +15,7 @@ import { HowlMock } from "../../../../../__mocks__/howler";
 import { Howl } from "../../../../../__mocks__/howler";
 import { PausableTimeout } from "../../../../utils/PausableTimeout";
 import { PausableInterval } from "../../../../utils/PausableInterval";
+import { SoundStorePrivate } from "./soundStoreTestTypes";
 
 const playEventEmitter = new Subject<PlayEvent>();
 playEventEmitter.subscribe(SoundStore1.playEventReceiver);
@@ -72,19 +73,25 @@ describe("PlayEvent type events are received and processed correctly", () => {
 
     // Dado que vamos a espiar métodos privados, debemos convertir SoundStore en "any" para que TypeScript no de error.
     spyOnStopSoundAnimationFrames = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "stopSoundAnimationFrames"
     );
     spyOnApplySoundTimeoutsAction = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "applySoundTimeoutsAction"
     );
     spyOnApplySoundIntervalsActions = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "applySoundIntervalsActions"
     );
-    spyOnDeletePlayingId = vi.spyOn(SoundStore1 as any, "deletePlayingId");
-    spyOnUnloadInstance = vi.spyOn(SoundStore1 as any, "unloadInstance");
+    spyOnDeletePlayingId = vi.spyOn(
+      SoundStore1 as unknown as SoundStorePrivate,
+      "deletePlayingId"
+    );
+    spyOnUnloadInstance = vi.spyOn(
+      SoundStore1 as unknown as SoundStorePrivate,
+      "unloadInstance"
+    );
   });
 
   describe("Correctly processes the autoEnd event", () => {
