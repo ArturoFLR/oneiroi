@@ -451,7 +451,7 @@ export default class SoundPlayer {
             });
           } catch (error) {
             console.warn(
-              `SoundPlayer - resumeSound: No se ha podido continuar la reproducción con id "${element}" de ${soundName} en ${env}, ${category}.`
+              `SoundPlayer - resumeSound: No se ha podido continuar la reproducción con id "${element}" de ${soundName} en ${env}, ${category}. Error: ${error}`
             );
             return false;
           }
