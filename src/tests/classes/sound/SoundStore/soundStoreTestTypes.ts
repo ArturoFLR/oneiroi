@@ -1,3 +1,4 @@
+import { HowlOptions } from "howler";
 import {
   AudioEnvironment,
   IntervalActions,
@@ -8,6 +9,17 @@ import { PausableInterval } from "../../../../utils/PausableInterval";
 import { PausableTimeout } from "../../../../utils/PausableTimeout";
 
 export interface SoundStorePrivate {
+  pendingInstances: Map<string, Promise<boolean>>;
+
+  createHowlInstance: (soundName: string, config: HowlOptions) => Howl;
+
+  createAudioStoreEntry: (
+    env: AudioEnvironment,
+    category: SoundCategory,
+    soundName: string,
+    instance: Howl
+  ) => void;
+
   stopSoundAnimationFrames: (
     env: AudioEnvironment,
     category: SoundCategory,
