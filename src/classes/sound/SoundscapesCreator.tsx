@@ -81,7 +81,7 @@ export default class SoundscapesCreator {
     secondarySounds: SecondarySound[]
   ) {
     // Almacenamos el nombre del soundscape y todos sus sonidos en soundscapesLibrary
-    let soundsList: string[] = [];
+    const soundsList: string[] = [];
 
     mainAmbientSound.forEach((sound) => {
       soundsList.push(sound.name);
@@ -107,7 +107,7 @@ export default class SoundscapesCreator {
         );
       } catch (error) {
         console.warn(
-          `SoundscapesCreator - createSoundscape: Error al precargar el sonido ${secSound.name} en el entorno ${env} del soundscape ${soundscapeName}`
+          `SoundscapesCreator - createSoundscape: Error al precargar el sonido ${secSound.name} en el entorno ${env} del soundscape ${soundscapeName}. Error: ${error}`
         );
       }
     }
