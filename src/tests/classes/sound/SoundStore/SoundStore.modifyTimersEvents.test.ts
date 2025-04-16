@@ -15,6 +15,7 @@ import { HowlMock } from "../../../../../__mocks__/howler";
 import { Howl } from "../../../../../__mocks__/howler";
 import { PausableTimeout } from "../../../../utils/PausableTimeout";
 import { PausableInterval } from "../../../../utils/PausableInterval";
+import { SoundStorePrivate } from "./soundStoreTestTypes";
 
 const modifyTimersEventEmitter = new Subject<ModifyTimersEvent>();
 modifyTimersEventEmitter.subscribe(SoundStore1.modifyTimersEventReceiver);
@@ -67,18 +68,21 @@ describe("ModifyTimersEvent type events are received and processed correctly", (
 
     // Dado que vamos a espiar métodos privados, debemos convertir SoundStore en "any" para que TypeScript no de error.
     spyOnStopSoundAnimationFrames = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "stopSoundAnimationFrames"
     );
     spyOnApplySoundTimeoutsAction = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "applySoundTimeoutsAction"
     );
     spyOnApplySoundIntervalsActions = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "applySoundIntervalsActions"
     );
-    spyOnAddTimerToSound = vi.spyOn(SoundStore1 as any, "addTimerToSound");
+    spyOnAddTimerToSound = vi.spyOn(
+      SoundStore1 as unknown as SoundStorePrivate,
+      "addTimerToSound"
+    );
   });
 
   describe("Correctly processes the addTimeout event", () => {
