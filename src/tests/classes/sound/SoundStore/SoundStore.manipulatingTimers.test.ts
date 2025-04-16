@@ -11,6 +11,7 @@ import { Howl } from "../../../../../__mocks__/howler";
 import { PausableTimeout } from "../../../../utils/PausableTimeout";
 import { PausableInterval } from "../../../../utils/PausableInterval";
 import { MockInstance } from "vitest";
+import { SoundStorePrivate } from "./soundStoreTestTypes";
 
 // Helper
 function resetAudioStore() {
@@ -106,7 +107,7 @@ beforeEach(() => {
 
 describe("The addTimerToSound method works as expected", () => {
   it("Correctly detects and assigns animationFrameIds without deleting existing ones.", () => {
-    (SoundStore1 as any).addTimerToSound(
+    (SoundStore1 as unknown as SoundStorePrivate).addTimerToSound(
       AudioEnvironment.Cinematic,
       "sounds",
       "testSound",
@@ -120,7 +121,7 @@ describe("The addTimerToSound method works as expected", () => {
   it("Correctly detects and assigns pausableTimeoutsIds without deleting existing ones.", () => {
     const pausableTimeoutToAdd = new PausableTimeout(() => {}, 200);
 
-    (SoundStore1 as any).addTimerToSound(
+    (SoundStore1 as unknown as SoundStorePrivate).addTimerToSound(
       AudioEnvironment.Cinematic,
       "sounds",
       "testSound",
@@ -135,7 +136,7 @@ describe("The addTimerToSound method works as expected", () => {
   it("Correctly detects and assigns pausableIntervalsIds without deleting existing ones.", () => {
     const pausableIntervalToAdd = new PausableInterval(() => {}, 400);
 
-    (SoundStore1 as any).addTimerToSound(
+    (SoundStore1 as unknown as SoundStorePrivate).addTimerToSound(
       AudioEnvironment.Cinematic,
       "sounds",
       "testSound",
@@ -150,7 +151,7 @@ describe("The addTimerToSound method works as expected", () => {
 
 describe("The applySoundTimeoutsAction method works as expected", () => {
   it("Correctly detects and apply 'clear' action: It calls the clear method of all timeouts and then deletes them.", () => {
-    (SoundStore1 as any).applySoundTimeoutsAction(
+    (SoundStore1 as unknown as SoundStorePrivate).applySoundTimeoutsAction(
       "clear",
       AudioEnvironment.Cinematic,
       "sounds",
@@ -163,7 +164,7 @@ describe("The applySoundTimeoutsAction method works as expected", () => {
   });
 
   it("Correctly detects and apply 'pause' action: It calls the pause method of all timeouts and don't delete them.", () => {
-    (SoundStore1 as any).applySoundTimeoutsAction(
+    (SoundStore1 as unknown as SoundStorePrivate).applySoundTimeoutsAction(
       "pause",
       AudioEnvironment.Cinematic,
       "sounds",
@@ -176,7 +177,7 @@ describe("The applySoundTimeoutsAction method works as expected", () => {
   });
 
   it("Correctly detects and apply 'resume' action: It calls the resume method of all timeouts and don't delete them.", () => {
-    (SoundStore1 as any).applySoundTimeoutsAction(
+    (SoundStore1 as unknown as SoundStorePrivate).applySoundTimeoutsAction(
       "resume",
       AudioEnvironment.Cinematic,
       "sounds",
@@ -191,7 +192,7 @@ describe("The applySoundTimeoutsAction method works as expected", () => {
 
 describe("The applySoundIntervalsActions method works as expected", () => {
   it("Correctly detects and apply 'clear' action: It calls the clear method of all timeouts and then deletes them.", () => {
-    (SoundStore1 as any).applySoundIntervalsActions(
+    (SoundStore1 as unknown as SoundStorePrivate).applySoundIntervalsActions(
       "clear",
       AudioEnvironment.Cinematic,
       "sounds",
@@ -204,7 +205,7 @@ describe("The applySoundIntervalsActions method works as expected", () => {
   });
 
   it("Correctly detects and apply 'pause' action: It calls the pause method of all timeouts and don't delete them.", () => {
-    (SoundStore1 as any).applySoundIntervalsActions(
+    (SoundStore1 as unknown as SoundStorePrivate).applySoundIntervalsActions(
       "pause",
       AudioEnvironment.Cinematic,
       "sounds",
@@ -217,7 +218,7 @@ describe("The applySoundIntervalsActions method works as expected", () => {
   });
 
   it("Correctly detects and apply 'resume' action: It calls the resume method of all timeouts and don't delete them.", () => {
-    (SoundStore1 as any).applySoundIntervalsActions(
+    (SoundStore1 as unknown as SoundStorePrivate).applySoundIntervalsActions(
       "resume",
       AudioEnvironment.Cinematic,
       "sounds",
@@ -232,7 +233,7 @@ describe("The applySoundIntervalsActions method works as expected", () => {
 
 describe("The stopSoundAnimationFrames method works as expected", () => {
   it("Correctly detects and apply 'clear' action: It calls the clear method of all timeouts and then deletes them.", () => {
-    (SoundStore1 as any).stopSoundAnimationFrames(
+    (SoundStore1 as unknown as SoundStorePrivate).stopSoundAnimationFrames(
       AudioEnvironment.Cinematic,
       "sounds",
       "testSound"
