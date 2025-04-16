@@ -6,6 +6,7 @@ import { HowlMock } from "../../../../../__mocks__/howler";
 import { Howl } from "../../../../../__mocks__/howler";
 import { AudioEnvironment } from "../../../../classes/sound/soundTypes";
 import { HowlOptions } from "howler";
+import { SoundStorePrivate } from "./soundStoreTestTypes";
 
 const goodSrc = "./rutaCorrecta";
 const wrongSrc = "./rutaFalsa";
@@ -15,15 +16,15 @@ let genericConfigHtml5: HowlOptions;
 let howlMockSound: HowlMock;
 
 const spyOnCreateHowlInstance = vi.spyOn(
-  SoundStore1 as any,
+  SoundStore1 as unknown as SoundStorePrivate,
   "createHowlInstance"
 );
 const spyOnCreateAudioStoreEntry = vi.spyOn(
-  SoundStore1 as any,
+  SoundStore1 as unknown as SoundStorePrivate,
   "createAudioStoreEntry"
 );
 const spyOnpendingInstancesSet = vi.spyOn(
-  (SoundStore1 as any).pendingInstances,
+  (SoundStore1 as unknown as SoundStorePrivate).pendingInstances,
   "set"
 );
 
@@ -73,10 +74,9 @@ afterAll(() => {
 
 describe("The createHowlInstance method works as expected", () => {
   it("Returns an instance of the Howl mock when the src is valid.", () => {
-    const howlInstance = (SoundStore1 as any).createHowlInstance(
-      "testInstance",
-      genericConfigNoPreload
-    );
+    const howlInstance = (
+      SoundStore1 as unknown as SoundStorePrivate
+    ).createHowlInstance("testInstance", genericConfigNoPreload);
 
     //getOptions is a property of the Howl mock that does not exist in the real Howl
     expect(howlInstance).toHaveProperty("getOptions");
@@ -85,14 +85,13 @@ describe("The createHowlInstance method works as expected", () => {
   it("Adds an onloaderror event to the instance, which calls the handleLoadError method when the src is incorrect.", () => {
     genericConfigNoPreload.src = [wrongSrc];
     const spyOnHandleLoadError = vi.spyOn(
-      SoundStore1 as any,
+      SoundStore1 as unknown as SoundStorePrivate,
       "handleLoadError"
     );
 
-    const howlInstance = (SoundStore1 as any).createHowlInstance(
-      "testInstance",
-      genericConfigNoPreload
-    );
+    const howlInstance = (
+      SoundStore1 as unknown as SoundStorePrivate
+    ).createHowlInstance("testInstance", genericConfigNoPreload);
 
     expect(howlInstance).toHaveProperty("getOptions");
     expect(spyOnHandleLoadError).toHaveBeenCalledTimes(1);
