@@ -42,15 +42,15 @@ import {
   resumeSoundscape,
   stopAllSounds,
   stopSoundscape,
-} from "../../utils/soundTest";
+} from "../../playground/sound/soundTest";
 import {
   SoundscapesCreator1,
   SoundStore1,
-} from "../../classes/sound/singletons";
+} from "../../src/classes/sound/singletons";
 import {
   AudioEnvironment,
   SoundCategory,
-} from "../../classes/sound/soundTypes";
+} from "../../src/classes/sound/soundTypes";
 
 function SoundTesting() {
   const [audioEnabled, setAudioEnabled] = useState(false);
