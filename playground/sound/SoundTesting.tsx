@@ -82,7 +82,7 @@ function SoundTesting() {
 
     for (const env in soundscapeInfo) {
       const environment = env as AudioEnvironment;
-      const soundscapeList = [];
+      const soundscapeList: React.ReactElement[] = [];
 
       for (const soundsCapeName in soundscapeInfo[environment]) {
         const soundsList: React.ReactElement[] = [];
