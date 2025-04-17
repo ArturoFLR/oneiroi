@@ -11,4 +11,9 @@ export default defineConfig({
     setupFiles: ["./src/tests/setup.ts"],
     environment: "jsdom",
   },
+  build: {
+    rollupOptions: {
+      external: [/^\/playground\//],
+    },
+  },
 });
