@@ -1,5 +1,11 @@
+import SoundTesting from "../playground/sound/SoundTesting";
+
 function App() {
-  return <></>;
+  return (
+    <>
+      <SoundTesting />
+    </>
+  );
 }
 
 export default App;
