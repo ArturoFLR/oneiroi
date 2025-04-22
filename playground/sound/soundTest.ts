@@ -17,7 +17,7 @@ export function playMusic() {
     AudioEnvironment.Cinematic,
     "music",
     "soule1",
-    "music/soule.mp3",
+    "../../src/assets/audio/music/track_01.mp3",
     {
       volume: 1,
       src: "",
@@ -30,7 +30,7 @@ export function playNormalSound() {
     AudioEnvironment.Cinematic,
     "sounds",
     "wind1Normal",
-    "sounds/soft-wind.mp3"
+    "../../src/assets/audio/sounds/ambient/soft-wind.mp3"
   );
 }
 
@@ -39,14 +39,14 @@ export function preloadCinematicSound() {
     AudioEnvironment.Cinematic,
     "sounds",
     "wind2Preloaded",
-    "sounds/soft-wind.mp3"
+    "../../src/assets/audio/sounds/ambient/soft-wind.mp3"
   );
 }
 
 export function preloadInterfaceSound() {
   SoundDirectorAPI1.preloadInterfaceSound(
     "fountain",
-    "sounds/fountain-water.mp3"
+    "../../src/assets/audio/sounds/ambient/fountain-water.mp3"
   );
 }
 
@@ -263,7 +263,7 @@ export function createDinamicPan() {
     AudioEnvironment.Cinematic,
     "sounds",
     "evil",
-    "sounds/332916__univ_lyon3__gori_aurelien_2015_2016_evillaught.wav",
+    "../../src/assets/audio/sounds/effects/evil-man-laught.mp3",
     -0.9,
     0.9,
     2000,
@@ -276,7 +276,7 @@ export function createDinamicPan2() {
     AudioEnvironment.InterfacePreloaded,
     "sounds",
     "fountain",
-    "sounds/fountain-water.mp3",
+    "../../src/assets/audio/sounds/ambient/fountain-water.mp3",
     -0.9,
     0.9,
     3500,
@@ -289,7 +289,7 @@ export async function createLoop1() {
     AudioEnvironment.Cinematic,
     "sounds",
     "evil2",
-    "sounds/332916__univ_lyon3__gori_aurelien_2015_2016_evillaught.wav",
+    "../../src/assets/audio/sounds/effects/evil-man-laught.mp3",
     700,
     400,
     { volume: 0.7, src: "" },
@@ -302,7 +302,7 @@ export async function createLoop2() {
     AudioEnvironment.Cinematic,
     "music",
     "soule2",
-    "music/soule.mp3",
+    "../../src/assets/audio/music/track_01.mp3",
     8000,
     7000
   );
@@ -311,7 +311,7 @@ export async function createLoop2() {
 export function createSoundscape1() {
   const mainSoundRain: MainAmbientSound = {
     name: "rain1",
-    src: "sounds/lluvia-en-chapa.mp3",
+    src: "../../src/assets/audio/sounds/ambient/rain-on-metal.mp3",
     fadeDuration: 2000,
     securityMargin: 700,
     config: { volume: 0.6, src: "" },
@@ -319,7 +319,7 @@ export function createSoundscape1() {
 
   const mainSoundWind: MainAmbientSound = {
     name: "wind1",
-    src: "sounds/soft-wind.mp3",
+    src: "../../src/assets/audio/sounds/ambient/soft-wind.mp3",
     fadeDuration: 2000,
     securityMargin: 1000,
     config: { volume: 0.6, src: "" },
@@ -327,7 +327,7 @@ export function createSoundscape1() {
 
   const thunder1: SecondarySound = {
     name: "thunder1",
-    src: "sounds/truenoPrueba1.mp3",
+    src: "../../src/assets/audio/sounds/effects/thunder_1.mp3",
     delay: 20000,
     minLoopTime: 25000,
     maxLoopTime: 35000,
@@ -336,7 +336,7 @@ export function createSoundscape1() {
 
   const thunder2: SecondarySound = {
     name: "thunder2",
-    src: "sounds/truenoPrueba2.mp3",
+    src: "../../src/assets/audio/sounds/effects/thunder_2.mp3",
     delay: 5500,
     minLoopTime: 25000,
     maxLoopTime: 32000,
@@ -345,7 +345,7 @@ export function createSoundscape1() {
 
   const thunder3: SecondarySound = {
     name: "thunder3",
-    src: "sounds/pruebaTrueno3.mp3",
+    src: "../../src/assets/audio/sounds/effects/thunder_3.mp3",
     delay: 45000,
     minLoopTime: 30000,
     maxLoopTime: 49000,
