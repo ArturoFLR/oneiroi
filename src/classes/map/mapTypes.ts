@@ -1,3 +1,5 @@
+import Item from "../item/Item";
+
 export interface ReachableCell {
   col: number;
   row: number;
@@ -35,5 +37,5 @@ export interface MapCellConfig {
   hasNpc?: boolean;
   hasSpirit?: boolean;
   imageSrc?: string;
-  items?: BaseItem[];
+  items?: Item[];
 }

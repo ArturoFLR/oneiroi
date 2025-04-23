@@ -1,4 +1,7 @@
 // Este interfaz define el objeto de configuración que debemos crear para instanciar un objeto BaseItem, donde sólo es necesario especificar las propiedades
+
+import Item from "./Item";
+
 // que no vayan a tener el valor por defecto y los  métodos que vayan a hacer algo realmente útil. "name" y "description" sí son obligatorios, siempre cambian.
 export interface BaseItemConfig {
   hidden?: boolean;
@@ -15,5 +18,5 @@ export interface BaseItemConfig {
   onOpen?: () => string;
   onClose?: () => string;
   onPush?: () => string;
-  useWith?: (item: BaseItem) => string;
+  useWith?: (item: Item) => string;
 }
