@@ -1,10 +1,4 @@
 import React from "react";
-import MapCell from "../classes/MapCell";
-import MapContainer from "./styledComponents/MapContainer";
-import MapCellVoid from "./styledComponents/MapCellVoid";
-import MapCellRoom from "./styledComponents/MapCellRoom";
-import generateCellBorders from "../utils/generateCellBorders";
-import getMaxColsRows from "../utils/getMaxColsRows";
 
 type MapGeneratorProps = {
   mapCells: MapCell[];
@@ -33,7 +27,7 @@ function MapGenerator({ mapCells }: MapGeneratorProps) {
             hasPuzzle={mapCell.hasPuzzle}
             hasNpc={mapCell.hasNpc}
             hasSpirit={mapCell.hasSpirit}
-          />,
+          />
         );
       }
     });

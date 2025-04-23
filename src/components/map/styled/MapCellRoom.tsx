@@ -1,11 +1,11 @@
 import styled, { keyframes } from "styled-components";
-import { NamePosition, SomeDoorsToShow } from "../../classes/MapCell";
-import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../theme";
-import { BordersToShow } from "../../utils/generateCellBorders";
 import { useLayoutEffect, useRef, useState } from "react";
-import calcFontSize from "../../utils/calcFontSize";
-import CustomLightbulbIcon from "../muiIcons/CustomLightbulbIcon";
-import CustomNpcIcon from "../muiIcons/CustomNpcIcon";
+import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
+import { BordersToShow } from "../helpers/generateCellBorders";
+import { NamePosition, SomeDoorsToShow } from "../../../classes/map/mapTypes";
+import calcFontSize from "../../../utils/calcFontSize";
+import CustomLightbulbIcon from "../../icons/CustomLightbulbIcon";
+import CustomNpcIcon from "../../icons/CustomNpcIcon";
 
 type CellMainFrameProps = {
   $bordersToShow: BordersToShow;
