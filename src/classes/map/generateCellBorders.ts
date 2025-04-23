@@ -1,13 +1,5 @@
 import MapCell from "./MapCell";
-
-type BordersType = "void" | "cell" | "group"; //"void" se usa cuando la casilla linda con una casilla vacía (void) o con el borde del mapa. "cell" cuando linda con una casilla que no es del mismo grupo (group).
-
-export type BordersToShow = {
-  north: BordersType;
-  east: BordersType;
-  south: BordersType;
-  west: BordersType;
-};
+import { BordersToShow, BordersType } from "./mapTypes";
 
 // Esta función comprueba las celdas adyacentes a la introducida como parámetro, y determina qué bordes deben dibujarse y cómo:
 // Cuando en la celda adyacente hay otra celda con contenido, cada una dibuja un borde con la mitad del grosor deseado (si queremos un borde de 2px, cada una dibuja un borde de 1px)

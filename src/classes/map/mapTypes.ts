@@ -39,3 +39,12 @@ export interface MapCellConfig {
   imageSrc?: string;
   items?: Item[];
 }
+
+export type BordersType = "void" | "cell" | "group"; //"void" se usa cuando la casilla linda con una casilla vacía (void) o con el borde del mapa. "cell" cuando linda con una casilla que no es del mismo grupo (group).
+
+export type BordersToShow = {
+  north: BordersType;
+  east: BordersType;
+  south: BordersType;
+  west: BordersType;
+};
