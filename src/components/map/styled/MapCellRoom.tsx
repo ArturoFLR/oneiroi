@@ -7,6 +7,8 @@ import calcFontSize from "../../../utils/calcFontSize";
 import CustomLightbulbIcon from "../../icons/CustomLightbulbIcon";
 import CustomNpcIcon from "../../icons/CustomNpcIcon";
 
+import spiritImgSrc from "@assets/graphics/icons/map/spirit-icon.png";
+
 type CellMainFrameProps = {
   $bordersToShow: BordersToShow;
   $name: string;
@@ -237,7 +239,7 @@ const MapCellRoom = ({
           </NpcIconConfig>
         ) : null}
 
-        {hasSpirit ? <SpiritIcon src="icons/map/spirit-icon.png" /> : null}
+        {hasSpirit ? <SpiritIcon src={spiritImgSrc} /> : null}
       </MapIconsContainer>
     </CellMainFrame>
   );

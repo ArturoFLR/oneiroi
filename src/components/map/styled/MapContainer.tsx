@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { GLOBAL_COLORS } from "../../../theme";
 
+import asfaltLightImgSrc from "@assets/graphics/backgrounds/asfalt-light.png";
+
 type MapContainerProps = {
   $cols: number;
 };
@@ -30,7 +32,7 @@ const MapContainer = styled.div<MapContainerProps>`
     height: 100%;
     background-color: green;
     border-radius: 15px;
-    background: url("/images/backgrounds/asfalt-light.png"); /* Imagen de ruido */
+    background: url(${asfaltLightImgSrc}); /* Imagen de ruido */
     mix-blend-mode: hard-light; /* Mezcla el ruido con el degradado */
     opacity: 0.7; /* Ajusta la intensidad */
   }

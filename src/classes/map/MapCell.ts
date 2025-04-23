@@ -6,6 +6,8 @@ import {
   ReachableCell,
 } from "./mapTypes";
 
+import placeholderBackgSrc from "@assets/graphics/scenes/placeholder-background.jpg";
+
 export default class MapCell {
   id: number;
   col: number;
@@ -48,8 +50,7 @@ export default class MapCell {
     this.hasPuzzle = config.hasPuzzle ?? false;
     this.hasNpc = config.hasNpc ?? false;
     this.hasSpirit = config.hasSpirit ?? false;
-    this.imageSrc =
-      config.imageSrc ?? "../../public/images/maps/placeholder-background.jpg";
+    this.imageSrc = config.imageSrc ?? placeholderBackgSrc;
     this.items = config.items ?? null;
   }
 }
