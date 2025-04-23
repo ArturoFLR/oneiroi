@@ -1,4 +1,10 @@
 import React from "react";
+import getMaxColsRows from "./helpers/getMaxColsRows";
+import generateCellBorders from "./helpers/generateCellBorders";
+import MapCell from "../../classes/map/MapCell";
+import MapCellVoid from "./styled/MapCellVoid";
+import MapCellRoom from "./styled/MapCellRoom";
+import MapContainer from "./styled/MapContainer";
 
 type MapGeneratorProps = {
   mapCells: MapCell[];
