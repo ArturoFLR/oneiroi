@@ -20,4 +20,8 @@ export const GLOBAL_COLORS = {
     bulbGlow: "#ffcc00",
     npcColor: "#9EB7E5",
   },
+  screenDarkener: {
+    light: "rgba(0, 0, 0, 0.5)",
+    dark: "rgba(0, 0, 0, 0.8)",
+  },
 };
