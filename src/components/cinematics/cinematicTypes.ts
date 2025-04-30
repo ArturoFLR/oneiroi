@@ -24,7 +24,7 @@ export interface CinematicAmbientSound {
   env: AudioEnvironment;
   soundscapeName: string;
   mainAmbientSounds: MainAmbientSound[];
-  secondaryAmbientSounds: SecondarySound[];
+  secondaryAmbientSounds?: SecondarySound[];
   delay: number; //Tiempo de espera antes de iniciar el sonido ambiente.
   initialFadeDuration: number; //Duración del fade-in inicial del sonido ambiente. Puede ser 0.
   endTime?: number; //Cuándo se detiene el sonido ambiente, en milisegundos. Si no se indica, se detiene cuando llegue otro plano con ambiente distinto.
