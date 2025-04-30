@@ -1,14 +1,16 @@
 import { GLOBAL_COLORS } from "../../../theme";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import {
   MainViewerActualShotData,
   MainViewerNextShotData,
 } from "../cinematicTypes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MainContainer = styled.div`
   position: relative;
 `;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 interface CurrentPictureContainerProps {
   $widePicture: boolean;
@@ -21,27 +23,55 @@ const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
   width: ${({ $widePicture }) => ($widePicture ? "70vw" : "40vw")};
   aspect-ratio: ${({ $widePicture }) =>
     $widePicture ? "1376 / 768" : "1 / 1"};
-  border-radius: 20px;
-  border: 2px solid ${GLOBAL_COLORS.orange.highlightedText};
+  border-radius: 15px;
+  border: 1px solid ${GLOBAL_COLORS.orange.highlightedText};
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "transparent")};
   z-index: 1;
 `;
 
-const NextPictureContainer = styled(CurrentPictureContainer)`
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const fadeAnimation = keyframes`
+0% {
+  opacity: 0;
+}
+100% {
+  opacity: 1;
+}
+`;
+
+interface NextPictureContainerProps {
+  $widePicture: boolean;
+  $bgColor: string;
+  $fade: boolean;
+  $fadeDuration: number;
+}
+
+const NextPictureContainer = styled(
+  CurrentPictureContainer
+)<NextPictureContainerProps>`
   position: absolute;
   top: 0;
   left: 0;
   z-index: 2;
   opacity: 0;
+  animation: ${({ $fade }) => ($fade ? fadeAnimation : "none")}
+    ${({ $fadeDuration }) => $fadeDuration}ms forwards;
 `;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const MainPicture = styled.img`
   width: 100%;
 `;
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const NextPicture = styled.img`
   width: 100%;
 `;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 interface MainViewerProps {
   actualShot: MainViewerActualShotData;
@@ -50,6 +80,9 @@ interface MainViewerProps {
 
 function MainViewer({ actualShot, nextShot }: MainViewerProps) {
   const [applyFade, setApplyFade] = useState<boolean>(false);
+  const [test, setTest] = useState<number>(0);
+
+  const nextContainerElement = useRef<HTMLDivElement>(null);
 
   const mainContainerBgColor = actualShot.backgroundColor
     ? actualShot.backgroundColor
@@ -58,13 +91,43 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     ? nextShot.backgroundColor
     : "transparent";
 
+  //Aplica el efecto de fade mediante un timer, si corresponde.
   useEffect(() => {
+    let fadeTimeout: number | undefined = undefined;
     if (actualShot.shotTransition === "fade") {
       const timeToApplyFade = actualShot.shotDuration - actualShot.fadeDuration;
+
+      fadeTimeout = window.setTimeout(() => {
+        setApplyFade(true);
+      }, timeToApplyFade);
     }
 
-    return () => {};
-  }, [actualShot.shotTransition]);
+    return () => {
+      setApplyFade(false);
+      if (fadeTimeout) clearTimeout(fadeTimeout);
+    };
+  }, [
+    actualShot.shotTransition,
+    actualShot.shotDuration,
+    actualShot.fadeDuration,
+  ]);
+
+  useEffect(() => {
+    let opacityValue = "";
+    if (nextContainerElement.current) {
+      const computedStyle = getComputedStyle(nextContainerElement.current);
+      opacityValue = computedStyle.getPropertyValue("opacity");
+    }
+    const timer1 = setInterval(() => {
+      console.log(test);
+      console.log(opacityValue);
+      setTest((prev) => prev + 1);
+    }, 1000);
+
+    return () => {
+      clearInterval(timer1);
+    };
+  }, [test]);
 
   return (
     <MainContainer id="cinematicViewerContainer">
@@ -86,6 +149,9 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
           id="cinemaNextPictureContainer"
           $widePicture={nextShot.widePicture}
           $bgColor={nextContainerBgColor}
+          $fade={applyFade}
+          $fadeDuration={actualShot.fadeDuration}
+          ref={nextContainerElement}
         >
           {nextShot.mainImageUrl ? (
             <NextPicture

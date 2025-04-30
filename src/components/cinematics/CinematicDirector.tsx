@@ -19,7 +19,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   const [actualShotIndex, setActualShotIndex] = useState<number>(0);
 
   const cinematicDataRef = useRef<CinematicSceneAuto>(cinematicData); // Hacemos una copia para evitar modificar la prop original (rompemos la inmutabilidad del componente => malas prácticas).
-  const shotDurationTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]); // Los timers de cada plano, para poder limpiarlos desde useEffect.
+  const shotDurationTimersRef = useRef<number[]>([]); // Los timers de cada plano, para poder limpiarlos desde useEffect.
 
   const lastShot =
     cinematicDataRef.current[cinematicDataRef.current.length - 1];
@@ -118,14 +118,9 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
     if (isLoading) return; // Si aún estamos cargando, no hacemos nada.
 
     if (actualShotIndex <= cinematicData.length - 1) {
-      const shotDurationTimer = setTimeout(
-        () => {
-          setActualShotIndex((prevIndex) => prevIndex + 1); // Cambiamos al siguiente plano
-        },
-        currentShotTransition === "cut"
-          ? currentShotDuration
-          : currentShotDuration + fadeTransitionDuration
-      );
+      const shotDurationTimer = window.setTimeout(() => {
+        setActualShotIndex((prevIndex) => prevIndex + 1); // Cambiamos al siguiente plano
+      }, currentShotDuration);
 
       shotDurationTimersRef.current.push(shotDurationTimer);
     } else {
