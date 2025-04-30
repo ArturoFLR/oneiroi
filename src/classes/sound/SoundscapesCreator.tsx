@@ -76,7 +76,7 @@ export default class SoundscapesCreator {
     env: AudioEnvironment, // No necesitamos category: todos serán "soundscapes"
     soundscapeName: string,
     mainAmbientSound: MainAmbientSound[],
-    secondarySounds: SecondarySound[]
+    secondarySounds?: SecondarySound[]
   ) {
     // Almacenamos el nombre del soundscape y todos sus sonidos en soundscapesLibrary
     const soundsList: string[] = [];
@@ -85,28 +85,32 @@ export default class SoundscapesCreator {
       soundsList.push(sound.name);
     });
 
-    secondarySounds.forEach((sound) => {
-      soundsList.push(sound.name);
-    });
+    if (secondarySounds) {
+      secondarySounds.forEach((sound) => {
+        soundsList.push(sound.name);
+      });
+    }
 
     this.soundscapesLibrary[env][soundscapeName] = soundsList;
 
     // Vamos precargando los sonidos secundarios mediante una promesa a la que esperamos, ya que si no es así, no estará el sonido aún creado cuando
     // se intente añadir el timeout de su delay a su lista de timeouts, y generará un error.
 
-    for (const secSound of secondarySounds) {
-      try {
-        await SoundDirectorAPI1.preloadSound(
-          env,
-          "soundscapes",
-          secSound.name,
-          secSound.src,
-          secSound.config
-        );
-      } catch (error) {
-        console.warn(
-          `SoundscapesCreator - createSoundscape: Error al precargar el sonido ${secSound.name} en el entorno ${env} del soundscape ${soundscapeName}. Error: ${error}`
-        );
+    if (secondarySounds) {
+      for (const secSound of secondarySounds) {
+        try {
+          await SoundDirectorAPI1.preloadSound(
+            env,
+            "soundscapes",
+            secSound.name,
+            secSound.src,
+            secSound.config
+          );
+        } catch (error) {
+          console.warn(
+            `SoundscapesCreator - createSoundscape: Error al precargar el sonido ${secSound.name} en el entorno ${env} del soundscape ${soundscapeName}. Error: ${error}`
+          );
+        }
       }
     }
 
@@ -127,9 +131,37 @@ export default class SoundscapesCreator {
     }
 
     // Creamos el delay para los sonidos secundarios.
-    secondarySounds.forEach((sound) => {
-      if (sound.delay > 0) {
-        const delayNormalTimeout = new PausableTimeout(() => {
+    if (secondarySounds) {
+      secondarySounds.forEach((sound) => {
+        if (sound.delay > 0) {
+          const delayNormalTimeout = new PausableTimeout(() => {
+            this.loopSoundscapeSound(
+              env,
+              soundscapeName,
+              sound.name,
+              sound.src,
+              sound.minLoopTime,
+              sound.maxLoopTime,
+              sound.config,
+              sound.stereoValue
+            );
+
+            this.emitNewModifyTimersEvent({
+              eventType: "deleteTimeout",
+              env,
+              category: "soundscapes",
+              soundName: sound.name,
+              timer: delayNormalTimeout,
+            });
+          }, sound.delay);
+          this.emitNewModifyTimersEvent({
+            eventType: "addTimeout",
+            env,
+            category: "soundscapes",
+            soundName: sound.name,
+            timer: delayNormalTimeout,
+          });
+        } else {
           this.loopSoundscapeSound(
             env,
             soundscapeName,
@@ -140,35 +172,9 @@ export default class SoundscapesCreator {
             sound.config,
             sound.stereoValue
           );
-
-          this.emitNewModifyTimersEvent({
-            eventType: "deleteTimeout",
-            env,
-            category: "soundscapes",
-            soundName: sound.name,
-            timer: delayNormalTimeout,
-          });
-        }, sound.delay);
-        this.emitNewModifyTimersEvent({
-          eventType: "addTimeout",
-          env,
-          category: "soundscapes",
-          soundName: sound.name,
-          timer: delayNormalTimeout,
-        });
-      } else {
-        this.loopSoundscapeSound(
-          env,
-          soundscapeName,
-          sound.name,
-          sound.src,
-          sound.minLoopTime,
-          sound.maxLoopTime,
-          sound.config,
-          sound.stereoValue
-        );
-      }
-    });
+        }
+      });
+    }
   }
 
   // Reproduce un sonido en bucle, con un tiempo de espera aleatorio entre cada reproducción.
