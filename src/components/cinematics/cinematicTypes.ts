@@ -1,3 +1,11 @@
+import { HowlOptions } from "howler";
+import {
+  AudioEnvironment,
+  MainAmbientSound,
+  SecondarySound,
+  SoundCategory,
+} from "src/classes/sound/soundTypes";
+
 export type ShotTransitionType = "cut" | "fade";
 export interface ZoomData {
   zoomStartSize: number; //Tamaño inicial de la imagen, '100' para tamaño completo normal.
@@ -12,6 +20,43 @@ export interface ZoomData {
   };
 }
 
+export interface CinematicAmbientSound {
+  env: AudioEnvironment;
+  soundscapeName: string;
+  mainAmbientSounds: MainAmbientSound[];
+  secondaryAmbientSounds: SecondarySound[];
+  delay: number; //Tiempo de espera antes de iniciar el sonido ambiente.
+  initialFadeDuration: number; //Duración del fade-in inicial del sonido ambiente. Puede ser 0.
+  endTime?: number; //Cuándo se detiene el sonido ambiente, en milisegundos. Si no se indica, se detiene cuando llegue otro plano con ambiente distinto.
+  fadeOutDuration?: number; //Duración del fade-out  del sonido ambiente. Si no se indica, se detiene inmediatamente.
+}
+
+export interface CinematicUniqueSound {
+  env: AudioEnvironment;
+  category: SoundCategory;
+  soundName: string;
+  soundSrc: string;
+  config?: HowlOptions;
+  stereo?: number;
+  delay: number; //Tiempo de espera antes de reproducir el sonido.
+}
+
+export type CinematicUniqueSounds = CinematicUniqueSound[];
+
+export interface CinematicMusic {
+  env: AudioEnvironment;
+  category: SoundCategory;
+  soundName: string;
+  soundSrc: string;
+  config?: HowlOptions;
+  stereo?: number;
+  loop: boolean; //Si la música se repite o no.
+  delay: number;
+  initialFadeDuration: number; //Duración del fade-in inicial. Puede ser 0.
+  endTime?: number; //Cuándo se detiene la música, en milisegundos. Si no se indica, se detiene cuando llegue otro plano con música distinta o con valor "null".
+  fadeOutDuration?: number; //Duración del fade-out de la música. Si no se indica, se detiene inmediatamente.
+}
+
 export interface CinematicShotAuto {
   id: number;
   mainImageUrl?: string; //Si no se define, se aplica el "backgroundColor"
@@ -22,6 +67,10 @@ export interface CinematicShotAuto {
   shotTransition?: ShotTransitionType; //Tipo de transición hacia el siguiente plano
   fadeDuration?: number; // Si optamos por una transición de tipo "fade", aquí podemos indicar su duración en milisegundos.
   zoom?: ZoomData;
+  ambientSound?: CinematicAmbientSound | null; // Si se indica null, se detiene el sonido ambiente anterior.
+  uniqueSounds?: CinematicUniqueSounds;
+  music?: CinematicMusic | null; // Si se indica null, se detiene la música actual.
+  specialActions?: () => void; //Acciones especiales a realizar al iniciar el plano, como por ejemplo cambiar el volumen del sonido ambiente.
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
 }
 
