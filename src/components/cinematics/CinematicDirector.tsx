@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import LoadingSpinner from "../common/LoadingSpinner";
 import ScreenDarkener from "../common/ScreenDarkener";
 import MainViewer from "./styled/MainViewer";
-import { CinematicSceneAuto, ShotTransitionType } from "./cinematicTypes";
+import {
+  CinematicSceneAuto,
+  MainViewerShotData,
+  ShotTransitionType,
+} from "./cinematicTypes";
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
@@ -30,10 +34,10 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       : lastShot;
 
   // Valores por defecto para el plano actual.
-  const currentShotDuration = currentShot.shotDuration || 4000; // Si no se ha definido, por defecto 5 segundos.
+  const currentShotDuration = currentShot.shotDuration || 5000; // Si no se ha definido, por defecto 5 segundos.
   const currentShotTransition: ShotTransitionType =
     currentShot.shotTransition || "cut";
-  const fadeTransition = currentShot.fadeTransition || 2000;
+  const fadeTransitionDuration = currentShot.fadeDuration || 2000;
 
   const preloadImages = useCallback(() => {
     let completionPercentage = 0;
@@ -68,41 +72,50 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   }, []);
 
   function generateCinematicShot() {
-    if (actualShotIndex <= cinematicDataRef.current.length - 1) {
-      return (
-        <MainViewer
-          mainPicture={currentShot?.mainImageUrl}
-          mainPictureAlt={currentShot?.mainImageAlt}
-          wideMainPicture={currentShot.widePicture}
-          mainColor={currentShot?.backgroundColor}
-          nextPicture={nextShot?.mainImageUrl}
-          nextPictureAlt={nextShot?.mainImageAlt}
-          wideNextPicture={nextShot.widePicture}
-          nextColor={nextShot?.backgroundColor}
-        />
-      );
-    } else {
-      return (
-        <MainViewer
-          mainPicture={lastShot?.mainImageUrl}
-          mainPictureAlt={lastShot?.mainImageAlt}
-          wideMainPicture={lastShot.widePicture}
-          mainColor={lastShot?.backgroundColor}
-          nextPicture={lastShot?.mainImageUrl}
-          nextPictureAlt={lastShot?.mainImageAlt}
-          wideNextPicture={lastShot.widePicture}
-          nextColor={lastShot?.backgroundColor}
-        />
-      );
+    const mainViewerActualShot: MainViewerShotData = {
+      id: currentShot.id,
+      mainImageUrl: currentShot.mainImageUrl,
+      mainImageAlt: currentShot.mainImageAlt,
+      backgroundColor: currentShot.backgroundColor,
+      widePicture: currentShot.widePicture,
+      shotDuration: currentShotDuration,
+      shotTransition: currentShotTransition,
+      fadeDuration: fadeTransitionDuration,
+      zoom: currentShot.zoom,
+    };
+
+    let mainViewerNextShot: MainViewerShotData | null = {
+      id: nextShot.id,
+      mainImageUrl: nextShot.mainImageUrl,
+      mainImageAlt: nextShot.mainImageAlt,
+      backgroundColor: nextShot.backgroundColor,
+      widePicture: nextShot.widePicture,
+      shotDuration: nextShot.shotDuration,
+      shotTransition: nextShot.shotTransition,
+      fadeDuration: nextShot.fadeDuration,
+      zoom: nextShot.zoom,
+    };
+
+    if (actualShotIndex >= cinematicDataRef.current.length - 1) {
+      mainViewerNextShot = null;
     }
+
+    return (
+      <MainViewer
+        actualShot={mainViewerActualShot}
+        nextShot={mainViewerNextShot}
+      />
+    );
   }
 
+  // Realiza la pregarga de imágenes y sonidos antes de que comience la cinemática.
   useEffect(() => {
     if (isLoading) {
       preloadImages();
     }
   }, [isLoading, preloadImages]);
 
+  // Establece la duración del plano actual mediante un setTimeout y gestiona el cambio al plano siguiente.
   useEffect(() => {
     if (isLoading) return; // Si aún estamos cargando, no hacemos nada.
 
@@ -113,7 +126,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
         },
         currentShotTransition === "cut"
           ? currentShotDuration
-          : currentShotDuration + fadeTransition
+          : currentShotDuration + fadeTransitionDuration
       );
 
       shotDurationTimersRef.current.push(shotDurationTimer);
@@ -137,7 +150,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
     isLoading,
     currentShotTransition,
     currentShotDuration,
-    fadeTransition,
+    fadeTransitionDuration,
     cinematicData.length,
     lastShot,
   ]);

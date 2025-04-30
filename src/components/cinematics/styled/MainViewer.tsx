@@ -1,5 +1,6 @@
 import { GLOBAL_COLORS } from "../../../theme";
 import styled from "styled-components";
+import { MainViewerShotData } from "../cinematicTypes";
 
 const MainContainer = styled.div`
   position: relative;
@@ -30,17 +31,6 @@ const NextPictureContainer = styled(CurrentPictureContainer)`
   opacity: 0;
 `;
 
-interface MainViewerProps {
-  mainPicture?: string;
-  mainPictureAlt?: string;
-  wideMainPicture: boolean;
-  mainColor?: string;
-  nextPicture?: string;
-  nextPictureAlt?: string;
-  wideNextPicture: boolean;
-  nextColor?: string;
-}
-
 const MainPicture = styled.img`
   width: 100%;
 `;
@@ -49,39 +39,48 @@ const NextPicture = styled.img`
   width: 100%;
 `;
 
-function MainViewer({
-  mainPicture,
-  mainPictureAlt,
-  wideMainPicture,
-  mainColor,
-  nextPicture,
-  nextPictureAlt,
-  wideNextPicture,
-  nextColor,
-}: MainViewerProps) {
-  const mainContainerBgColor = mainColor ? mainColor : "transparent";
-  const nextContainerBgColor = nextColor ? nextColor : "transparent";
+interface MainViewerProps {
+  actualShot: MainViewerShotData;
+  nextShot: null | MainViewerShotData;
+}
+
+function MainViewer({ actualShot, nextShot }: MainViewerProps) {
+  const mainContainerBgColor = actualShot.backgroundColor
+    ? actualShot.backgroundColor
+    : "transparent";
+  const nextContainerBgColor = nextShot?.backgroundColor
+    ? nextShot.backgroundColor
+    : "transparent";
 
   return (
     <MainContainer id="cinematicViewerContainer">
       <CurrentPictureContainer
         id="cinemaCurrentPictureContainer"
-        $widePicture={wideMainPicture}
+        $widePicture={actualShot.widePicture}
         $bgColor={mainContainerBgColor}
       >
-        {mainPicture ? (
-          <MainPicture src={mainPicture} alt={mainPictureAlt}></MainPicture>
+        {actualShot.mainImageAlt ? (
+          <MainPicture
+            src={actualShot.mainImageUrl}
+            alt={actualShot.mainImageAlt}
+          ></MainPicture>
         ) : null}
       </CurrentPictureContainer>
-      <NextPictureContainer
-        id="cinemaNextPictureContainer"
-        $widePicture={wideNextPicture}
-        $bgColor={nextContainerBgColor}
-      >
-        {nextPicture ? (
-          <NextPicture src={nextPicture} alt={nextPictureAlt}></NextPicture>
-        ) : null}
-      </NextPictureContainer>
+
+      {nextShot ? (
+        <NextPictureContainer
+          id="cinemaNextPictureContainer"
+          $widePicture={nextShot.widePicture}
+          $bgColor={nextContainerBgColor}
+        >
+          {nextShot.mainImageUrl ? (
+            <NextPicture
+              src={nextShot.mainImageUrl}
+              alt={nextShot.mainImageAlt}
+            ></NextPicture>
+          ) : null}
+        </NextPictureContainer>
+      ) : null}
     </MainContainer>
   );
 }

@@ -7,7 +7,8 @@ export const cinematicIntro: CinematicSceneAuto = [
     id: 1,
     backgroundColor: "#000000",
     widePicture: true,
-    shotTransition: "cut",
+    shotTransition: "fade",
+    fadeDuration: 3000,
   },
   {
     id: 2,
