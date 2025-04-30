@@ -4,7 +4,8 @@ import ScreenDarkener from "../common/ScreenDarkener";
 import MainViewer from "./styled/MainViewer";
 import {
   CinematicSceneAuto,
-  MainViewerShotData,
+  MainViewerActualShotData,
+  MainViewerNextShotData,
   ShotTransitionType,
 } from "./cinematicTypes";
 
@@ -72,7 +73,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   }, []);
 
   function generateCinematicShot() {
-    const mainViewerActualShot: MainViewerShotData = {
+    const mainViewerActualShot: MainViewerActualShotData = {
       id: currentShot.id,
       mainImageUrl: currentShot.mainImageUrl,
       mainImageAlt: currentShot.mainImageAlt,
@@ -84,15 +85,12 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       zoom: currentShot.zoom,
     };
 
-    let mainViewerNextShot: MainViewerShotData | null = {
+    let mainViewerNextShot: MainViewerNextShotData | null = {
       id: nextShot.id,
       mainImageUrl: nextShot.mainImageUrl,
       mainImageAlt: nextShot.mainImageAlt,
       backgroundColor: nextShot.backgroundColor,
       widePicture: nextShot.widePicture,
-      shotDuration: nextShot.shotDuration,
-      shotTransition: nextShot.shotTransition,
-      fadeDuration: nextShot.fadeDuration,
       zoom: nextShot.zoom,
     };
 

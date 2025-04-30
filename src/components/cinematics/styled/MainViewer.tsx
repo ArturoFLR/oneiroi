@@ -1,6 +1,10 @@
 import { GLOBAL_COLORS } from "../../../theme";
 import styled from "styled-components";
-import { MainViewerShotData } from "../cinematicTypes";
+import {
+  MainViewerActualShotData,
+  MainViewerNextShotData,
+} from "../cinematicTypes";
+import { useEffect, useState } from "react";
 
 const MainContainer = styled.div`
   position: relative;
@@ -40,17 +44,27 @@ const NextPicture = styled.img`
 `;
 
 interface MainViewerProps {
-  actualShot: MainViewerShotData;
-  nextShot: null | MainViewerShotData;
+  actualShot: MainViewerActualShotData;
+  nextShot: null | MainViewerNextShotData;
 }
 
 function MainViewer({ actualShot, nextShot }: MainViewerProps) {
+  const [applyFade, setApplyFade] = useState<boolean>(false);
+
   const mainContainerBgColor = actualShot.backgroundColor
     ? actualShot.backgroundColor
     : "transparent";
   const nextContainerBgColor = nextShot?.backgroundColor
     ? nextShot.backgroundColor
     : "transparent";
+
+  useEffect(() => {
+    if (actualShot.shotTransition === "fade") {
+      const timeToApplyFade = actualShot.shotDuration - actualShot.fadeDuration;
+    }
+
+    return () => {};
+  }, [actualShot.shotTransition]);
 
   return (
     <MainContainer id="cinematicViewerContainer">
