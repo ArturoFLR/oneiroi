@@ -15,6 +15,8 @@ import {
   SoundStore1,
 } from "./singletons";
 
+import initSound from "@assets/audio/sounds/interface/interface-click.mp3";
+
 export default class SoundDirectorAPI {
   //// Patrón Singleton
   private static instance: SoundDirectorAPI;
@@ -33,10 +35,8 @@ export default class SoundDirectorAPI {
   initAudio = () => {
     // Activa el audio globalmente
     // Forzar la creación del contexto con un sonido "dummy"
-    const dummy = new Howl({ src: [""], volume: 0 });
+    const dummy = new Howl({ src: [initSound], volume: 1 });
     dummy.play();
-    dummy.stop();
-
     Howler.volume(1.0);
 
     // Resumir el contexto si es necesario
