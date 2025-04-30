@@ -23,5 +23,6 @@ export const GLOBAL_COLORS = {
   screenDarkener: {
     light: "rgba(0, 0, 0, 0.5)",
     dark: "rgba(0, 0, 0, 0.8)",
+    black: "rgba(0, 0, 0, 1)",
   },
 };

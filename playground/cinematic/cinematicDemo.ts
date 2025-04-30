@@ -17,7 +17,7 @@ export const cinematicIntro: CinematicSceneAuto = [
     mainImageAlt: "Paisaje al atardecer, el sol se está poniendo",
     widePicture: true,
     shotTransition: "cut",
-    shotDuration: 5000,
+    shotDuration: 2000,
   },
   {
     id: 3,
@@ -25,7 +25,7 @@ export const cinematicIntro: CinematicSceneAuto = [
     mainImageAlt: "Un relámpago ilumina un cúmulo de nubes",
     widePicture: false,
     shotTransition: "fade",
-    shotDuration: 10000,
+    shotDuration: 7000,
     fadeDuration: 4000,
   },
   {

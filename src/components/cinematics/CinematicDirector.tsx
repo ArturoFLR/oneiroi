@@ -157,7 +157,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   }, []);
 
   return (
-    <ScreenDarkener color="dark">
+    <ScreenDarkener color="black">
       {isLoading ? (
         <LoadingSpinner progress={loadingProgress} />
       ) : (

@@ -1,4 +1,3 @@
-import { GLOBAL_COLORS } from "../../../theme";
 import styled, { keyframes } from "styled-components";
 import {
   MainViewerActualShotData,
@@ -24,7 +23,6 @@ const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
   aspect-ratio: ${({ $widePicture }) =>
     $widePicture ? "1376 / 768" : "1 / 1"};
   border-radius: 15px;
-  border: 1px solid ${GLOBAL_COLORS.orange.highlightedText};
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "transparent")};
   z-index: 1;
 `;

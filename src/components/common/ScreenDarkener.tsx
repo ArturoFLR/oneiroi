@@ -2,8 +2,14 @@ import { GLOBAL_COLORS } from "../../theme";
 import styled from "styled-components";
 
 interface MainFrameProps {
-  $color: "light" | "dark";
+  $color: "light" | "dark" | "black";
 }
+
+const bgColorMap = {
+  light: GLOBAL_COLORS.screenDarkener.light,
+  dark: GLOBAL_COLORS.screenDarkener.dark,
+  black: GLOBAL_COLORS.screenDarkener.black,
+};
 
 const MainFrame = styled.div<MainFrameProps>`
   position: fixed;
@@ -14,15 +20,12 @@ const MainFrame = styled.div<MainFrameProps>`
   align-items: center;
   width: 100vw;
   height: 100vh;
-  background: ${({ $color }) =>
-    $color === "light"
-      ? GLOBAL_COLORS.screenDarkener.light
-      : GLOBAL_COLORS.screenDarkener.dark};
+  background: ${({ $color }) => bgColorMap[$color]};
   z-index: 1000;
 `;
 
 interface ScreenDarkenerProps {
-  color?: "light" | "dark";
+  color?: "light" | "dark" | "black";
   children?: React.ReactNode;
 }
 
