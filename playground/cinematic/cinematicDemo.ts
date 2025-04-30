@@ -6,26 +6,27 @@ export const cinematicIntro: CinematicSceneAuto = [
   {
     id: 1,
     backgroundColor: "#000000",
-    shotDuration: 5000,
-    shotTransition: "fade",
+    widePicture: true,
+    shotTransition: "cut",
   },
   {
     id: 2,
     mainImageUrl: testImageWide,
     mainImageAlt: "Paisaje al atardecer, el sol se está poniendo",
-    shotDuration: 5000,
+    widePicture: true,
     shotTransition: "cut",
   },
   {
     id: 3,
     mainImageUrl: testImage,
     mainImageAlt: "Un relámpago ilumina un cúmulo de nubes",
-    shotDuration: 5000,
-    shotTransition: "fade",
+    widePicture: false,
+    shotTransition: "cut",
   },
   {
     id: 4,
     backgroundColor: "#000000",
-    shotDuration: 5000,
+    widePicture: false,
+    onEnd: () => console.log("Fin de la escena"),
   },
 ];
