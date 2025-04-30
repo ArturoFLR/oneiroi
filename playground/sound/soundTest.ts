@@ -30,7 +30,7 @@ export function playNormalSound() {
     AudioEnvironment.Cinematic,
     "sounds",
     "wind1Normal",
-    "../../src/assets/audio/sounds/ambient/soft-wind.mp3"
+    "../../src/assets/audio/sounds/ambient/wind/soft-wind.mp3"
   );
 }
 
@@ -39,7 +39,7 @@ export function preloadCinematicSound() {
     AudioEnvironment.Cinematic,
     "sounds",
     "wind2Preloaded",
-    "../../src/assets/audio/sounds/ambient/soft-wind.mp3"
+    "../../src/assets/audio/sounds/ambient/wind/soft-wind.mp3"
   );
 }
 
@@ -319,7 +319,7 @@ export function createSoundscape1() {
 
   const mainSoundWind: MainAmbientSound = {
     name: "wind1",
-    src: "../../src/assets/audio/sounds/ambient/soft-wind.mp3",
+    src: "../../src/assets/audio/sounds/ambient/wind/soft-wind.mp3",
     fadeDuration: 2000,
     securityMargin: 1000,
     config: { volume: 0.6, src: "" },
