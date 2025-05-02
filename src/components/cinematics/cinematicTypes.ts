@@ -67,9 +67,9 @@ export interface CinematicShotAuto {
   shotTransition?: ShotTransitionType; //Tipo de transición hacia el siguiente plano
   fadeDuration?: number; // Si optamos por una transición de tipo "fade", aquí podemos indicar su duración en milisegundos.
   zoom?: ZoomData;
-  ambientSound?: CinematicAmbientSound | null; // Si se indica null, se detiene el sonido ambiente anterior.
+  ambientSound?: CinematicAmbientSound | "stop"; // Si se indica stop, se detiene el sonido ambiente anterior.
   uniqueSounds?: CinematicUniqueSounds;
-  music?: CinematicMusic | null; // Si se indica null, se detiene la música actual.
+  music?: CinematicMusic | "stop"; // Si se indica stop, se detiene la música actual.
   specialActions?: () => void; //Acciones especiales a realizar al iniciar el plano, como por ejemplo cambiar el volumen del sonido ambiente.
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
 }
@@ -99,9 +99,9 @@ export interface MainViewerNextShotData {
 }
 
 export interface CinematicSoundManagerShotData {
-  ambientSound?: CinematicAmbientSound | null;
-  uniqueSounds?: CinematicUniqueSounds;
-  music?: CinematicMusic | null;
+  ambientSound?: CinematicAmbientSound | "stop" | null;
+  uniqueSounds?: CinematicUniqueSounds | null;
+  music?: CinematicMusic | "stop" | null;
 }
 
 export type CinematicSoundManagerData = CinematicSoundManagerShotData[];
