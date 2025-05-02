@@ -98,8 +98,10 @@ export interface MainViewerNextShotData {
   zoom?: ZoomData;
 }
 
-export interface CinematicSoundManagerData {
+export interface CinematicSoundManagerShotData {
   ambientSound?: CinematicAmbientSound | null;
   uniqueSounds?: CinematicUniqueSounds;
   music?: CinematicMusic | null;
 }
+
+export type CinematicSoundManagerData = CinematicSoundManagerShotData[];
