@@ -1,4 +1,11 @@
+import { SoundDirectorAPI1 } from "../../src/classes/sound/singletons";
 import { CinematicSceneAuto } from "../../src/components/cinematics/cinematicTypes";
+import {
+  shot1AmbientSound,
+  shot1Music,
+  shot3UniqueSounds,
+} from "./cinematicDemoSound";
+
 import testImageWide from "@assets/graphics/cinematics/intro/alien-landscape_01.jpg";
 import testImage from "@assets/graphics/cinematics/intro/stormy-clouds_03.jpg";
 
@@ -10,6 +17,9 @@ export const cinematicIntro: CinematicSceneAuto = [
     shotTransition: "fade",
     shotDuration: 10000,
     fadeDuration: 6000,
+    ambientSound: shot1AmbientSound,
+    music: shot1Music,
+    specialActions: () => SoundDirectorAPI1.initAudio(),
   },
   {
     id: 2,
@@ -27,6 +37,7 @@ export const cinematicIntro: CinematicSceneAuto = [
     shotTransition: "fade",
     shotDuration: 7000,
     fadeDuration: 4000,
+    uniqueSounds: shot3UniqueSounds,
   },
   {
     id: 4,

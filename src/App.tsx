@@ -7,8 +7,8 @@ import CinematicDirector from "./components/cinematics/CinematicDirector";
 function App() {
   return (
     <>
-      {/* <SoundTesting />
-      <div className="mainContainer">
+      {/* <SoundTesting /> */}
+      {/* <div className="mainContainer">
         <h1>Mapa Casa de Natalia</h1>
         <MapGenerator mapCells={nataliaHouseMapCells} />
       </div> */}

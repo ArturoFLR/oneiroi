@@ -40,6 +40,8 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
     currentShot.shotTransition || "cut";
   const fadeTransitionDuration = currentShot.fadeDuration || 2000;
 
+  // Calcula el número total de items a cargar, entre imágenes y sonidos.
+
   const preloadImages = useCallback(() => {
     let completionPercentage = 0;
     const totalImages = cinematicDataRef.current.length;
@@ -71,6 +73,14 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       }
     });
   }, []);
+
+  function preloadSounds() {
+    cinematicData.forEach((shot) => {
+      if (shot.ambientSound && shot.ambientSound.secondaryAmbientSounds) {
+        shot.ambientSound.secondaryAmbientSounds.forEach((secSound) => {});
+      }
+    });
+  }
 
   function generateCinematicShot() {
     const mainViewerActualShot: MainViewerActualShotData = {
