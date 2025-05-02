@@ -97,3 +97,9 @@ export interface MainViewerNextShotData {
   widePicture: boolean; //Aunque no se indique imagen porque se quiera un color plano, hay que indicar qué tamaño de marco se desea.
   zoom?: ZoomData;
 }
+
+export interface CinematicSoundManagerData {
+  ambientSound?: CinematicAmbientSound | null;
+  uniqueSounds?: CinematicUniqueSounds;
+  music?: CinematicMusic | null;
+}
