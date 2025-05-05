@@ -215,7 +215,7 @@ export default class SoundStore {
     }
   }
 
-  // Se utiliza para crear cualquier sonido que no sea del Interface (env = InterfacePreloaded).
+  // Se utiliza para crear cualquier sonido que no sea del Interface (env !== InterfacePreloaded).
   async createSoundInstance(
     env: AudioEnvironment,
     category: SoundCategory,
