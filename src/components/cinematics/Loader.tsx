@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { CinematicSceneAuto } from "./cinematicTypes";
-import { SoundDirectorAPI1 } from "../../classes/sound/singletons";
+import { SoundDirectorAPI1, SoundStore1 } from "../../classes/sound/singletons";
 
 interface LoaderProps {
   cinematicData: CinematicSceneAuto;
@@ -67,21 +67,27 @@ function Loader({ cinematicData, setIsLoading }: LoaderProps) {
     cinematicData.forEach((shot) => {
       if (shot.uniqueSounds) {
         shot.uniqueSounds.forEach((uniqueSound) => {
-          SoundDirectorAPI1.preloadSound(
-            uniqueSound.env,
-            uniqueSound.category,
-            uniqueSound.soundName,
-            uniqueSound.soundSrc
-          ).then((result) => {
-            if (result) {
-              advanceCompletion();
-            } else {
-              console.error(
-                `Cinematic Director: Error cargando el sonido: ${uniqueSound.soundSrc}`
-              );
-              advanceCompletion();
-            }
-          });
+          if (
+            !SoundStore1.audioStore[uniqueSound.env][uniqueSound.category][
+              uniqueSound.soundName
+            ]
+          ) {
+            SoundDirectorAPI1.preloadSound(
+              uniqueSound.env,
+              uniqueSound.category,
+              uniqueSound.soundName,
+              uniqueSound.soundSrc
+            ).then((result) => {
+              if (result) {
+                advanceCompletion();
+              } else {
+                console.error(
+                  `Cinematic Director: Error cargando el sonido: ${uniqueSound.soundSrc}`
+                );
+                advanceCompletion();
+              }
+            });
+          }
         });
       }
     });
