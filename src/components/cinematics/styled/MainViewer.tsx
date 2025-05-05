@@ -3,7 +3,7 @@ import {
   MainViewerActualShotData,
   MainViewerNextShotData,
 } from "../cinematicTypes";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const MainContainer = styled.div`
   position: relative;
@@ -22,7 +22,7 @@ const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
   width: ${({ $widePicture }) => ($widePicture ? "70vw" : "40vw")};
   aspect-ratio: ${({ $widePicture }) =>
     $widePicture ? "1376 / 768" : "1 / 1"};
-  border-radius: 15px;
+  border-radius: 10px;
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "transparent")};
   z-index: 1;
 `;
@@ -48,6 +48,7 @@ interface NextPictureContainerProps {
 const NextPictureContainer = styled(
   CurrentPictureContainer
 )<NextPictureContainerProps>`
+  display: ${({ $fade }) => ($fade ? "block" : "none")};
   position: absolute;
   top: 0;
   left: 0;
@@ -78,9 +79,8 @@ interface MainViewerProps {
 
 function MainViewer({ actualShot, nextShot }: MainViewerProps) {
   const [applyFade, setApplyFade] = useState<boolean>(false);
-  const [test, setTest] = useState<number>(0);
 
-  const nextContainerElement = useRef<HTMLDivElement>(null);
+  const nextPictureContainerElement = useRef<HTMLDivElement>(null);
 
   const mainContainerBgColor = actualShot.backgroundColor
     ? actualShot.backgroundColor
@@ -101,7 +101,6 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     }
 
     return () => {
-      setApplyFade(false);
       if (fadeTimeout) clearTimeout(fadeTimeout);
     };
   }, [
@@ -110,22 +109,13 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     actualShot.fadeDuration,
   ]);
 
-  useEffect(() => {
-    let opacityValue = "";
-    if (nextContainerElement.current) {
-      const computedStyle = getComputedStyle(nextContainerElement.current);
-      opacityValue = computedStyle.getPropertyValue("opacity");
+  // Garantiza que NextPictureContainer sea invisible al comienzo de un nuevo shot.
+  useLayoutEffect(() => {
+    setApplyFade(false);
+    if (nextPictureContainerElement.current) {
+      nextPictureContainerElement.current.style.opacity = "0";
     }
-    const timer1 = setInterval(() => {
-      console.log(test);
-      console.log(opacityValue);
-      setTest((prev) => prev + 1);
-    }, 1000);
-
-    return () => {
-      clearInterval(timer1);
-    };
-  }, [test]);
+  }, [actualShot.id]);
 
   return (
     <MainContainer id="cinematicViewerContainer">
@@ -136,9 +126,10 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
       >
         {actualShot.mainImageAlt ? (
           <MainPicture
+            key={actualShot.mainImageUrl}
             src={actualShot.mainImageUrl}
             alt={actualShot.mainImageAlt}
-          ></MainPicture>
+          />
         ) : null}
       </CurrentPictureContainer>
 
@@ -149,13 +140,14 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
           $bgColor={nextContainerBgColor}
           $fade={applyFade}
           $fadeDuration={actualShot.fadeDuration}
-          ref={nextContainerElement}
+          ref={nextPictureContainerElement}
         >
           {nextShot.mainImageUrl ? (
             <NextPicture
+              key={nextShot.mainImageUrl}
               src={nextShot.mainImageUrl}
               alt={nextShot.mainImageAlt}
-            ></NextPicture>
+            />
           ) : null}
         </NextPictureContainer>
       ) : null}
