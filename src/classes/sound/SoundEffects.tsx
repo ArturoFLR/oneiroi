@@ -167,8 +167,19 @@ export default class SoundEffects {
         });
       }
 
-      //Si el fundido es hacia silencio total, paramos la reproducción y eliminamos su id.
-      if (fadeValues.final === 0) {
+      //Si el fundido es hacia silencio total, añadimos listener para parar la reproducción y eliminar su id, pero sólo si queda tiempo
+      // para que el fundido termine antes de que se acabe el sonido. Esto es así porque Howler dispara el evento "fade" cuando el sonido
+      // llega hasta el final y termina su reproducción (evento "end"), aunque no haya dado tiempo a terminar el fade. Esto provoca que se
+      // intente borrar el sonido 2 veces, una por el evento "end" y otra por "fade". Esto no pasa al revés: si se provoca un stop() del sonido
+      // a causa del evento "fade", esto no activará el evento "end".
+      const soundDuration = instance.duration();
+      const currentTime = instance.seek(id);
+      const soundTimeRemaining = soundDuration - currentTime;
+
+      if (
+        fadeValues.final === 0 &&
+        soundTimeRemaining > fadeValues.milliseconds
+      ) {
         instance.once("fade", () => {
           if (id) {
             this.emitNewPlayEvent({
@@ -222,8 +233,19 @@ export default class SoundEffects {
         );
       });
 
-      //Si el fundido es hacia silencio total, emitimos evento "stop".
-      if (fadeValues.final === 0) {
+      //Si el fundido es hacia silencio total, añadimos listener para parar la reproducción y eliminar su id, pero sólo si queda tiempo
+      // para que el fundido termine antes de que se acabe el sonido. Esto es así porque Howler dispara el evento "fade" cuando el sonido
+      // llega hasta el final y termina su reproducción (evento "end"), aunque no haya dado tiempo a terminar el fade. Esto provoca que se
+      // intente borrar el sonido 2 veces, una por el evento "end" y otra por "fade". Esto no pasa al revés: si se provoca un stop() del sonido
+      // a causa del evento "fade", esto no activará el evento "end".
+      const soundDuration = instance.duration();
+      const currentTime = instance.seek();
+      const soundTimeRemaining = soundDuration - currentTime;
+
+      if (
+        fadeValues.final === 0 &&
+        soundTimeRemaining > fadeValues.milliseconds
+      ) {
         instance.once("fade", () => {
           if (soundName) {
             this.emitNewPlayEvent({
@@ -262,8 +284,19 @@ export default class SoundEffects {
         );
       });
 
-      //Si el fundido es hacia silencio total, emitimos evento "stop".
-      if (fadeValues.final === 0) {
+      //Si el fundido es hacia silencio total, añadimos listener para parar la reproducción y eliminar su id, pero sólo si queda tiempo
+      // para que el fundido termine antes de que se acabe el sonido. Esto es así porque Howler dispara el evento "fade" cuando el sonido
+      // llega hasta el final y termina su reproducción (evento "end"), aunque no haya dado tiempo a terminar el fade. Esto provoca que se
+      // intente borrar el sonido 2 veces, una por el evento "end" y otra por "fade". Esto no pasa al revés: si se provoca un stop() del sonido
+      // a causa del evento "fade", esto no activará el evento "end".
+      const soundDuration = instance.duration();
+      const currentTime = instance.seek();
+      const soundTimeRemaining = soundDuration - currentTime;
+
+      if (
+        fadeValues.final === 0 &&
+        soundTimeRemaining > fadeValues.milliseconds
+      ) {
         instance.once("fade", () => {
           if (env && category && soundName) {
             this.emitNewPlayEvent({
