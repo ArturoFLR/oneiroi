@@ -153,35 +153,19 @@ export default class SoundPlayer {
     // Añadimos el evento "onend" para que al terminar de reproducirse se emita un evento a SoundStore
     // para que se borre su id del array de reproducciones en curso.
     // Si el sonido no está en "soundscapes", además se eliminan timeouts y animaciones, y se destuye la instancia (unload), si procede.
-    if (category === "soundscapes") {
-      SoundStore1.audioStore[env][category][soundName].instance.once(
-        "end",
-        () => {
-          this.emitNewPlayEvent({
-            eventType: "autoEndSoundscape",
-            env,
-            category,
-            soundName,
-            id: newPlayId,
-          });
-        },
-        newPlayId
-      );
-    } else {
-      SoundStore1.audioStore[env][category][soundName].instance.once(
-        "end",
-        () => {
-          this.emitNewPlayEvent({
-            eventType: "autoEnd",
-            env,
-            category,
-            soundName,
-            id: newPlayId,
-          });
-        },
-        newPlayId
-      );
-    }
+    const instance = SoundStore1.audioStore[env][category][soundName].instance;
+    const callback = () => {
+      this.emitNewPlayEvent({
+        eventType: category === "soundscapes" ? "autoEndSoundscape" : "autoEnd",
+        env,
+        category,
+        soundName,
+        id: newPlayId,
+      });
+    };
+
+    instance.off("end", callback, newPlayId); // Asegura eliminar posibles listeners existentes antes de aplicar el nuevo.
+    instance.once("end", callback, newPlayId);
 
     return newPlayId;
   }
