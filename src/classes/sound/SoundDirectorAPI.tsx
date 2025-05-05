@@ -29,10 +29,16 @@ export default class SoundDirectorAPI {
   }
   //// FIN Patrón Singleton
 
+  private isAudioInitialized: boolean = false;
+
   ////////////////////////////////////////////////////////////////////// MÉTODOS
 
-  // Este método debe ser llamado una vez al iniciar la aplicación, antes de usar cualquier otro método de la API.
+  // Este método debe ser llamado una vez al iniciar la aplicación, antes de usar cualquier otro método de la API. Inicializa el contexto de audio
+  // y registra los observables.
   initAudio = () => {
+    //Evitamos inicializar más de una vez (múltiples suscripciones a observables provocan que un único evento se reciba varias veces por los observers)
+    if (this.isAudioInitialized) return;
+
     // Activa el audio globalmente
     // Forzar la creación del contexto con un sonido "dummy"
     const dummy = new Howl({ src: [initSound], volume: 1 });
@@ -71,6 +77,8 @@ export default class SoundDirectorAPI {
       SoundscapesCreator1.changeParamEventEmitter.subscribe(
         SoundParameterController1.changeParamEventReceiver
       );
+
+      this.isAudioInitialized = true;
     } catch (error) {
       console.warn(
         `SoundDirectorAPI - initAudio: No se han podido registrar correctamente los observers. Error: ${error}`
