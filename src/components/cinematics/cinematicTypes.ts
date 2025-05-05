@@ -70,6 +70,7 @@ export interface CinematicShotAuto {
   ambientSound?: CinematicAmbientSound | "stop"; // Si se indica stop, se detiene el sonido ambiente anterior.
   uniqueSounds?: CinematicUniqueSounds;
   music?: CinematicMusic | "stop"; // Si se indica stop, se detiene la música actual.
+  onEndAudioFadeDuration?: number; // Usar en el último plano, para indicar cuánto durará el fade-out de sonido y música antes de que acabe la cinemática.
   specialActions?: () => void; //Acciones especiales a realizar al iniciar el plano, como por ejemplo cambiar el volumen del sonido ambiente.
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
 }
@@ -102,6 +103,7 @@ export interface CinematicSoundManagerShotData {
   ambientSound?: CinematicAmbientSound | "stop" | null;
   uniqueSounds?: CinematicUniqueSounds | null;
   music?: CinematicMusic | "stop" | null;
+  onEndAudioFadeDuration?: number;
 }
 
 export type CinematicSoundManagerData = CinematicSoundManagerShotData[];
