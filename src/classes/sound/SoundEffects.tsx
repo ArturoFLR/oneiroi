@@ -241,11 +241,12 @@ export default class SoundEffects {
       // a causa del evento "fade", esto no activará el evento "end".
       const soundDuration = instance.duration();
       const currentTime = instance.seek();
-      const soundTimeRemaining = soundDuration - currentTime;
+      const soundTimeRemaining = (soundDuration - currentTime) * 1000;
 
       if (
-        fadeValues.final === 0 &&
-        soundTimeRemaining > fadeValues.milliseconds
+        (fadeValues.final === 0 &&
+          soundTimeRemaining > fadeValues.milliseconds) ||
+        (fadeValues.final === 0 && category === "soundscapes")
       ) {
         instance.once("fade", () => {
           if (soundName) {
@@ -292,11 +293,12 @@ export default class SoundEffects {
       // a causa del evento "fade", esto no activará el evento "end".
       const soundDuration = instance.duration();
       const currentTime = instance.seek();
-      const soundTimeRemaining = soundDuration - currentTime;
+      const soundTimeRemaining = (soundDuration - currentTime) * 1000;
 
       if (
-        fadeValues.final === 0 &&
-        soundTimeRemaining > fadeValues.milliseconds
+        (fadeValues.final === 0 &&
+          soundTimeRemaining > fadeValues.milliseconds) ||
+        (fadeValues.final === 0 && category === "soundscapes")
       ) {
         instance.once("fade", () => {
           if (env && category && soundName) {
