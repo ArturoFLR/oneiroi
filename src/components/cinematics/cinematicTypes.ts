@@ -1,6 +1,5 @@
 import { HowlOptions } from "howler";
 import {
-  AudioEnvironment,
   MainAmbientSound,
   SecondarySound,
   SoundCategory,
@@ -21,7 +20,6 @@ export interface ZoomData {
 }
 
 export interface CinematicAmbientSound {
-  env: AudioEnvironment;
   soundscapeName: string;
   mainAmbientSounds: MainAmbientSound[];
   secondaryAmbientSounds?: SecondarySound[];
@@ -32,7 +30,6 @@ export interface CinematicAmbientSound {
 }
 
 export interface CinematicUniqueSound {
-  env: AudioEnvironment;
   category: SoundCategory;
   soundName: string;
   soundSrc: string;
@@ -44,8 +41,6 @@ export interface CinematicUniqueSound {
 export type CinematicUniqueSounds = CinematicUniqueSound[];
 
 export interface CinematicMusic {
-  env: AudioEnvironment;
-  category: SoundCategory;
   soundName: string;
   soundSrc: string;
   config?: HowlOptions;
@@ -67,9 +62,9 @@ export interface CinematicShotAuto {
   shotTransition?: ShotTransitionType; //Tipo de transición hacia el siguiente plano
   fadeDuration?: number; // Si optamos por una transición de tipo "fade", aquí podemos indicar su duración en milisegundos.
   zoom?: ZoomData;
-  ambientSound?: CinematicAmbientSound | "stop"; // Si se indica stop, se detiene el sonido ambiente anterior.
+  ambientSound?: CinematicAmbientSound | number; // Si indicamos un number estamos dando la orden de hacer un fade-out y estamos indicando la duración. Puede ser "0"
   uniqueSounds?: CinematicUniqueSounds;
-  music?: CinematicMusic | "stop"; // Si se indica stop, se detiene la música actual.
+  music?: CinematicMusic | number; // Si indicamos un number estamos dando la orden de hacer un fade-out y estamos indicando la duración. Puede ser "0"
   onEndAudioFadeDuration?: number; // Usar en el último plano, para indicar cuánto durará el fade-out de sonido y música antes de que acabe la cinemática.
   specialActions?: () => void; //Acciones especiales a realizar al iniciar el plano, como por ejemplo cambiar el volumen del sonido ambiente.
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
@@ -100,9 +95,9 @@ export interface MainViewerNextShotData {
 }
 
 export interface CinematicSoundManagerShotData {
-  ambientSound?: CinematicAmbientSound | "stop" | null;
+  ambientSound?: CinematicAmbientSound | number | null;
   uniqueSounds?: CinematicUniqueSounds | null;
-  music?: CinematicMusic | "stop" | null;
+  music?: CinematicMusic | number | null;
   onEndAudioFadeDuration?: number;
 }
 
