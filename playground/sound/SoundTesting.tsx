@@ -21,6 +21,7 @@ import {
   fadeAll,
   fadeMusic,
   fadePreloadSound,
+  fadeSoundscape,
   pauseAll,
   pauseEnvironment,
   pauseInterfacelSound,
@@ -396,6 +397,9 @@ function SoundTesting() {
       <button onClick={() => pauseSoundscape()}>Pause Soundscape 1</button>
       <button onClick={() => resumeSoundscape()}>Resume Soundscape 1</button>
       <button onClick={() => stopSoundscape()}>Stop Soundscape 1</button>
+      <button onClick={() => fadeSoundscape()}>Fade Soundscape 1</button>
+
+      <br></br>
 
       {!audioEnabled ? (
         <>

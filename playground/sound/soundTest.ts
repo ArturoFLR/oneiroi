@@ -311,7 +311,7 @@ export async function createLoop2() {
 export function createSoundscape1() {
   const mainSoundRain: MainAmbientSound = {
     name: "rain1",
-    src: "../../src/assets/audio/sounds/ambient/rain-on-metal.mp3",
+    src: "../../src/assets/audio/sounds/ambient/rain/rain-on-metal.mp3",
     fadeDuration: 2000,
     securityMargin: 700,
     config: { volume: 0.6, src: "" },
@@ -327,7 +327,7 @@ export function createSoundscape1() {
 
   const thunder1: SecondarySound = {
     name: "thunder1",
-    src: "../../src/assets/audio/sounds/effects/thunder_1.mp3",
+    src: "../../src/assets/audio/sounds/effects/thunder/thunder_1.mp3",
     delay: 20000,
     minLoopTime: 25000,
     maxLoopTime: 35000,
@@ -336,7 +336,7 @@ export function createSoundscape1() {
 
   const thunder2: SecondarySound = {
     name: "thunder2",
-    src: "../../src/assets/audio/sounds/effects/thunder_2.mp3",
+    src: "../../src/assets/audio/sounds/effects/thunder/thunder_2.mp3",
     delay: 5500,
     minLoopTime: 25000,
     maxLoopTime: 32000,
@@ -345,7 +345,7 @@ export function createSoundscape1() {
 
   const thunder3: SecondarySound = {
     name: "thunder3",
-    src: "../../src/assets/audio/sounds/effects/thunder_3.mp3",
+    src: "../../src/assets/audio/sounds/effects/thunder/thunder_3.mp3",
     delay: 45000,
     minLoopTime: 30000,
     maxLoopTime: 49000,
@@ -373,4 +373,8 @@ export function pauseSoundscape() {
 
 export function resumeSoundscape() {
   SoundDirectorAPI1.resumeSoundscape(AudioEnvironment.Cinematic, "stormyRain1");
+}
+
+export function fadeSoundscape() {
+  SoundDirectorAPI1.fadeSoundscape(AudioEnvironment.Cinematic, 4000, 0);
 }
