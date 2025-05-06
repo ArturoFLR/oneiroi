@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadingSpinner from "../common/LoadingSpinner";
-import { CinematicSceneAuto } from "./cinematicTypes";
+import { CinematicMusic, CinematicSceneAuto } from "./cinematicTypes";
 import { SoundDirectorAPI1, SoundStore1 } from "../../classes/sound/singletons";
+import { AudioEnvironment } from "../../classes/sound/soundTypes";
 
 interface LoaderProps {
   cinematicData: CinematicSceneAuto;
@@ -10,6 +11,12 @@ interface LoaderProps {
 
 function Loader({ cinematicData, setIsLoading }: LoaderProps) {
   const [loadingProgress, setLoadingProgress] = useState<number>(0);
+
+  //Estas referencias se encargan de que no se intenten precargar 2 veces (StricMode) los recursos.
+  const areImagesPreloadingRef = useRef<boolean>(false);
+  const areUniqueSoundsPreloadingRef = useRef<boolean>(false);
+  const isMusicPreloadingRef = useRef<boolean>(false);
+  const areAmbientSoundsPreloadingRef = useRef<boolean>(false);
 
   // Calcula el número total de items a cargar, entre imágenes y sonidos.
   const getTotalItemsToLoad = useMemo(() => {
@@ -22,6 +29,18 @@ function Loader({ cinematicData, setIsLoading }: LoaderProps) {
 
       if (shot.uniqueSounds) {
         totalItems += shot.uniqueSounds.length;
+      }
+
+      if (shot?.music && typeof shot.music !== "number") {
+        totalItems += 1;
+      }
+
+      if (shot.ambientSound && typeof shot.ambientSound !== "number") {
+        totalItems += shot.ambientSound.mainAmbientSounds.length;
+
+        if (shot.ambientSound.secondaryAmbientSounds) {
+          totalItems += shot.ambientSound.secondaryAmbientSounds.length;
+        }
       }
     });
 
@@ -45,6 +64,9 @@ function Loader({ cinematicData, setIsLoading }: LoaderProps) {
 
   // Precarga las imágenes
   const preloadImages = useCallback(() => {
+    if (areImagesPreloadingRef.current) return;
+    areImagesPreloadingRef.current = true;
+
     cinematicData.forEach((shot) => {
       if (shot.mainImageUrl) {
         const img = new Image();
@@ -64,19 +86,23 @@ function Loader({ cinematicData, setIsLoading }: LoaderProps) {
   }, [advanceCompletion, cinematicData]);
 
   const preloadSounds = useCallback(() => {
+    if (areUniqueSoundsPreloadingRef.current) return;
+    areUniqueSoundsPreloadingRef.current = true;
+
     cinematicData.forEach((shot) => {
       if (shot.uniqueSounds) {
         shot.uniqueSounds.forEach((uniqueSound) => {
           if (
-            !SoundStore1.audioStore[uniqueSound.env][uniqueSound.category][
+            !SoundStore1.audioStore.cinematic[uniqueSound.category][
               uniqueSound.soundName
             ]
           ) {
             SoundDirectorAPI1.preloadSound(
-              uniqueSound.env,
+              AudioEnvironment.Cinematic,
               uniqueSound.category,
               uniqueSound.soundName,
-              uniqueSound.soundSrc
+              uniqueSound.soundSrc,
+              uniqueSound.config
             ).then((result) => {
               if (result) {
                 advanceCompletion();
@@ -93,16 +119,104 @@ function Loader({ cinematicData, setIsLoading }: LoaderProps) {
     });
   }, [advanceCompletion, cinematicData]);
 
-  // Realiza la pregarga de imágenes y sonidos antes de que comience la cinemática.
+  const preloadMusic = useCallback(() => {
+    if (isMusicPreloadingRef.current) return;
+    isMusicPreloadingRef.current = true;
+
+    cinematicData.forEach((shot) => {
+      if (
+        shot?.music &&
+        typeof shot.music !== "number" &&
+        !SoundStore1.audioStore.cinematic.music[shot.music.soundName]
+      ) {
+        SoundDirectorAPI1.preloadSound(
+          AudioEnvironment.Cinematic,
+          "music",
+          shot.music.soundName,
+          shot.music.soundSrc,
+          shot.music.config
+        ).then((result) => {
+          if (result) {
+            advanceCompletion();
+          } else {
+            console.error(
+              `Cinematic Director: Error cargando la música: ${(shot.music as CinematicMusic).soundSrc}`
+            );
+            advanceCompletion();
+          }
+        });
+      }
+    });
+  }, [cinematicData, advanceCompletion]);
+
+  const preloadAmbientSounds = useCallback(() => {
+    if (areAmbientSoundsPreloadingRef.current) return;
+    areAmbientSoundsPreloadingRef.current = true;
+
+    cinematicData.forEach((shot) => {
+      if (shot.ambientSound && typeof shot.ambientSound !== "number") {
+        shot.ambientSound.mainAmbientSounds.forEach((mainSound) => {
+          SoundDirectorAPI1.preloadSound(
+            AudioEnvironment.Cinematic,
+            "soundscapes",
+            mainSound.name,
+            mainSound.src,
+            mainSound.config
+          ).then((result) => {
+            if (result) {
+              advanceCompletion();
+            } else {
+              console.error(
+                `Cinematic Director: Error cargando la música: ${(shot.music as CinematicMusic).soundSrc}`
+              );
+              advanceCompletion();
+            }
+          });
+        });
+
+        if (shot.ambientSound.secondaryAmbientSounds) {
+          shot.ambientSound.secondaryAmbientSounds.forEach((secSound) => {
+            SoundDirectorAPI1.preloadSound(
+              AudioEnvironment.Cinematic,
+              "soundscapes",
+              secSound.name,
+              secSound.src,
+              secSound.config
+            ).then((result) => {
+              if (result) {
+                advanceCompletion();
+              } else {
+                console.error(
+                  `Cinematic Director: Error cargando la música: ${(shot.music as CinematicMusic).soundSrc}`
+                );
+                advanceCompletion();
+              }
+            });
+          });
+        }
+      }
+    });
+  }, [cinematicData, advanceCompletion]);
+
+  // Realiza la precarga de imágenes y sonidos antes de que comience la cinemática.
   useEffect(() => {
     preloadImages();
     preloadSounds();
+    preloadMusic();
+    preloadAmbientSounds();
 
     // Si no hubiera nada que cargar, no se ejecutaría advanceCompletion() en las funciones anteriores, por lo que lo hacemos manualmente.
     if (getTotalItemsToLoad === 0) {
       advanceCompletion();
     }
-  }, [preloadImages, preloadSounds, advanceCompletion, getTotalItemsToLoad]);
+  }, [
+    preloadImages,
+    preloadSounds,
+    preloadMusic,
+    preloadAmbientSounds,
+    advanceCompletion,
+    getTotalItemsToLoad,
+  ]);
 
   //Si se ha llegado al 100% de carga, se inicia la cinemática.
   useEffect(() => {
