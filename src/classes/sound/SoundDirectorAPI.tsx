@@ -636,6 +636,7 @@ export default class SoundDirectorAPI {
     env: AudioEnvironment,
     fadeDuration: number,
     endValue: number,
+    initialValue?: number,
     soundscapeName?: string
   ) {
     const normalizedFade = this.getNormalizedFadeValues({
@@ -643,10 +644,17 @@ export default class SoundDirectorAPI {
       milliseconds: fadeDuration,
     });
 
+    let normalizedInitialValue: number | undefined = undefined;
+
+    if (initialValue) {
+      normalizedInitialValue = this.getNormalizedVolume(initialValue);
+    }
+
     SoundscapesCreator1.fadeSoundscape(
       env,
       normalizedFade.milliseconds,
       normalizedFade.final,
+      normalizedInitialValue,
       soundscapeName
     );
   }

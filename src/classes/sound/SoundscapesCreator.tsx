@@ -323,6 +323,7 @@ export default class SoundscapesCreator {
     env: AudioEnvironment,
     fadeDuration: number,
     endValue: number,
+    initialValue?: number,
     soundscapeName?: string
   ) {
     const soundscapesInEnvironment = Object.keys(this.soundscapesLibrary[env]);
@@ -339,12 +340,22 @@ export default class SoundscapesCreator {
       ? [soundscapeName]
       : soundscapesInEnvironment;
 
-    //Si va a ser un fade-out a 0, eliminamos todos los timers (timeouts e intervals) de los sonidos, para que no vuelvan a reproducirse
-    //una vez terminado el fade-out. Si no, mantenemos los timers.
     soundscapesToFade.forEach((soundscape) => {
       const soundscapeSounds = this.soundscapesLibrary[env][soundscape];
 
       soundscapeSounds.forEach((sound) => {
+        //Si se ha indicado un valor inicial de volumen para el fundido, lo aplicamos.
+        if (initialValue) {
+          this.emitNewChangeParamEvent({
+            parameterType: "volume",
+            env,
+            category: "soundscapes",
+            soundName: sound,
+            newValue: initialValue,
+          });
+        }
+        //Si va a ser un fade-out a 0, eliminamos todos los timers (timeouts e intervals) de los sonidos, para que no vuelvan a reproducirse
+        //una vez terminado el fade-out.
         if (endValue <= 0) {
           this.emitNewModifyTimersEvent({
             env,
@@ -359,17 +370,21 @@ export default class SoundscapesCreator {
             soundName: sound,
             eventType: "deleteInterval",
           });
-        }
 
-        //Si el sonido no se está reproduciendo, lo paramos directamente.
-        if (SoundStore1.audioStore[env].soundscapes[sound].ids.length === 0) {
-          this.emitNewPlayEvent({
-            eventType: "stop",
-            env,
-            category: "soundscapes",
-            soundName: sound,
-          });
-          //Si el sonido está en reproducción le aplicamos el fade.
+          //Si el sonido no se está reproduciendo, lo paramos directamente.
+          if (SoundStore1.audioStore[env].soundscapes[sound].ids.length === 0) {
+            this.emitNewPlayEvent({
+              eventType: "stop",
+              env,
+              category: "soundscapes",
+              soundName: sound,
+            });
+          } else {
+            SoundDirectorAPI1.fadeSound(env, "soundscapes", sound, {
+              final: endValue,
+              milliseconds: fadeDuration,
+            });
+          }
         } else {
           SoundDirectorAPI1.fadeSound(env, "soundscapes", sound, {
             final: endValue,
