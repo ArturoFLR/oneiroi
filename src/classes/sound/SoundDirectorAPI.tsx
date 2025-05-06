@@ -629,4 +629,23 @@ export default class SoundDirectorAPI {
       "stop"
     );
   }
+
+  fadeSoundscape(
+    env: AudioEnvironment,
+    fadeDuration: number,
+    endValue: number,
+    soundscapeName?: string
+  ) {
+    const normalizedFade = this.getNormalizedFadeValues({
+      final: endValue,
+      milliseconds: fadeDuration,
+    });
+
+    SoundscapesCreator1.fadeSoundscape(
+      env,
+      normalizedFade.milliseconds,
+      normalizedFade.final,
+      soundscapeName
+    );
+  }
 }

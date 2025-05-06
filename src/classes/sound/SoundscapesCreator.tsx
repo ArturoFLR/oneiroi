@@ -318,6 +318,68 @@ export default class SoundscapesCreator {
     }
   }
 
+  //Si no se indica el soundscapeName, se aplica el fade a todos los soundscapes que existan en ese momento.
+  fadeSoundscape(
+    env: AudioEnvironment,
+    fadeDuration: number,
+    endValue: number,
+    soundscapeName?: string
+  ) {
+    const soundscapesInEnvironment = Object.keys(this.soundscapesLibrary[env]);
+
+    //Si no existen soundscapes activos en el env indicado, hay un error, no se puede hacer fade.
+    if (soundscapesInEnvironment.length === 0) {
+      console.log(
+        `SoundscapesCreator- fadeSoundscape: No existe ningún soundscape en el AudioEnvironment indicado: ${env}`
+      );
+      return;
+    }
+
+    const soundscapesToFade = soundscapeName
+      ? [soundscapeName]
+      : soundscapesInEnvironment;
+
+    //Si va a ser un fade-out a 0, eliminamos todos los timers (timeouts e intervals) de los sonidos, para que no vuelvan a reproducirse
+    //una vez terminado el fade-out. Si no, mantenemos los timers.
+    soundscapesToFade.forEach((soundscape) => {
+      const soundscapeSounds = this.soundscapesLibrary[env][soundscape];
+
+      soundscapeSounds.forEach((sound) => {
+        if (endValue <= 0) {
+          this.emitNewModifyTimersEvent({
+            env,
+            category: "soundscapes",
+            soundName: sound,
+            eventType: "deleteTimeout",
+          });
+
+          this.emitNewModifyTimersEvent({
+            env,
+            category: "soundscapes",
+            soundName: sound,
+            eventType: "deleteInterval",
+          });
+        }
+
+        //Si el sonido no se está reproduciendo, lo paramos directamente.
+        if (SoundStore1.audioStore[env].soundscapes[sound].ids.length === 0) {
+          this.emitNewPlayEvent({
+            eventType: "stop",
+            env,
+            category: "soundscapes",
+            soundName: sound,
+          });
+          //Si el sonido está en reproducción le aplicamos el fade.
+        } else {
+          SoundDirectorAPI1.fadeSound(env, "soundscapes", sound, {
+            final: endValue,
+            milliseconds: fadeDuration,
+          });
+        }
+      });
+    });
+  }
+
   private emitNewPlayEvent(eventObject: PlayEvent) {
     this.playEventEmitter.next(eventObject);
   }
