@@ -127,23 +127,18 @@ function CinematicSoundManager({
   useEffect(() => {
     if (isLoading) return;
 
+    const actualShotSoundData = cinematicSoundData[actualShotIndex];
+
     //Sonidos únicos
     generateUniqueSounds();
 
     //Música
-    const actualShotSoundData = cinematicSoundData[actualShotIndex];
-
-    if (!actualShotSoundData?.music) return;
-
-    if (typeof actualShotSoundData.music === "number") {
-      stopPreviousMusic(actualShotSoundData.music);
-    }
-
-    if (
-      actualShotSoundData.music &&
-      typeof actualShotSoundData.music !== "number"
-    ) {
-      generateNewMusic(actualShotSoundData.music);
+    if (actualShotSoundData?.music) {
+      if (typeof actualShotSoundData.music === "number") {
+        stopPreviousMusic(actualShotSoundData.music);
+      } else {
+        generateNewMusic(actualShotSoundData.music);
+      }
     }
   }, [
     isLoading,
