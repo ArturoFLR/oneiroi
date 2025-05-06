@@ -8,8 +8,8 @@ import {
   MainViewerNextShotData,
   ShotTransitionType,
 } from "./cinematicTypes";
-import Loader from "./Loader";
 import CinematicSoundManager from "./CinematicSoundManager";
+import CinematicPreloader from "./CinematicPreloader";
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
@@ -46,9 +46,13 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   const cinematicSoundData: CinematicSoundManagerData = [];
   cinematicData.forEach((shot) => {
     cinematicSoundData.push({
-      ambientSound: shot.ambientSound || null,
+      ambientSound: shot.ambientSound
+        ? shot.ambientSound
+        : shot.ambientSound === 0
+          ? shot.ambientSound
+          : null, //"0" es un valor válido en ms, no falsy
       uniqueSounds: shot.uniqueSounds || null,
-      music: shot.music || null,
+      music: shot.music ? shot.music : shot.music === 0 ? shot.music : null, //"0" es un valor válido en milisegundos, no falsy
     });
   });
 
@@ -145,7 +149,10 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   return (
     <ScreenDarkener color="black">
       {isLoading ? (
-        <Loader cinematicData={cinematicData} setIsLoading={setIsLoading} />
+        <CinematicPreloader
+          cinematicData={cinematicData}
+          setIsLoading={setIsLoading}
+        />
       ) : (
         generateCinematicShot()
       )}
