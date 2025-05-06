@@ -585,7 +585,7 @@ export default class SoundDirectorAPI {
     env: AudioEnvironment,
     soundscapeName: string,
     mainAmbientSound: MainAmbientSound[],
-    secondarySounds: SecondarySound[]
+    secondarySounds?: SecondarySound[]
   ) {
     // Normalizamos los valores de "config" y "stereoValue" para todos los sonidos, si existen:
     mainAmbientSound.forEach((mainSound) => {
@@ -593,10 +593,12 @@ export default class SoundDirectorAPI {
       mainSound.stereoValue = this.getNormalizedStereo(mainSound.stereoValue);
     });
 
-    secondarySounds.forEach((secSound) => {
-      secSound.config = this.getNormalizedConfig(secSound.config);
-      secSound.stereoValue = this.getNormalizedStereo(secSound.stereoValue);
-    });
+    if (secondarySounds) {
+      secondarySounds.forEach((secSound) => {
+        secSound.config = this.getNormalizedConfig(secSound.config);
+        secSound.stereoValue = this.getNormalizedStereo(secSound.stereoValue);
+      });
+    }
 
     SoundscapesCreator1.createSoundscape(
       env,
