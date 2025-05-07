@@ -1,7 +1,14 @@
 import styled from "styled-components";
-import { CinematicMusic, CinematicSoundManagerData } from "./cinematicTypes";
+import {
+  CinematicAmbientSound,
+  CinematicMusic,
+  CinematicSoundManagerData,
+} from "./cinematicTypes";
 import { useCallback, useEffect, useRef } from "react";
-import { SoundDirectorAPI1 } from "../../classes/sound/singletons";
+import {
+  SoundDirectorAPI1,
+  SoundscapesCreator1,
+} from "../../classes/sound/singletons";
 import { AudioEnvironment } from "../../classes/sound/soundTypes";
 
 const GhostDiv = styled.div`
@@ -25,6 +32,7 @@ function CinematicSoundManager({
 }: CinematicSoundManagerProps) {
   const uniqueSoundsTimersRef = useRef<number[]>([]);
   const musicTimersRef = useRef<number[]>([]);
+  const ambientSoundsTimersRef = useRef<number[]>([]);
 
   const generateUniqueSounds = useCallback(() => {
     if (!cinematicSoundData[actualShotIndex]?.uniqueSounds) return;
@@ -69,18 +77,11 @@ function CinematicSoundManager({
   }, []);
 
   const generateNewMusic = useCallback((musicData: CinematicMusic) => {
-    const defaultOldMusicFadeDuration = 1000;
     const defaultNewMusicFadeOutDuration = 3500;
     const newMusicFadeOutDuration = musicData?.fadeOutDuration
       ? musicData.fadeOutDuration
       : defaultNewMusicFadeOutDuration;
     const newMusicDelay = musicData.delay;
-
-    // Hacemos fade out de la música de planos anteriores, si la hay.
-    SoundDirectorAPI1.fadeCategory(AudioEnvironment.Cinematic, "music", {
-      final: 0,
-      milliseconds: defaultOldMusicFadeDuration,
-    });
 
     //Reproducimos la nueva música, con el delay indicado por el usuario.
     const musicStartTimer = window.setTimeout(() => {
@@ -123,6 +124,83 @@ function CinematicSoundManager({
     musicTimersRef.current.push(musicStartTimer);
   }, []);
 
+  const stopPreviousAmbientSnd = useCallback(
+    (fadeDuration: number, soundscapeName: string) => {
+      if (fadeDuration > 0) {
+        SoundDirectorAPI1.fadeSoundscape(
+          AudioEnvironment.Cinematic,
+          fadeDuration,
+          0,
+          undefined,
+          soundscapeName
+        );
+      } else {
+        SoundDirectorAPI1.stopSoundscape(
+          AudioEnvironment.Cinematic,
+          soundscapeName
+        );
+      }
+    },
+    []
+  );
+
+  const generateAmbientSound = useCallback(
+    (ambientSoundData: CinematicAmbientSound) => {
+      const newAmbientSoundTimer = window.setTimeout(() => {
+        SoundDirectorAPI1.createSoundscape(
+          AudioEnvironment.Cinematic,
+          ambientSoundData.soundscapeName,
+          ambientSoundData.mainAmbientSounds,
+          ambientSoundData.secondaryAmbientSounds
+        );
+
+        window.setTimeout(() => {
+          const defaultAmbientVolume = 1;
+
+          //Si se ha indicado un fade-in, lo aplicamos. Usamos timer porque si no esto se ejecuta antes de que se haya creado y registrado el soundscape (paso anterior)
+          if (ambientSoundData.initialFadeDuration > 0) {
+            SoundDirectorAPI1.fadeSoundscape(
+              AudioEnvironment.Cinematic,
+              ambientSoundData.initialFadeDuration,
+              ambientSoundData.toVolume
+                ? ambientSoundData.toVolume
+                : defaultAmbientVolume,
+              0,
+              ambientSoundData.soundscapeName
+            );
+          }
+        }, 0);
+      }, ambientSoundData.delay);
+
+      ambientSoundsTimersRef.current.push(newAmbientSoundTimer);
+
+      //Si se ha indicado un tiempo determinado para terminar el soundscape, lo aplicamos
+      if (typeof ambientSoundData.endTime === "number") {
+        const stopNewAmbientSoundTimer = window.setTimeout(() => {
+          //Si se ha indicado un tiempo de fade-out, lo aplicamos
+          if (typeof ambientSoundData.fadeOutDuration === "number") {
+            SoundDirectorAPI1.fadeSoundscape(
+              AudioEnvironment.Cinematic,
+              ambientSoundData.fadeOutDuration,
+              0,
+              undefined,
+              ambientSoundData.soundscapeName
+            );
+          } else {
+            //Si no se indicó un tiempo de fade-out, lo paramos directamente:
+            SoundDirectorAPI1.stopSoundscape(
+              AudioEnvironment.Cinematic,
+              ambientSoundData.soundscapeName
+            );
+          }
+        }, ambientSoundData.endTime + ambientSoundData.delay);
+
+        ambientSoundsTimersRef.current.push(stopNewAmbientSoundTimer);
+      }
+    },
+    []
+  );
+
   // Genera sonidos únicos y música
   useEffect(() => {
     if (isLoading) return;
@@ -140,6 +218,29 @@ function CinematicSoundManager({
         generateNewMusic(actualShotSoundData.music);
       }
     }
+
+    // Sonido Ambiente (soundscape)
+    const previousSoundscapes = Object.keys(
+      SoundscapesCreator1.soundscapesLibrary.cinematic
+    );
+
+    if (actualShotSoundData?.ambientSound) {
+      //Paramos los sonidos ambientes anteriores
+      previousSoundscapes.forEach((soundscapeName) => {
+        stopPreviousAmbientSnd(
+          typeof actualShotSoundData.ambientSound === "number"
+            ? actualShotSoundData.ambientSound
+            : (actualShotSoundData.ambientSound as CinematicAmbientSound)
+                .prevAmbientFadeDuration,
+          soundscapeName
+        );
+      });
+
+      //Generamos los nuevos sonidos ambiente, si los hay:
+      if (typeof actualShotSoundData.ambientSound !== "number") {
+        generateAmbientSound(actualShotSoundData.ambientSound);
+      }
+    }
   }, [
     isLoading,
     generateUniqueSounds,
@@ -147,24 +248,41 @@ function CinematicSoundManager({
     actualShotIndex,
     stopPreviousMusic,
     generateNewMusic,
+    stopPreviousAmbientSnd,
+    generateAmbientSound,
   ]);
 
   //Si este es el último plano de la cinemática, aplicamos un fade-out a sonidos y música antes de que termine el plano => evitamos que la cinemática termine y sigan sonando.
   useEffect(() => {
     if (!lastShotDuration) return;
 
+    const defaultFadeOutDuration = 3500;
     const fadeDuration = lastShotSoundFadeDuration
       ? lastShotSoundFadeDuration
-      : 3500;
-    const securityMargin = 100;
+      : defaultFadeOutDuration;
+    const securityMargin = 200;
     const momentToAplly: number =
       lastShotDuration - (fadeDuration + securityMargin);
 
     const fadeOutSoundsTimer = window.setTimeout(() => {
-      SoundDirectorAPI1.fadeEnv(AudioEnvironment.Cinematic, {
+      //Fade para unique sounds:
+      SoundDirectorAPI1.fadeCategory(AudioEnvironment.Cinematic, "sounds", {
         final: 0,
         milliseconds: fadeDuration,
       });
+
+      //Fade para la música:
+      SoundDirectorAPI1.fadeCategory(AudioEnvironment.Cinematic, "music", {
+        final: 0,
+        milliseconds: fadeDuration,
+      });
+
+      //Fade para soundscape sounds
+      SoundDirectorAPI1.fadeSoundscape(
+        AudioEnvironment.Cinematic,
+        fadeDuration,
+        0
+      );
     }, momentToAplly);
 
     return () => {
