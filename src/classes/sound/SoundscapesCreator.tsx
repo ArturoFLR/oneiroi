@@ -319,6 +319,8 @@ export default class SoundscapesCreator {
   }
 
   //Si no se indica el soundscapeName, se aplica el fade a todos los soundscapes que existan en ese momento.
+  //endValue y initialValue no son valores absolutos. Son multiplicadores (volumen actual x endValue, etc). Esto es así para preservar las diferencias
+  //de volumen entre los sonidos que componen el soundscape.
   fadeSoundscape(
     env: AudioEnvironment,
     fadeDuration: number,
@@ -328,13 +330,8 @@ export default class SoundscapesCreator {
   ) {
     const soundscapesInEnvironment = Object.keys(this.soundscapesLibrary[env]);
 
-    //Si no existen soundscapes activos en el env indicado, hay un error, no se puede hacer fade.
-    if (soundscapesInEnvironment.length === 0) {
-      console.log(
-        `SoundscapesCreator- fadeSoundscape: No existe ningún soundscape en el AudioEnvironment indicado: ${env}`
-      );
-      return;
-    }
+    //Si no existen soundscapes activos en el env indicado no se puede hacer fade.
+    if (soundscapesInEnvironment.length === 0) return;
 
     const soundscapesToFade = soundscapeName
       ? [soundscapeName]
@@ -344,6 +341,17 @@ export default class SoundscapesCreator {
       const soundscapeSounds = this.soundscapesLibrary[env][soundscape];
 
       soundscapeSounds.forEach((sound) => {
+        //Obtenemos el volumen actual del sonido. Usaremos esto para que no se pierda la diferencia de volúmenes entre sonidos de un soundscape
+        const currentVolume =
+          SoundStore1.audioStore[env].soundscapes[sound].instance.volume();
+
+        // Calcular volúmenes inicial y final
+        const targetVolume = endValue * currentVolume; // Volumen final proporcional
+        const initialVolume =
+          typeof initialValue === "number"
+            ? initialValue * currentVolume // Si hay initialValue, se aplica como multiplicador
+            : currentVolume; // Si no, se usa el volumen actual como punto de partida
+
         //Si se ha indicado un valor inicial de volumen para el fundido, lo aplicamos.
         if (typeof initialValue === "number") {
           this.emitNewChangeParamEvent({
@@ -351,7 +359,7 @@ export default class SoundscapesCreator {
             env,
             category: "soundscapes",
             soundName: sound,
-            newValue: initialValue,
+            newValue: initialVolume,
           });
         }
         //Si va a ser un fade-out a 0, eliminamos todos los timers (timeouts e intervals) de los sonidos, para que no vuelvan a reproducirse
@@ -381,13 +389,13 @@ export default class SoundscapesCreator {
             });
           } else {
             SoundDirectorAPI1.fadeSound(env, "soundscapes", sound, {
-              final: endValue,
+              final: targetVolume,
               milliseconds: fadeDuration,
             });
           }
         } else {
           SoundDirectorAPI1.fadeSound(env, "soundscapes", sound, {
-            final: endValue,
+            final: targetVolume,
             milliseconds: fadeDuration,
           });
         }
