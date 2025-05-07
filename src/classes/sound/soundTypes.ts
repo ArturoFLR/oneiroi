@@ -3,6 +3,7 @@ import { PausableTimeout } from "../../utils/PausableTimeout";
 import { PausableInterval } from "../../utils/PausableInterval";
 
 export type FadeValuesType = {
+  initial?: number;
   final: number;
   milliseconds: number;
 };
