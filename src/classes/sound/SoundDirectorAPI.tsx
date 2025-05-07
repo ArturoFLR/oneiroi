@@ -646,7 +646,7 @@ export default class SoundDirectorAPI {
 
     let normalizedInitialValue: number | undefined = undefined;
 
-    if (initialValue) {
+    if (typeof initialValue === "number") {
       normalizedInitialValue = this.getNormalizedVolume(initialValue);
     }
 

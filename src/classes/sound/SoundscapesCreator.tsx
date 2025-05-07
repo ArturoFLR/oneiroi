@@ -345,7 +345,7 @@ export default class SoundscapesCreator {
 
       soundscapeSounds.forEach((sound) => {
         //Si se ha indicado un valor inicial de volumen para el fundido, lo aplicamos.
-        if (initialValue) {
+        if (typeof initialValue === "number") {
           this.emitNewChangeParamEvent({
             parameterType: "volume",
             env,
