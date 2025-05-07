@@ -21,7 +21,7 @@ const MainFrame = styled.div<MainFrameProps>`
   width: 100vw;
   height: 100vh;
   background: ${({ $color }) => bgColorMap[$color]};
-  z-index: 1000;
+  z-index: 990;
 `;
 
 interface ScreenDarkenerProps {
