@@ -6,16 +6,17 @@ import {
 } from "src/classes/sound/soundTypes";
 
 export type ShotTransitionType = "cut" | "fade";
+
 export interface ZoomData {
-  zoomStartSize: number; //Tamaño inicial de la imagen, '100' para tamaño completo normal.
+  zoomStartSize: number; //Tamaño inicial de la imagen, '1' para tamaño completo normal (modifica el estilo "scale"). Por regla general aplicaremos el doble de aumento que el desplazamiento. Ej. si queremos mover la imagen un 10% hacia la izq. necesitamos un aumento del 20% para que no se vea un espacio en negro por la dcha.
   zoomStartPosition: {
-    top: number; //Posición inicial de la imagen en el eje Y (vertical)
-    left: number; //Posición inicial de la imagen en el eje X (horizontal)
+    top: number; //Posición inicial de la imagen en el eje Y (vertical). Se convertirá en PORCENTAJE. 10 => 10%
+    left: number; //Posición inicial de la imagen en el eje X (horizontal). Se convertirá en PORCENTAJE. 10 => 10%
   };
-  zoomEndSize: number; //Tamaño final de la imagen.
+  zoomEndSize: number; //Tamaño final de la imagen, '1' para tamaño completo normal (modifica el estilo "scale").
   zoomEndPosition: {
-    top: number;
-    left: number;
+    top: number; //Se convertirá en PORCENTAJE. 10 => 10%
+    left: number; //Se convertirá en PORCENTAJE. 10 => 10%
   };
 }
 
@@ -98,6 +99,7 @@ export interface MainViewerNextShotData {
   mainImageAlt?: string; //Texto alternativo para la imagen
   backgroundColor?: string; //Color que sustituye a la imagen de fondo
   widePicture: boolean; //Aunque no se indique imagen porque se quiera un color plano, hay que indicar qué tamaño de marco se desea.
+  shotDuration: number; //Duración del plano en milisegundos
   zoom?: ZoomData;
 }
 
