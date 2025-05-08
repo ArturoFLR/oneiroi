@@ -24,9 +24,11 @@ export interface CinematicAmbientSound {
   mainAmbientSounds: MainAmbientSound[];
   secondaryAmbientSounds?: SecondarySound[];
   delay: number; //Tiempo de espera antes de iniciar el sonido ambiente.
+  prevAmbientFadeDuration: number; //Duración del fade-out del sonido ambiente al que vamos a sustituir. 0 es un corte abrupto.
   initialFadeDuration: number; //Duración del fade-in inicial del sonido ambiente. Puede ser 0.
+  toVolume?: number; //Si usamos un fade inicial, podemos indicar hasta qué volumen subirá el sonido. Si no, será 1
   endTime?: number; //Cuándo se detiene el sonido ambiente, en milisegundos. Si no se indica, se detiene cuando llegue otro plano con ambiente distinto.
-  fadeOutDuration?: number; //Duración del fade-out  del sonido ambiente. Si no se indica, se detiene inmediatamente.
+  fadeOutDuration?: number; //Duración del fade-out del sonido ambiente. Se usa cuando se ha especificado "endTime". Si no se indica, se detiene inmediatamente.
 }
 
 export interface CinematicUniqueSound {
@@ -36,6 +38,7 @@ export interface CinematicUniqueSound {
   config?: HowlOptions;
   stereo?: number;
   delay: number; //Tiempo de espera antes de reproducir el sonido.
+  loop?: boolean; //Debe repetirse? Si usamos esto, sólo podremos parar el sonido mediante las "specialActions" de un plano posterior.
 }
 
 export type CinematicUniqueSounds = CinematicUniqueSound[];
@@ -43,11 +46,13 @@ export type CinematicUniqueSounds = CinematicUniqueSound[];
 export interface CinematicMusic {
   soundName: string;
   soundSrc: string;
-  config?: HowlOptions;
+  config?: HowlOptions; // Si queremos un fade-in inicial, debemos usar este parámetro para especificar volume = 0; Ajustaremos el volumen final con toVolume
   stereo?: number;
   loop: boolean; //Si la música se repite o no.
   delay: number;
+  prevMusicFadeDuration: number; //Duración del fade-out de la música a la que vamos a sustituir. 0 es un corte abrupto.
   initialFadeDuration: number; //Duración del fade-in inicial. Puede ser 0.
+  toVolume?: number; //Si usamos un fade inicial, podemos indicar hasta qué volumen subirá la música. Si no, será 1
   endTime?: number; //Cuándo se detiene la música, en milisegundos. Si no se indica, se detiene cuando llegue otro plano con música distinta o con valor "null".
   fadeOutDuration?: number; //Duración del fade-out de la música. Si no se indica, se detiene inmediatamente.
 }
@@ -67,6 +72,8 @@ export interface CinematicShotAuto {
   music?: CinematicMusic | number; // Si indicamos un number estamos dando la orden de hacer un fade-out y estamos indicando la duración. Puede ser "0"
   onEndAudioFadeDuration?: number; // Usar en el último plano, para indicar cuánto durará el fade-out de sonido y música antes de que acabe la cinemática.
   specialActions?: () => void; //Acciones especiales a realizar al iniciar el plano, como por ejemplo cambiar el volumen del sonido ambiente.
+  specialActionsTimeouts?: number[]; //Almacena los posibles timeouts creados por specialActions, para que CinematicDirector pueda limpiarlos.
+  specialActionsIntervals?: number[]; //Almacena los posibles intervals creados por specialActions, para que CinematicDirector pueda limpiarlos.
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
 }
 
