@@ -136,6 +136,20 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       currentShot.specialActions();
       isSpecialActionsExecutedRef.current = true;
     }
+
+    return () => {
+      if (currentShot.specialActionsTimeouts) {
+        currentShot.specialActionsTimeouts.forEach((timer) => {
+          window.clearTimeout(timer);
+        });
+      }
+
+      if (currentShot.specialActionsIntervals) {
+        currentShot.specialActionsIntervals.forEach((timer) => {
+          window.clearInterval(timer);
+        });
+      }
+    };
   }, [currentShot, isLoading]);
 
   // Se encarga de limpiar todos los timers que puedan quedar pendientes al desmontar el componente.
@@ -162,7 +176,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
         isLoading={isLoading}
         lastShotDuration={currentShot.onEnd ? currentShotDuration : null}
         lastShotSoundFadeDuration={
-          currentShot.onEndAudioFadeDuration
+          typeof currentShot.onEndAudioFadeDuration === "number"
             ? currentShot.onEndAudioFadeDuration
             : null
         }
