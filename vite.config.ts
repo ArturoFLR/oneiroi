@@ -28,4 +28,8 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "./src/assets"),
     },
   },
+  server: {
+    host: "0.0.0.0", // Permite conexiones desde cualquier IP en la red
+    port: 5173, // Puerto predeterminado
+  },
 });
