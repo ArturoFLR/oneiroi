@@ -45,6 +45,8 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
     currentShot.shotTransition || "cut";
   const fadeTransitionDuration =
     currentShot.fadeDuration || defaultFadeDuration;
+  const currentShotFX = currentShot.specialFX ? currentShot.specialFX : null;
+  const nextShotFX = nextShot.specialFX ? nextShot.specialFX : null;
 
   // Datos a pasar al componente CinematicSoundManager.
   const cinematicSoundData: CinematicSoundManagerData = [];
@@ -73,6 +75,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       shotTransition: currentShotTransition,
       fadeDuration: fadeTransitionDuration,
       zoom: currentShot.zoom,
+      specialFX: currentShotFX,
     };
 
     let mainViewerNextShot: MainViewerNextShotData | null = {
@@ -83,6 +86,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       widePicture: nextShot.widePicture,
       shotDuration: nextShotDuration,
       zoom: nextShot.zoom,
+      specialFX: nextShotFX,
     };
 
     if (actualShotIndex >= cinematicDataRef.current.length - 1) {
