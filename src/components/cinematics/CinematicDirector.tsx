@@ -37,10 +37,14 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       : lastShot;
 
   // Valores por defecto para el plano actual.
-  const currentShotDuration = currentShot.shotDuration || 5000; // Si no se ha definido, por defecto 5 segundos.
+  const defaultShotsDuration = 5000;
+  const defaultFadeDuration = 2000;
+  const currentShotDuration = currentShot.shotDuration || defaultShotsDuration; // Si no se ha definido, por defecto 5 segundos.
+  const nextShotDuration = nextShot.shotDuration || defaultShotsDuration;
   const currentShotTransition: ShotTransitionType =
     currentShot.shotTransition || "cut";
-  const fadeTransitionDuration = currentShot.fadeDuration || 2000;
+  const fadeTransitionDuration =
+    currentShot.fadeDuration || defaultFadeDuration;
 
   // Datos a pasar al componente CinematicSoundManager.
   const cinematicSoundData: CinematicSoundManagerData = [];
@@ -77,6 +81,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
       mainImageAlt: nextShot.mainImageAlt,
       backgroundColor: nextShot.backgroundColor,
       widePicture: nextShot.widePicture,
+      shotDuration: nextShotDuration,
       zoom: nextShot.zoom,
     };
 
