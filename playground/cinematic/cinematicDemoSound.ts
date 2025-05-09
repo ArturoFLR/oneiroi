@@ -93,7 +93,7 @@ const evil1: CinematicUniqueSound = {
   soundSrc: evil1_2,
   delay: 0,
   config: {
-    volume: 1,
+    volume: 0.2,
     rate: 1,
     src: [evil1_2],
   },
