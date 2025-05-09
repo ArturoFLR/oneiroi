@@ -7,6 +7,18 @@ import {
 
 export type ShotTransitionType = "cut" | "fade";
 
+export interface CinematicTremorFXData {
+  intensity: "low" | "medium" | "high";
+  delay: number;
+  // Hay que tener en cuenta que si aplicamos un delay de 1000 y venimos de un fade-in de 5000, el temblor
+  //empezará a verse a los 6000ms (No se puede empezar un temblor en mitad de un fade). Pero si indicamos
+  //delay = 0, el temblor se aplicará en todo el fade-in.
+}
+
+export interface CinematicFXData {
+  tremor?: CinematicTremorFXData;
+}
+
 export interface ZoomData {
   zoomStartSize: number; //Tamaño inicial de la imagen, '1' para tamaño completo normal (modifica el estilo "scale"). Por regla general aplicaremos el doble de aumento que el desplazamiento. Ej. si queremos mover la imagen un 10% hacia la izq. necesitamos un aumento del 20% para que no se vea un espacio en negro por la dcha.
   zoomStartPosition: {
@@ -76,6 +88,7 @@ export interface CinematicShotAuto {
   specialActions?: () => void; //Acciones especiales a realizar al iniciar el plano, como por ejemplo cambiar el volumen del sonido ambiente.
   specialActionsTimeouts?: number[]; //Almacena los posibles timeouts creados por specialActions, para que CinematicDirector pueda limpiarlos.
   specialActionsIntervals?: number[]; //Almacena los posibles intervals creados por specialActions, para que CinematicDirector pueda limpiarlos.
+  specialFX?: CinematicFXData;
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
 }
 
@@ -92,6 +105,7 @@ export interface MainViewerActualShotData {
   shotTransition: ShotTransitionType; //Tipo de transición hacia el siguiente plano
   fadeDuration: number; // Si optamos por una transición de tipo "fade", aquí podemos indicar su duración en milisegundos.
   zoom?: ZoomData;
+  specialFX: CinematicFXData | null;
 }
 
 export interface MainViewerNextShotData {
@@ -102,6 +116,7 @@ export interface MainViewerNextShotData {
   widePicture: boolean; //Aunque no se indique imagen porque se quiera un color plano, hay que indicar qué tamaño de marco se desea.
   shotDuration: number; //Duración del plano en milisegundos
   zoom?: ZoomData;
+  specialFX: CinematicFXData | null;
 }
 
 export interface CinematicSoundManagerShotData {
