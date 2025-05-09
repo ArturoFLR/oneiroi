@@ -18,6 +18,7 @@ export interface ZoomData {
     top: number; //Se convertirá en PORCENTAJE. 10 => 10%
     left: number; //Se convertirá en PORCENTAJE. 10 => 10%
   };
+  animType: "linear" | "ease-in" | "ease-out" | "ease-in-out";
 }
 
 export interface CinematicAmbientSound {
@@ -108,6 +109,15 @@ export interface CinematicSoundManagerShotData {
   uniqueSounds?: CinematicUniqueSounds | null;
   music?: CinematicMusic | number | null;
   onEndAudioFadeDuration?: number;
+}
+
+//////////////// Types Used in MainViewer.tsx
+export interface ZoomAnimationData {
+  data: Animation | null;
+  progress: number;
+  keyframes: Keyframe[] | null;
+  options: KeyframeEffectOptions | null;
+  shotId: number;
 }
 
 export type CinematicSoundManagerData = CinematicSoundManagerShotData[];
