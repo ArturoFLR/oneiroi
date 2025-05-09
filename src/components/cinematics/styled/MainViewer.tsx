@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import {
   MainViewerActualShotData,
   MainViewerNextShotData,
@@ -7,8 +7,38 @@ import {
 } from "../cinematicTypes";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
+const tremorLight = keyframes`
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  10% { transform: translate(-0.5px, -0.5px) rotate(-0.1deg); }
+  30% { transform: translate(0.7px, 0.7px) rotate(0.1deg); }
+  50% { transform: translate(-0.3px, 0.4px) rotate(0.05deg); }
+  70% { transform: translate(0.4px, -0.2px) rotate(-0.05deg); }
+  90% { transform: translate(-0.2px, 0.3px) rotate(0.07deg); }
+`;
+
+const tremorMedium = keyframes`
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  10% { transform: translate(-2px, -3px) rotate(-0.3deg); }
+  30% { transform: translate(3px, 2px) rotate(0.4deg); }
+  50% { transform: translate(-3px, 1px) rotate(0.5deg); }
+  70% { transform: translate(2px, -2px) rotate(-0.2deg); }
+  90% { transform: translate(-1px, 3px) rotate(0.6deg); }
+`;
+
+const tremorHigh = keyframes`
+  0%, 100% { transform: translate(0, 0) rotate(0); }
+  10% { transform: translate(-6px, -8px) rotate(-1.2deg); }
+  30% { transform: translate(8px, 5px) rotate(1.5deg); }
+  50% { transform: translate(-7px, 4px) rotate(2deg); }
+  70% { transform: translate(5px, -6px) rotate(-1.8deg); }
+  90% { transform: translate(-4px, 7px) rotate(2.2deg); }
+`;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const MainContainer = styled.div`
   position: relative;
+  overflow: hidden;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,6 +46,7 @@ const MainContainer = styled.div`
 interface CurrentPictureContainerProps {
   $widePicture: boolean;
   $bgColor: string;
+  $tremorIntensity: string | undefined;
 }
 
 const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
@@ -27,6 +58,38 @@ const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
   border-radius: 10px;
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "transparent")};
   z-index: 1;
+  transform-origin: center;
+
+  ${({ $tremorIntensity }) => {
+    if ($tremorIntensity) {
+      let animationToApply = tremorLight;
+      let animationTime = "";
+
+      switch ($tremorIntensity) {
+        case "low":
+          animationToApply = tremorLight;
+          animationTime = "150ms";
+          break;
+
+        case "medium":
+          animationToApply = tremorMedium;
+          animationTime = "120ms";
+          break;
+
+        case "high":
+          animationToApply = tremorHigh;
+          animationTime = "100ms";
+          break;
+
+        default:
+          break;
+      }
+
+      return css`
+        animation: ${animationToApply} ${animationTime} infinite linear;
+      `;
+    }
+  }}
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,6 +108,7 @@ interface NextPictureContainerProps {
   $bgColor: string;
   $fade: boolean;
   $fadeDuration: number;
+  $tremorIntensity: string | undefined;
 }
 
 const NextPictureContainer = styled(
@@ -56,8 +120,51 @@ const NextPictureContainer = styled(
   left: 0;
   z-index: 2;
   opacity: 0;
-  animation: ${({ $fade }) => ($fade ? fadeAnimation : "none")}
-    ${({ $fadeDuration }) => $fadeDuration}ms forwards;
+  transform-origin: center;
+
+  ${({ $fade, $fadeDuration, $tremorIntensity }) => {
+    const parts: Array<ReturnType<typeof css>> = [];
+
+    if ($fade) {
+      parts.push(css`
+        ${fadeAnimation} ${$fadeDuration}ms forwards
+      `);
+    }
+
+    let animationToApply = tremorLight;
+    let animationTime = "";
+
+    switch ($tremorIntensity) {
+      case "low":
+        animationToApply = tremorLight;
+        animationTime = "150ms";
+        break;
+
+      case "medium":
+        animationToApply = tremorMedium;
+        animationTime = "120ms";
+        break;
+
+      case "high":
+        animationToApply = tremorHigh;
+        animationTime = "100ms";
+        break;
+
+      default:
+        break;
+    }
+
+    parts.push(css`
+      ${animationToApply} ${animationTime} infinite linear
+    `);
+
+    if (parts.length === 0) return "";
+
+    /* Une las animaciones con comas */
+    return css`
+      animation: ${parts[0]}${parts.slice(1).map((p) => css`, ${p}`)};
+    `;
+  }}
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,10 +194,14 @@ const MainPicture = styled.img<MainPictureProps>`
   left: ${({ $zoomData }) =>
     $zoomData ? $zoomData.zoomStartPosition.left : 0}%;
   width: 100%;
-  animation: ${({ $zoomData }) =>
-      $zoomData ? zoomAnimation($zoomData) : "none"}
-    ${({ $shotDuration }) => $shotDuration}ms forwards
-    ${({ $zoomData }) => $zoomData?.animType};
+
+  ${({ $zoomData, $shotDuration }) => {
+    if ($zoomData)
+      return css`
+        animation: ${zoomAnimation($zoomData)} ${$shotDuration}ms forwards
+          ${$zoomData.animType};
+      `;
+  }}
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -115,6 +226,10 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
   const [applyFade, setApplyFade] = useState<boolean>(false);
   const [isZoomAPIAnimPlaying, setIsZoomAPIAnimPlaying] =
     useState<boolean>(false);
+  const [isCurrentContainerTrembling, setIsCurrentContainerTrembling] =
+    useState<boolean>(false);
+  const [isNextContainerTrembling, setIsNextContainerTrembling] =
+    useState<boolean>(false);
 
   const nextPictureContainerElement = useRef<HTMLDivElement>(null);
   const currentPictureElement = useRef<HTMLImageElement>(null);
@@ -136,6 +251,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
   });
 
   const animationTimersRef = useRef<number[]>([]);
+  const trembleAnimTimersRef = useRef<number[]>([]);
 
   const mainContainerBgColor = actualShot.backgroundColor
     ? actualShot.backgroundColor
@@ -417,12 +533,64 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     isZoomAPIAnimPlaying,
   ]);
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////  TREMBLING  /////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //El temblor se aplica a los contenedores CurrentPictureContainer y NextPictureContainer para que no interfiera con
+  //la animación de zoom / panning hecha con Web Animations API, ya que ambas usan "traslate".
+  useLayoutEffect(() => {
+    if (actualShot?.specialFX?.tremor) {
+      const { delay } = actualShot.specialFX.tremor;
+
+      if (delay === 0) {
+        setIsCurrentContainerTrembling(true);
+      } else {
+        const trembleTimer = window.setTimeout(() => {
+          setIsCurrentContainerTrembling(true);
+        }, delay);
+
+        trembleAnimTimersRef.current.push(trembleTimer);
+      }
+    } else {
+      setIsCurrentContainerTrembling(false);
+    }
+
+    if (nextShot?.specialFX?.tremor) {
+      const { delay } = nextShot.specialFX.tremor;
+
+      if (delay === 0) {
+        setIsNextContainerTrembling(true);
+      } else {
+        console.log(`Pongo a false`);
+        setIsNextContainerTrembling(false);
+      }
+    } else {
+      setIsNextContainerTrembling(false);
+    }
+
+    const timersToClear = trembleAnimTimersRef.current;
+
+    return () => {
+      timersToClear.forEach((timer) => {
+        window.clearTimeout(timer);
+
+        trembleAnimTimersRef.current = [];
+      });
+    };
+  }, [actualShot?.specialFX?.tremor, nextShot?.specialFX?.tremor]);
+
   return (
     <MainContainer id="cinematicViewerContainer">
       <CurrentPictureContainer
         id="cinemaCurrentPictureContainer"
         $widePicture={actualShot.widePicture}
         $bgColor={mainContainerBgColor}
+        $tremorIntensity={
+          isCurrentContainerTrembling
+            ? actualShot.specialFX?.tremor?.intensity
+            : undefined
+        }
       >
         {actualShot.mainImageAlt ? (
           <MainPicture
@@ -449,6 +617,11 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
           $fade={applyFade}
           $fadeDuration={actualShot.fadeDuration}
           ref={nextPictureContainerElement}
+          $tremorIntensity={
+            isNextContainerTrembling
+              ? nextShot.specialFX?.tremor?.intensity
+              : undefined
+          }
         >
           {nextShot.mainImageUrl ? (
             <NextPicture
