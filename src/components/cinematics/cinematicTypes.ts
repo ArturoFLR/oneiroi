@@ -119,6 +119,7 @@ export interface MainViewerNextShotData {
   specialFX: CinematicFXData | null;
 }
 
+// Versión simplificada de  CinematicShotAuto, sólo con los datos necesarios para el componente CinematicSoundManager.
 export interface CinematicSoundManagerShotData {
   ambientSound?: CinematicAmbientSound | number | null;
   uniqueSounds?: CinematicUniqueSounds | null;
@@ -126,7 +127,24 @@ export interface CinematicSoundManagerShotData {
   onEndAudioFadeDuration?: number;
 }
 
-//////////////// Types Used in MainViewer.tsx
+// Versión simplificada de  CinematicShotAuto, sólo con los datos necesarios para el componente CinematicFxFrame.
+export interface CinematicFxFrameActualShotData {
+  id: number;
+  specialFX: CinematicFXData | null;
+  widePicture: boolean;
+  shotDuration: number;
+  shotTransition: ShotTransitionType;
+  fadeDuration: number;
+}
+
+export interface CinematicFxFrameNextShotData {
+  id: number;
+  specialFX: CinematicFXData | null;
+  widePicture: boolean;
+  shotDuration: number;
+}
+
+////////////////  Used in MainViewer.tsx
 export interface ZoomAnimationData {
   data: Animation | null;
   progress: number;
