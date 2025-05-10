@@ -13,9 +13,10 @@ import CinematicPreloader from "./CinematicPreloader";
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
+  mode: "light" | "dark" | "black";
 }
 
-function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
+function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [actualShotIndex, setActualShotIndex] = useState<number>(0);
 
@@ -170,7 +171,7 @@ function CinematicDirector({ cinematicData }: CinematicDirectorProps) {
   }, []);
 
   return (
-    <ScreenDarkener color="black">
+    <ScreenDarkener color={mode}>
       {isLoading ? (
         <CinematicPreloader
           cinematicData={cinematicData}

@@ -21,7 +21,7 @@ function CinematicTester() {
   return (
     <>
       {audioContextCreated ? (
-        <CinematicDirector cinematicData={cinematicIntro} />
+        <CinematicDirector cinematicData={cinematicIntro} mode="black" />
       ) : (
         <AudioContextButton onClick={handleClick}>
           Crear Sound Context
