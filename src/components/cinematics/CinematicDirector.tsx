@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import ScreenDarkener from "../common/ScreenDarkener";
 import MainViewer from "./styled/MainViewer";
 import {
-  CinematicFXData,
+  CinematicFxFrameActualShotData,
+  CinematicFxFrameNextShotData,
   CinematicSceneAuto,
   CinematicSoundManagerData,
   MainViewerActualShotData,
@@ -14,7 +15,9 @@ import CinematicPreloader from "./CinematicPreloader";
 import styled from "styled-components";
 import CinematicFxFrame from "./styled/CinematicFxFrame";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  position: relative;
+`;
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
@@ -99,12 +102,21 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
       mainViewerNextShot = null;
     }
 
-    const fxActualShot: CinematicFXData | null = currentShot.specialFX
-      ? currentShot.specialFX
-      : null;
-    const fxNextShot: CinematicFXData | null = nextShot.specialFX
-      ? nextShot.specialFX
-      : null;
+    const fxActualShotData: CinematicFxFrameActualShotData = {
+      id: currentShot.id,
+      specialFX: currentShot.specialFX ? currentShot.specialFX : null,
+      widePicture: currentShot.widePicture,
+      shotDuration: currentShotDuration,
+      shotTransition: currentShotTransition,
+      fadeDuration: fadeTransitionDuration,
+    };
+
+    const fxNextShotData: CinematicFxFrameNextShotData | null = {
+      id: nextShot.id,
+      specialFX: nextShot.specialFX ? nextShot.specialFX : null,
+      widePicture: nextShot.widePicture,
+      shotDuration: nextShotDuration,
+    };
 
     return (
       <Wrapper>
@@ -113,7 +125,10 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
           nextShot={mainViewerNextShot}
         />
 
-        <CinematicFxFrame fxActualShot={fxActualShot} fxNextShot={fxNextShot} />
+        <CinematicFxFrame
+          fxActualShot={fxActualShotData}
+          fxNextShot={fxNextShotData}
+        />
       </Wrapper>
     );
   }
