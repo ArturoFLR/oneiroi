@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ScreenDarkener from "../common/ScreenDarkener";
 import MainViewer from "./styled/MainViewer";
 import {
+  CinematicFXData,
   CinematicSceneAuto,
   CinematicSoundManagerData,
   MainViewerActualShotData,
@@ -10,6 +11,10 @@ import {
 } from "./cinematicTypes";
 import CinematicSoundManager from "./CinematicSoundManager";
 import CinematicPreloader from "./CinematicPreloader";
+import styled from "styled-components";
+import CinematicFxFrame from "./styled/CinematicFxFrame";
+
+const Wrapper = styled.div``;
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
@@ -94,11 +99,22 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
       mainViewerNextShot = null;
     }
 
+    const fxActualShot: CinematicFXData | null = currentShot.specialFX
+      ? currentShot.specialFX
+      : null;
+    const fxNextShot: CinematicFXData | null = nextShot.specialFX
+      ? nextShot.specialFX
+      : null;
+
     return (
-      <MainViewer
-        actualShot={mainViewerActualShot}
-        nextShot={mainViewerNextShot}
-      />
+      <Wrapper>
+        <MainViewer
+          actualShot={mainViewerActualShot}
+          nextShot={mainViewerNextShot}
+        />
+
+        <CinematicFxFrame fxActualShot={fxActualShot} fxNextShot={fxNextShot} />
+      </Wrapper>
     );
   }
 
