@@ -9,7 +9,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const tremorLight = keyframes`
   0%, 100% { transform: translate(0, 0) rotate(0); }
-  10% { transform: translate(-0.5px, -0.5px) rotate(-0.1deg); }
+  10% { transform: translate(-0.5px, -0.5px) rotate(-0.3deg); }
   30% { transform: translate(0.7px, 0.7px) rotate(0.1deg); }
   50% { transform: translate(-0.3px, 0.4px) rotate(0.05deg); }
   70% { transform: translate(0.4px, -0.2px) rotate(-0.05deg); }
