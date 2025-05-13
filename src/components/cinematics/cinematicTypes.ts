@@ -15,8 +15,16 @@ export interface CinematicTremorFXData {
   //delay = 0, el temblor se aplicará en todo el fade-in.
 }
 
+export type LightningSize = "small" | "medium" | "big";
+
+export interface LightningData {
+  delay: number; //Retraso en su ejecución, en milisegundos
+  size: LightningSize; //Fuerza del rayo
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
+  lightning?: LightningData[];
 }
 
 export interface ZoomData {
@@ -125,23 +133,6 @@ export interface CinematicSoundManagerShotData {
   uniqueSounds?: CinematicUniqueSounds | null;
   music?: CinematicMusic | number | null;
   onEndAudioFadeDuration?: number;
-}
-
-// Versión simplificada de  CinematicShotAuto, sólo con los datos necesarios para el componente CinematicFxFrame.
-export interface CinematicFxFrameActualShotData {
-  id: number;
-  specialFX: CinematicFXData | null;
-  widePicture: boolean;
-  shotDuration: number;
-  shotTransition: ShotTransitionType;
-  fadeDuration: number;
-}
-
-export interface CinematicFxFrameNextShotData {
-  id: number;
-  specialFX: CinematicFXData | null;
-  widePicture: boolean;
-  shotDuration: number;
 }
 
 ////////////////  Used in MainViewer.tsx
