@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import ScreenDarkener from "../common/ScreenDarkener";
 import MainViewer from "./styled/MainViewer";
 import {
-  CinematicFxFrameActualShotData,
-  CinematicFxFrameNextShotData,
   CinematicSceneAuto,
   CinematicSoundManagerData,
   MainViewerActualShotData,
@@ -12,12 +10,6 @@ import {
 } from "./cinematicTypes";
 import CinematicSoundManager from "./CinematicSoundManager";
 import CinematicPreloader from "./CinematicPreloader";
-import styled from "styled-components";
-import CinematicFxFrame from "./styled/CinematicFxFrame";
-
-const Wrapper = styled.div`
-  position: relative;
-`;
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
@@ -102,34 +94,11 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
       mainViewerNextShot = null;
     }
 
-    const fxActualShotData: CinematicFxFrameActualShotData = {
-      id: currentShot.id,
-      specialFX: currentShot.specialFX ? currentShot.specialFX : null,
-      widePicture: currentShot.widePicture,
-      shotDuration: currentShotDuration,
-      shotTransition: currentShotTransition,
-      fadeDuration: fadeTransitionDuration,
-    };
-
-    const fxNextShotData: CinematicFxFrameNextShotData | null = {
-      id: nextShot.id,
-      specialFX: nextShot.specialFX ? nextShot.specialFX : null,
-      widePicture: nextShot.widePicture,
-      shotDuration: nextShotDuration,
-    };
-
     return (
-      <Wrapper>
-        <MainViewer
-          actualShot={mainViewerActualShot}
-          nextShot={mainViewerNextShot}
-        />
-
-        <CinematicFxFrame
-          fxActualShot={fxActualShotData}
-          fxNextShot={fxNextShotData}
-        />
-      </Wrapper>
+      <MainViewer
+        actualShot={mainViewerActualShot}
+        nextShot={mainViewerNextShot}
+      />
     );
   }
 
