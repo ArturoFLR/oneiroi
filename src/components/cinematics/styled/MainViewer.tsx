@@ -6,6 +6,7 @@ import {
   ZoomData,
 } from "../cinematicTypes";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import CinematicFxFrame from "./CinematicFxFrame";
 
 const tremorLight = keyframes`
   0%, 100% { transform: translate(0, 0) rotate(0); }
@@ -169,6 +170,20 @@ const NextPictureContainer = styled(
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const MainPicture = styled.img`
+  position: relative;
+  width: 100%;
+`;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const NextPicture = styled(MainPicture)`
+  position: relative;
+  width: 100%;
+`;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const zoomAnimation = (props: ZoomData) => keyframes`
 0% {
   scale: ${props.zoomStartSize};
@@ -182,18 +197,19 @@ const zoomAnimation = (props: ZoomData) => keyframes`
 }
 `;
 
-interface MainPictureProps {
+interface CurrentPictureAndFxWrapperProps {
   $zoomData: ZoomData | undefined;
   $shotDuration: number;
 }
 
-const MainPicture = styled.img<MainPictureProps>`
+const CurrentPictureAndFxWrapper = styled.div<CurrentPictureAndFxWrapperProps>`
   position: relative;
   scale: ${({ $zoomData }) => ($zoomData ? $zoomData.zoomStartSize : 1)};
   top: ${({ $zoomData }) => ($zoomData ? $zoomData.zoomStartPosition.top : 0)}%;
   left: ${({ $zoomData }) =>
     $zoomData ? $zoomData.zoomStartPosition.left : 0}%;
   width: 100%;
+  height: 100%;
 
   ${({ $zoomData, $shotDuration }) => {
     if ($zoomData)
@@ -206,9 +222,10 @@ const MainPicture = styled.img<MainPictureProps>`
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const NextPicture = styled.img`
+const NextPictureAndFxWrapper = styled.div`
   position: relative;
   width: 100%;
+  height: 100%;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -232,8 +249,8 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     useState<boolean>(false);
 
   const nextPictureContainerElement = useRef<HTMLDivElement>(null);
-  const currentPictureElement = useRef<HTMLImageElement>(null);
-  const nextPictureElement = useRef<HTMLImageElement>(null);
+  const currentPictureAndFxWrapperElement = useRef<HTMLDivElement>(null);
+  const nextPictureAndFxWrapperElement = useRef<HTMLDivElement>(null);
 
   const zoomAnimation1DataRef = useRef<ZoomAnimationData>({
     data: null,
@@ -306,9 +323,9 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
 
   //Las animaciones que gestionan los siguientes useLayoutEffect son creadas con Web Animations API y sólo se aplican si
   //el siguiente plano tiene un efecto de zoom / panning y la transición es por "fade".
-  //Es estos casos, la animación debe empezar a verse en el NextPictureContainer cuando comienza a hacer el fade al siguiente plano.
-  //Para ello, se inicia la animación en el NextPictureContainer y al cambiar de plano, se replica la misma animación en
-  //el CurrentPictureContainer continuando por donde se quedó al cambiar de plano.
+  //Es estos casos, la animación debe empezar a verse en NextPicture cuando comienza a hacer el fade al siguiente plano.
+  //Para ello, se inicia la animación en NextPicture y al cambiar de plano, se replica la misma animación en
+  //CurrentPicture continuando por donde se quedó al cambiar de plano.
   //Los procesos están duplicados para dos posibles animaciones: zoomAnimation1DataRef y zoomAnimation2DataRef, para
   //los casos en los que en el plano actual estamos terminando de aplicar una animación y, como en el siguiente plano también
   //hay animación de zoom / panning y la transición es por "fade", tenemos que iniciar otra nueva.
@@ -375,10 +392,10 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     };
   }, [nextShot, actualShot.shotTransition]);
 
-  //Este 2º useLayoutEffect se encarga de retomar en el CurrentPictureContainer una animación de zoom / panning iniciada en el NextPictureContainer
+  //Este 2º useLayoutEffect se encarga de retomar en el CurrentPicture una animación de zoom / panning iniciada en el NextPicture
   //en el plano anterior.
-  // Es importante que este layoutEffect esté antes del que crea la animación. Si no es así, se pausaría la animación en el NextPictureContainer
-  // y se aplicaría la nueva a CurrentPictureContainer en el mismo plano.
+  // Es importante que este layoutEffect esté antes del que crea la animación. Si no es así, se pausaría la animación en el NextPicture
+  // y se aplicaría la nueva a CurrentPicture en el mismo plano.
   // Sólo se ejecuta si ya hay una animación iniciada (con datos).
   useLayoutEffect(() => {
     //Pausamos la animación 1 y obtenemos su "currentTime".
@@ -390,7 +407,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
 
       // Creamos una nueva animación
       const effect2 = new KeyframeEffect(
-        currentPictureElement.current,
+        currentPictureAndFxWrapperElement.current,
         zoomAnimation1DataRef.current.keyframes,
         zoomAnimation1DataRef.current.options
           ? zoomAnimation1DataRef.current.options
@@ -420,7 +437,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
         zoomAnimation2DataRef.current.data.currentTime;
 
       const effect2 = new KeyframeEffect(
-        currentPictureElement.current,
+        currentPictureAndFxWrapperElement.current,
         zoomAnimation2DataRef.current.keyframes,
         zoomAnimation2DataRef.current.options
           ? zoomAnimation2DataRef.current.options
@@ -441,10 +458,10 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     }
   }, [actualShot]);
 
-  //Se encarga de crear una nueva animación y iniciarla en el NextPictureContainer.
-  // En el siguiente cambio de plano, el layoutEffect anterior pausará la animación y aplicará la parte que falta a  CurrentPictureContainer.
-  // Es importante que este layoutEffect esté después del anterior. Si no es así, se pausaría la animación en el NextPictureContainer y se
-  // aplicaría la nueva a CurrentPictureContainer en el mismo plano.
+  //Se encarga de crear una nueva animación y iniciarla en NextPicture.
+  // En el siguiente cambio de plano, el layoutEffect anterior pausará la animación y aplicará la parte que falta a  CurrentPicture.
+  // Es importante que este layoutEffect esté después del anterior. Si no es así, se pausaría la animación en NextPicture y se
+  // aplicaría la nueva a CurrentPicture en el mismo plano.
   useLayoutEffect(() => {
     if (
       isZoomAPIAnimPlaying &&
@@ -477,7 +494,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
 
       // Crear efecto y animación
       const effect1 = new KeyframeEffect(
-        nextPictureElement.current,
+        nextPictureAndFxWrapperElement.current,
         animationKeyframes,
         animationOptions
       );
@@ -538,7 +555,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //El temblor se aplica a los contenedores CurrentPictureContainer y NextPictureContainer para que no interfiera con
-  //la animación de zoom / panning hecha con Web Animations API, ya que ambas usan "traslate".
+  //la animación de zoom / panning hecha con Web Animations API en CurrentPicture y NextPicturen, ya que ambas usan "traslate".
   useLayoutEffect(() => {
     if (actualShot?.specialFX?.tremor) {
       const { delay } = actualShot.specialFX.tremor;
@@ -591,21 +608,30 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
             : undefined
         }
       >
-        {actualShot.mainImageAlt ? (
-          <MainPicture
-            key={actualShot.mainImageUrl}
-            src={actualShot.mainImageUrl}
-            alt={actualShot.mainImageAlt}
-            ref={currentPictureElement}
-            $zoomData={
-              zoomAnimation1DataRef.current.shotId === actualShot.id ||
-              zoomAnimation2DataRef.current.shotId === actualShot.id
-                ? undefined
-                : actualShot.zoom
-            }
-            $shotDuration={actualShot.shotDuration}
+        <CurrentPictureAndFxWrapper
+          ref={currentPictureAndFxWrapperElement}
+          $zoomData={
+            zoomAnimation1DataRef.current.shotId === actualShot.id ||
+            zoomAnimation2DataRef.current.shotId === actualShot.id
+              ? undefined
+              : actualShot.zoom
+          }
+          $shotDuration={actualShot.shotDuration}
+        >
+          {actualShot.mainImageAlt ? (
+            <MainPicture
+              key={actualShot.mainImageUrl}
+              src={actualShot.mainImageUrl}
+              alt={actualShot.mainImageAlt}
+            />
+          ) : null}
+
+          <CinematicFxFrame
+            isForCurrentShot={true}
+            currentShotFx={actualShot.specialFX}
+            nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
           />
-        ) : null}
+        </CurrentPictureAndFxWrapper>
       </CurrentPictureContainer>
 
       {nextShot ? (
@@ -622,23 +648,30 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
               : undefined
           }
         >
-          {nextShot.mainImageUrl ? (
-            <NextPicture
-              key={nextShot.mainImageUrl}
-              src={nextShot.mainImageUrl}
-              alt={nextShot.mainImageAlt}
-              ref={nextPictureElement}
-              style={{
-                display:
-                  actualShot.shotTransition === "cut" && !applyFade
-                    ? "none"
-                    : "block",
-                // Forzar capa de composición
-                willChange:
-                  actualShot.shotTransition === "fade" ? "opacity" : "auto",
-              }}
+          <NextPictureAndFxWrapper ref={nextPictureAndFxWrapperElement}>
+            {nextShot.mainImageUrl ? (
+              <NextPicture
+                key={nextShot.mainImageUrl}
+                src={nextShot.mainImageUrl}
+                alt={nextShot.mainImageAlt}
+                style={{
+                  display:
+                    actualShot.shotTransition === "cut" && !applyFade
+                      ? "none"
+                      : "block",
+                  // Forzar capa de composición
+                  willChange:
+                    actualShot.shotTransition === "fade" ? "opacity" : "auto",
+                }}
+              />
+            ) : null}
+
+            <CinematicFxFrame
+              isForCurrentShot={false}
+              currentShotFx={actualShot.specialFX}
+              nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
             />
-          ) : null}
+          </NextPictureAndFxWrapper>
         </NextPictureContainer>
       ) : null}
     </MainContainer>
