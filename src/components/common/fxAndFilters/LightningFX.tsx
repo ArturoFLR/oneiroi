@@ -184,6 +184,7 @@ const MainContainer = styled.div<MainContainerProps>`
   height: 100%;
   background: transparent;
   will-change: filter, opacity;
+  z-index: 3;
 
   ${({ $size, $delay }) => {
     return css`
@@ -202,10 +203,11 @@ const MainContainer = styled.div<MainContainerProps>`
 interface LightningFXProps {
   size: LightningSize;
   delay: number;
+  id: string;
 }
 
-function LightningFX({ size, delay }: LightningFXProps) {
-  return <MainContainer $size={size} $delay={delay}></MainContainer>;
+function LightningFX({ size, delay, id }: LightningFXProps) {
+  return <MainContainer id={id} $size={size} $delay={delay}></MainContainer>;
 }
 
 export default LightningFX;
