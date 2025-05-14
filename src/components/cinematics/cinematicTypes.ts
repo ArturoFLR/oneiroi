@@ -16,15 +16,24 @@ export interface CinematicTremorFXData {
 }
 
 export type LightningSize = "small" | "medium" | "big";
+export type RainIntensity = "low" | "medium" | "high";
 
 export interface LightningData {
   delay: number; //Retraso en su ejecución, en milisegundos
   size: LightningSize; //Fuerza del rayo
 }
 
+export interface RainData {
+  delay: number; //Retraso en su ejecución, en milisegundos
+  intensity: RainIntensity; //Genera más o menos gotas que caen a más o menos velocidad.
+  isStarting: boolean; // Si es true, comenzará a llover en ese momento. Si es false, las gotas estarán por toda la pantalla desde el inicio.
+  size: number; //El tamaño de las gotas. 1 se ve bien en planos sin zoom. Cuanto mayor sea el zoom, menor debería ser el tamaño que indiquemos.
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
   lightning?: LightningData[];
+  rain?: RainData;
 }
 
 export interface ZoomData {
