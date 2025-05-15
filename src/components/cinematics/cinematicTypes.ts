@@ -30,10 +30,26 @@ export interface RainData {
   size: number; //El tamaño de las gotas. 1 se ve bien en planos sin zoom. Cuanto mayor sea el zoom, menor debería ser el tamaño que indiquemos.
 }
 
+export interface VideoFxData {
+  static: boolean; //Indica si el efecto permite ser movido por un efecto de zoom / panning (ocupa sólo una parte de la pantalla) o no (ocupa toda la pantalla y si se desplaza la imagen se verá donde se corta )
+  src: string; //La url del video.
+  size: string; //El width en porcentaje
+  positionTop: string; //Valor de top (posicionamiento absoluto) en porcentaje
+  positionLeft: string; //Valor de left en porcentaje
+  delay: number; //Retraso en el comienzo, en milisegundos
+  initialFadeDuration: number; //Tiempo en ms de fade cuando comienza el vídeo (por si el inicio del mismo es abrupto, como el humo)
+  finalFadeDuration: number; // Tiempo en ms al acabar el vídeo, por si es abrupto. Sólo se aplica si no hay loop.
+  loop: boolean; //Se reproduce en loop?  El loop se aplicará sin fade entre reproducciones, por lo que sólo se deben poner en loop los vídeos cuyo final encaje con una nueva reproducción. Si no, mejor usar varios videoFx y coordinarlos mediante delay y sus fade-outs con los fade-in de los siguientes
+  opacity?: number; //Por defecto es 1
+  speed?: number; // Velocidad de reproducción. Velocidad por defecto: 1. Usar 2 para el doble, 0.5 para la mitad, -1 para reproducir en reversa.
+  extraCss?: string; //Se utiliza para poder añadir filtros o efectos css que ayuden a integrar el vídeo con el fondo. Funciona bien esto: "mix-blend-mode: exclusion;"
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
   lightning?: LightningData[];
   rain?: RainData;
+  videoFx?: VideoFxData[];
 }
 
 export interface ZoomData {
