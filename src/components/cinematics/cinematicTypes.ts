@@ -19,11 +19,13 @@ export type LightningSize = "small" | "medium" | "big";
 export type RainIntensity = "low" | "medium" | "high";
 
 export interface LightningData {
+  isZoomable: boolean; //Indica si se debe aplicar al efecto el posible zoom / panning del plano o no.
   delay: number; //Retraso en su ejecución, en milisegundos
   size: LightningSize; //Fuerza del rayo
 }
 
 export interface RainData {
+  isZoomable: boolean; //Indica si se debe aplicar al efecto el posible zoom / panning del plano o no.
   delay: number; //Retraso en su ejecución, en milisegundos
   intensity: RainIntensity; //Genera más o menos gotas que caen a más o menos velocidad.
   isStarting: boolean; // Si es true, comenzará a llover en ese momento. Si es false, las gotas estarán por toda la pantalla desde el inicio.
@@ -31,7 +33,7 @@ export interface RainData {
 }
 
 export interface VideoFxData {
-  static: boolean; //Indica si el efecto permite ser movido por un efecto de zoom / panning (ocupa sólo una parte de la pantalla) o no (ocupa toda la pantalla y si se desplaza la imagen se verá donde se corta )
+  isZoomable: boolean; //Indica si se debe aplicar al efecto el posible zoom / panning del plano o no.
   src: string; //La url del video.
   size: string; //El width en porcentaje
   positionTop: string; //Valor de top (posicionamiento absoluto) en porcentaje
