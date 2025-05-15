@@ -28,10 +28,12 @@ interface CinematicFxFrameProps {
   isForCurrentShot: boolean;
   currentShotFx: CinematicFXData | null;
   nextShotFx: CinematicFXData | null;
+  zoomableFx: boolean;
 }
 
 function CinematicFxFrame({
   isForCurrentShot,
+  zoomableFx,
   currentShotFx,
   nextShotFx,
 }: CinematicFxFrameProps) {
@@ -46,24 +48,32 @@ function CinematicFxFrame({
       const lightningComponentsToShow: React.ReactNode[] = [];
 
       currentShotFx.lightning.map((lightningData, index) => {
-        lightningComponentsToShow.push(
-          <LightningFX
-            size={lightningData.size}
-            delay={lightningData.delay}
-            id={`fxLightning${index}`}
-          />
-        );
+        //Sólo creamos el efecto si su propiedad isZoomable coincide con la prop zoomableFx
+        if (
+          (lightningData.isZoomable && zoomableFx) ||
+          (!lightningData.isZoomable && !zoomableFx)
+        ) {
+          lightningComponentsToShow.push(
+            <LightningFX
+              size={lightningData.size}
+              delay={lightningData.delay}
+              id={`fxLightning${index}`}
+            />
+          );
+        }
       });
       return lightningComponentsToShow;
     } else {
       return null;
     }
-  }, [currentShotFx, isForCurrentShot]);
+  }, [currentShotFx, isForCurrentShot, zoomableFx]);
 
   ////////////////////////////////////////////    RAINFALL FX   ////////////////////////////////////////////////////
 
   const generateRainfallFx = useCallback(() => {
     if (isForCurrentShot && currentShotFx?.rain) {
+      if (currentShotFx.rain.isZoomable !== zoomableFx) return null;
+
       const rainData = currentShotFx.rain;
       return (
         <RainFx
@@ -77,6 +87,7 @@ function CinematicFxFrame({
       nextShotFx?.rain &&
       nextShotFx.rain.delay === 0
     ) {
+      if (nextShotFx.rain.isZoomable !== zoomableFx) return null;
       const rainData = nextShotFx.rain;
 
       return (
@@ -89,7 +100,7 @@ function CinematicFxFrame({
     } else {
       return null;
     }
-  }, [isForCurrentShot, currentShotFx?.rain, nextShotFx?.rain]);
+  }, [isForCurrentShot, currentShotFx?.rain, nextShotFx?.rain, zoomableFx]);
 
   //Activa o desactiva la lluvia usando "showRain"
   useLayoutEffect(() => {
@@ -103,6 +114,8 @@ function CinematicFxFrame({
 
     //Si existen datos, dependiendo del delay, ejecutamos o programamos un timeout
     if (isForCurrentShot && currentShotFx?.rain) {
+      if (currentShotFx.rain.isZoomable !== zoomableFx) return;
+
       if (currentShotFx.rain.delay > 0) {
         const rainTimeout = window.setTimeout(() => {
           setShowRain(true);
@@ -115,9 +128,10 @@ function CinematicFxFrame({
     }
 
     if (!isForCurrentShot && nextShotFx?.rain && nextShotFx.rain.delay === 0) {
+      if (nextShotFx.rain.isZoomable !== zoomableFx) return;
       setShowRain(true);
     }
-  }, [isForCurrentShot, currentShotFx?.rain, nextShotFx?.rain]);
+  }, [isForCurrentShot, currentShotFx?.rain, nextShotFx?.rain, zoomableFx]);
 
   // Limpieza de timeouts
   useEffect(() => {
