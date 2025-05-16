@@ -121,7 +121,7 @@ const thunder2: CinematicUniqueSound = {
   category: "sounds",
   soundName: "thunder2_3",
   soundSrc: thunder2_3,
-  delay: 1500,
+  delay: 3000,
   stereo: 0.8,
   config: {
     volume: 1,
