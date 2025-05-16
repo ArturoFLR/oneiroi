@@ -47,11 +47,21 @@ export interface VideoFxData {
   extraCss?: string; //Se utiliza para poder añadir filtros o efectos css que ayuden a integrar el vídeo con el fondo. Funciona bien esto: "mix-blend-mode: exclusion;"
 }
 
+//Este efecto se utiliza cuando queremos un fade-in a un plano que contiene videoFx aplicados y ya visibles en el momento del fade-in.
+//Recordemos que VideoFx no se puede aplicar durante los fundidos entre planos, pero podemos aplicar este efecto
+//para simular un fade-in desde un color y que el VideoFx sea visible durante el mismo.
+export interface ManualFadeInData {
+  color: string; //Color desde el que partimos.
+  delay: number; //El tiempo que permanece el color en pantalla antes de iniciarse el fade-in. En ms.
+  duration: number; //Duración del fade-in, en ms
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
   lightning?: LightningData[];
   rain?: RainData;
   videoFx?: VideoFxData[];
+  manualFadeIn: ManualFadeInData;
 }
 
 export interface ZoomData {
