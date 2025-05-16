@@ -10,6 +10,7 @@ import {
 } from "react";
 import RainFx from "../../common/fxAndFilters/RainFx";
 import VideoFx from "../../common/fxAndFilters/VideoFx";
+import ManualFadeInFx from "../../common/fxAndFilters/ManualFadeInFx";
 
 const MainContainer = styled.div`
   position: absolute;
@@ -165,6 +166,25 @@ function CinematicFxFrame({
     } else return null;
   }, [currentShotFx?.videoFx, isForCurrentShot, zoomableFx]);
 
+  ////////////////////////////////////////////   MANUAL FADE-IN FX   ////////////////////////////////////////////////////
+  const generateManualFadeIn = useCallback(() => {
+    if (zoomableFx || !isForCurrentShot) return;
+
+    if (currentShotFx?.manualFadeIn) {
+      const manualFadeInData = currentShotFx.manualFadeIn;
+
+      return (
+        <ManualFadeInFx
+          color={manualFadeInData.color}
+          delay={manualFadeInData.delay}
+          duration={manualFadeInData.duration}
+        />
+      );
+    } else {
+      return null;
+    }
+  }, [zoomableFx, isForCurrentShot, currentShotFx?.manualFadeIn]);
+
   // Limpieza de timeouts
   useEffect(() => {
     const timersToClear = rainfallTimeoutsRef.current;
@@ -180,6 +200,7 @@ function CinematicFxFrame({
       {generateLightningFx()}
       {showRain ? generateRainfallFx() : null}
       {generateVideoFx()}
+      {generateManualFadeIn()}
     </MainContainer>
   );
 }
