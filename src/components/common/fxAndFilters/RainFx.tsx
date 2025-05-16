@@ -170,6 +170,7 @@ const RainFx = ({ intensity, size, isStarting }: RainFxProps) => {
         left: "-17%",
         width: "160%",
         height: "160%",
+        zIndex: 4,
         willChange: "transform",
         transform: "rotate(20deg) translateZ(0)",
         isolation: "isolate",

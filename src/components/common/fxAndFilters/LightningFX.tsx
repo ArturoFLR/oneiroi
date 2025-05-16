@@ -184,7 +184,7 @@ const MainContainer = styled.div<MainContainerProps>`
   height: 100%;
   background: transparent;
   will-change: filter, opacity;
-  z-index: 3;
+  z-index: 5;
 
   ${({ $size, $delay }) => {
     return css`
