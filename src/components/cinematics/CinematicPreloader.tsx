@@ -17,6 +17,7 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
   const areUniqueSoundsPreloadingRef = useRef<boolean>(false);
   const isMusicPreloadingRef = useRef<boolean>(false);
   const areAmbientSoundsPreloadingRef = useRef<boolean>(false);
+  const areVideosPreloadingRef = useRef<boolean>(false);
 
   // Calcula el número total de items a cargar, entre imágenes y sonidos.
   const getTotalItemsToLoad = useMemo(() => {
@@ -41,6 +42,10 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
         if (shot.ambientSound.secondaryAmbientSounds) {
           totalItems += shot.ambientSound.secondaryAmbientSounds.length;
         }
+      }
+
+      if (shot.specialFX?.videoFx) {
+        totalItems += shot.specialFX.videoFx.length;
       }
     });
 
@@ -198,8 +203,38 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
     });
   }, [cinematicData, advanceCompletion]);
 
+  const preloadVideos = useCallback(() => {
+    if (areVideosPreloadingRef.current) return;
+    areVideosPreloadingRef.current = true;
+
+    cinematicData.forEach((shot) => {
+      const videoData = shot.specialFX?.videoFx;
+
+      if (videoData) {
+        videoData.forEach((video) => {
+          const preloadedVideo = document.createElement("video");
+          preloadedVideo.preload = "auto"; // Indica al navegador que precargue el video
+          preloadedVideo.src = video.src;
+
+          //Forzar la carga del video incluso si no está en el DOM
+          preloadedVideo.load();
+
+          preloadedVideo.oncanplaythrough = () => {
+            advanceCompletion(); // Video listo para reproducirse
+          };
+
+          preloadedVideo.onerror = () => {
+            console.error(`Error cargando el video: ${video.src}`);
+            advanceCompletion();
+          };
+        });
+      }
+    });
+  }, [advanceCompletion, cinematicData]);
+
   // Realiza la precarga de imágenes y sonidos antes de que comience la cinemática.
   useEffect(() => {
+    preloadVideos();
     preloadImages();
     preloadSounds();
     preloadMusic();
@@ -210,6 +245,7 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
       advanceCompletion();
     }
   }, [
+    preloadVideos,
     preloadImages,
     preloadSounds,
     preloadMusic,
@@ -220,7 +256,10 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
 
   //Si se ha llegado al 100% de carga, se inicia la cinemática.
   useEffect(() => {
-    if (loadingProgress >= 100) {
+    //Establecemos un margen de error, ya que puede haber errores de redondeo que provocan una cifra de carga de 99.999999999999
+    const securityMargin = 0.05;
+
+    if (loadingProgress >= 100 - securityMargin) {
       setIsLoading(false);
     }
   }, [loadingProgress, setIsLoading]);
