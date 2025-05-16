@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import RainFx from "../../common/fxAndFilters/RainFx";
+import VideoFx from "../../common/fxAndFilters/VideoFx";
 
 const MainContainer = styled.div`
   position: absolute;
@@ -49,10 +50,7 @@ function CinematicFxFrame({
 
       currentShotFx.lightning.map((lightningData, index) => {
         //Sólo creamos el efecto si su propiedad isZoomable coincide con la prop zoomableFx
-        if (
-          (lightningData.isZoomable && zoomableFx) ||
-          (!lightningData.isZoomable && !zoomableFx)
-        ) {
+        if (lightningData.isZoomable === zoomableFx) {
           lightningComponentsToShow.push(
             <LightningFX
               size={lightningData.size}
@@ -133,6 +131,40 @@ function CinematicFxFrame({
     }
   }, [isForCurrentShot, currentShotFx?.rain, nextShotFx?.rain, zoomableFx]);
 
+  ////////////////////////////////////////////    VIDEO FX   ////////////////////////////////////////////////////
+  //Este fx sólo se va a generar en el current shot, nunca en el next shot (habría que parar el vídeo en un componente CinematicFxFrame e iniciarlo
+  //desde ahí en otro distinto, por lo que necesitaríamos un contenedor de ambos que regulara estos datos)
+
+  const generateVideoFx = useCallback(() => {
+    const videoData = currentShotFx?.videoFx;
+
+    if (videoData && isForCurrentShot) {
+      const videosToGenerate: React.ReactNode[] = [];
+
+      videoData.forEach((video) => {
+        if (video.isZoomable !== zoomableFx) return;
+
+        videosToGenerate.push(
+          <VideoFx
+            src={video.src}
+            size={video.size}
+            positionTop={video.positionTop}
+            positionLeft={video.positionLeft}
+            delay={video.delay}
+            initialFadeDuration={video.initialFadeDuration}
+            finalFadeDuration={video.finalFadeDuration}
+            loop={video.loop}
+            opacity={video.opacity}
+            speed={video.speed}
+            extraCss={video.extraCss}
+          />
+        );
+      });
+
+      return videosToGenerate;
+    } else return null;
+  }, [currentShotFx?.videoFx, isForCurrentShot, zoomableFx]);
+
   // Limpieza de timeouts
   useEffect(() => {
     const timersToClear = rainfallTimeoutsRef.current;
@@ -147,6 +179,7 @@ function CinematicFxFrame({
     <MainContainer>
       {generateLightningFx()}
       {showRain ? generateRainfallFx() : null}
+      {generateVideoFx()}
     </MainContainer>
   );
 }
