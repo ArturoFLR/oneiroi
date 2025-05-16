@@ -50,6 +50,8 @@ export interface VideoFxData {
 //Este efecto se utiliza cuando queremos un fade-in a un plano que contiene videoFx aplicados y ya visibles en el momento del fade-in.
 //Recordemos que VideoFx no se puede aplicar durante los fundidos entre planos, pero podemos aplicar este efecto
 //para simular un fade-in desde un color y que el VideoFx sea visible durante el mismo.
+//Sólo se genera en un CinematicFxFrame con zoomableFx = false y isForCurrentShot = true (No es un efecto al que se deba aplicar zoom - panning
+//y no se genera para el plano siguiente, sólo para el actual.)
 export interface ManualFadeInData {
   color: string; //Color desde el que partimos.
   delay: number; //El tiempo que permanece el color en pantalla antes de iniciarse el fade-in. En ms.
@@ -61,7 +63,7 @@ export interface CinematicFXData {
   lightning?: LightningData[];
   rain?: RainData;
   videoFx?: VideoFxData[];
-  manualFadeIn: ManualFadeInData;
+  manualFadeIn?: ManualFadeInData;
 }
 
 export interface ZoomData {
