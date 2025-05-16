@@ -16,6 +16,9 @@ interface RainFxProps {
 }
 
 const RainFx = ({ intensity, size, isStarting }: RainFxProps) => {
+  const [resize, setResize] = useState<number>(0);
+  const lastResolutionRef = useRef<number>(window.innerWidth);
+
   let nbDrop: number = 0;
   let baseSpeed: number = 0;
   let baseLenght: number = 0;
@@ -23,28 +26,47 @@ const RainFx = ({ intensity, size, isStarting }: RainFxProps) => {
 
   switch (intensity) {
     case "low":
-      nbDrop = 200;
+      nbDrop = 380;
       baseSpeed = 22;
       baseLenght = 25;
       baseWidth = 0.5;
       break;
 
     case "medium":
-      nbDrop = 500;
-      baseSpeed = 30;
-      baseLenght = 45;
-      baseWidth = 0.5;
+      nbDrop = 750;
+      baseSpeed = 35;
+      baseLenght = 70;
+      baseWidth = 0.7;
       break;
 
     case "high":
-      nbDrop = 700;
-      baseSpeed = 45;
-      baseLenght = 110;
-      baseWidth = 0.5;
+      nbDrop = 980;
+      baseSpeed = 50;
+      baseLenght = 120;
+      baseWidth = 0.75;
       break;
 
     default:
       break;
+  }
+
+  //Modifica los valores base de las partículas.
+  function modifyParticlesValues(modifyFactor: number) {
+    nbDrop = nbDrop * modifyFactor;
+    baseSpeed = baseSpeed * modifyFactor;
+    baseLenght = baseLenght * modifyFactor;
+    baseWidth = baseWidth * modifyFactor;
+  }
+
+  // Restamos partículas a la simulación para pantallas pequeñas.
+  const mediumWidth = 650;
+  const lowWidth = 450;
+  if (window.innerWidth <= lowWidth) {
+    const reduceFactor = 0.55;
+    modifyParticlesValues(reduceFactor);
+  } else if (window.innerWidth <= mediumWidth) {
+    const reduceFactor = 0.65;
+    modifyParticlesValues(reduceFactor);
   }
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,7 +108,7 @@ const RainFx = ({ intensity, size, isStarting }: RainFxProps) => {
 
     const actualWidth = dimensions.width;
     const actualHeight = dimensions.height;
-    const ratio = Math.min(window.devicePixelRatio, 1.5);
+    const ratio = Math.min(window.devicePixelRatio, 1.2); //Este 1.2 limita el máximo de resolución. Se puede bajar más. Mejora mucho el rendimiento.
     const ctx = canvas.getContext("2d");
 
     // Ajustar solo si hay cambios reales
@@ -104,6 +126,9 @@ const RainFx = ({ intensity, size, isStarting }: RainFxProps) => {
   useEffect(() => {
     const observer = new ResizeObserver(() => {
       updateDimensions();
+      if (window.innerWidth !== lastResolutionRef.current) {
+        setResize((previous) => previous++);
+      }
     });
 
     if (containerRef.current) {
@@ -114,7 +139,7 @@ const RainFx = ({ intensity, size, isStarting }: RainFxProps) => {
     return () => {
       observer.disconnect();
     };
-  }, [updateDimensions]);
+  }, [updateDimensions, resize]);
 
   useEffect(() => {
     if (dimensions.width === 0 || dimensions.height === 0) return;
