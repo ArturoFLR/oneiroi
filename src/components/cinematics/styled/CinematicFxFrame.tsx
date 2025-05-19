@@ -1,6 +1,6 @@
 import LightningFX from "../../common/fxAndFilters/LightningFX";
 import styled from "styled-components";
-import { CinematicFXData } from "../cinematicTypes";
+import { CinematicFXData, TextCaptionData } from "../cinematicTypes";
 import {
   useCallback,
   useEffect,
@@ -11,6 +11,7 @@ import {
 import RainFx from "../../common/fxAndFilters/RainFx";
 import VideoFx from "../../common/fxAndFilters/VideoFx";
 import ManualFadeInFx from "../../common/fxAndFilters/ManualFadeInFx";
+import TextCaption from "../../common/fxAndFilters/TextCaption";
 
 const MainContainer = styled.div`
   position: absolute;
@@ -57,6 +58,7 @@ function CinematicFxFrame({
               size={lightningData.size}
               delay={lightningData.delay}
               id={`fxLightning${index}`}
+              key={`fxLightning${index}`}
             />
           );
         }
@@ -142,11 +144,12 @@ function CinematicFxFrame({
     if (videoData && isForCurrentShot) {
       const videosToGenerate: React.ReactNode[] = [];
 
-      videoData.forEach((video) => {
+      videoData.forEach((video, index) => {
         if (video.isZoomable !== zoomableFx) return;
 
         videosToGenerate.push(
           <VideoFx
+            key={index}
             src={video.src}
             size={video.size}
             positionTop={video.positionTop}
@@ -167,6 +170,8 @@ function CinematicFxFrame({
   }, [currentShotFx?.videoFx, isForCurrentShot, zoomableFx]);
 
   ////////////////////////////////////////////   MANUAL FADE-IN FX   ////////////////////////////////////////////////////
+  //Este fx sólo se va a generar en el current shot, nunca en el next shot, ya que está pensado para simular un fade-in a un plano con
+  //VídeoFx ya aplicado cuando comienza el fundido (VideoFx no funciona durante los fundidos normales).
   const generateManualFadeIn = useCallback(() => {
     if (zoomableFx || !isForCurrentShot) return;
 
@@ -185,6 +190,32 @@ function CinematicFxFrame({
     }
   }, [zoomableFx, isForCurrentShot, currentShotFx?.manualFadeIn]);
 
+  ////////////////////////////////////////////   TEXT CAPTION   ////////////////////////////////////////////////////
+  //Este fx sólo se va a generar en el current shot, nunca en el next shot, ya que no tiene sentido fundir a un plano con subtítulos ya en pantalla.
+
+  const generateTextCaption = useCallback(() => {
+    if (!isForCurrentShot) return;
+
+    if (currentShotFx?.textCaption) {
+      const zoomableTextArray: TextCaptionData[] = [];
+      const notZoomableTextArray: TextCaptionData[] = [];
+
+      //Separamos el texto que admite zoom del que no.
+      currentShotFx.textCaption.forEach((text) => {
+        if (text.isZoomable) zoomableTextArray.push(text);
+        if (!text.isZoomable) notZoomableTextArray.push(text);
+      });
+
+      return (
+        <TextCaption
+          textsArray={zoomableFx ? zoomableTextArray : notZoomableTextArray}
+        />
+      );
+    } else {
+      return null;
+    }
+  }, [isForCurrentShot, currentShotFx?.textCaption, zoomableFx]);
+
   // Limpieza de timeouts
   useEffect(() => {
     const timersToClear = rainfallTimeoutsRef.current;
@@ -201,6 +232,7 @@ function CinematicFxFrame({
       {showRain ? generateRainfallFx() : null}
       {generateVideoFx()}
       {generateManualFadeIn()}
+      {generateTextCaption()}
     </MainContainer>
   );
 }
