@@ -239,6 +239,7 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
     preloadSounds();
     preloadMusic();
     preloadAmbientSounds();
+    //La precarga de fuentes se realiza directamente en el return del componente, generando contenido no visible.
 
     // Si no hubiera nada que cargar, no se ejecutaría advanceCompletion() en las funciones anteriores, por lo que lo hacemos manualmente.
     if (getTotalItemsToLoad === 0) {
@@ -264,7 +265,28 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
     }
   }, [loadingProgress, setIsLoading]);
 
-  return <LoadingSpinner progress={loadingProgress} />;
+  return (
+    <>
+      <LoadingSpinner progress={loadingProgress} />
+      <div
+        style={{
+          position: "absolute",
+          opacity: 0,
+          top: 0,
+          left: 0,
+          pointerEvents: "none",
+        }}
+      >
+        {/* Listamos todas las fuentes, pesos y estilos necesarios. Realmente sólo se usan con peso 400 */}
+        <p style={{ fontFamily: "Protest Revolution", fontWeight: 400 }}>
+          Preload
+        </p>
+        <p style={{ fontFamily: "Cabin Condensed", fontWeight: 400 }}>
+          Preload
+        </p>
+      </div>
+    </>
+  );
 }
 
 export default CinematicPreloader;
