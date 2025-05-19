@@ -1,5 +1,11 @@
 export const GLOBAL_FONTS = {
-  mapCellName: "Strait, sans-serif",
+  map: {
+    cellName: "Strait, sans-serif",
+  },
+  textCinematics: {
+    narratorEmotional: '"Protest Revolution", sans-serif', //Estilo pincel, con partes semitransparentes. Para narraciones con carga emocional.
+    narratorNeutral: `"Cabin Condensed", sans-serif`, //Más formal, para narración o subtítulos más neutrales, como el nombre y fecha del lugar.
+  },
 };
 
 export const GLOBAL_COLORS = {
@@ -7,6 +13,10 @@ export const GLOBAL_COLORS = {
     glow: "#ffcc00",
     highlightedText: "#fddd5c",
     text: "#fddd5c",
+  },
+  text: {
+    textCaption: "rgb(241, 243, 228)",
+    textCaptionShadow: "rgb(24, 24, 24)",
   },
   map: {
     backgrGradient1: "#02251a",

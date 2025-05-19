@@ -91,7 +91,7 @@ const MapName = styled.p<MapNameProps>`
   font-weight: 800;
   color: #6798a1;
   font-size: ${({ $fontSize }) => $fontSize};
-  font-family: ${GLOBAL_FONTS.mapCellName};
+  font-family: ${GLOBAL_FONTS.map.cellName};
   filter: drop-shadow(1px 3px 0.5px black);
 `;
 
