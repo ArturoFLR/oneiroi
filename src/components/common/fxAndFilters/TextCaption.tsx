@@ -116,9 +116,9 @@ const TextBlock = styled.p<TextBlockProps>`
         ? $fontSize + "vw"
         : fontSizeMap[$fontSize]};
       font-family: ${$fontFamily};
-      animation: ${fadeIn} ${$fadeInDuration}ms ${$delay}ms linear forwards
+      animation: ${fadeIn} ${$fadeInDuration}ms linear ${$delay}ms forwards
         ${typeof $duration === "number"
-          ? css`, ${fadeOut} ${$fadeOutDuration}ms ${$duration}ms linear forwards;`
+          ? css`, ${fadeOut} ${$fadeOutDuration}ms linear ${$duration}ms forwards;`
           : null};
     `;
   }}
@@ -200,7 +200,6 @@ function TextCaption({ textsArray }: TextCaptionProps) {
           </TextBlock>
         </TextContainer>
       );
-      console.log(componentsToRender);
     });
 
     return componentsToRender;

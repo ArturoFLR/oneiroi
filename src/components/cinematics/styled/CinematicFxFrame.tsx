@@ -32,6 +32,7 @@ interface CinematicFxFrameProps {
   currentShotFx: CinematicFXData | null;
   nextShotFx: CinematicFXData | null;
   zoomableFx: boolean;
+  currentShotId: number;
 }
 
 function CinematicFxFrame({
@@ -39,6 +40,7 @@ function CinematicFxFrame({
   zoomableFx,
   currentShotFx,
   nextShotFx,
+  currentShotId,
 }: CinematicFxFrameProps) {
   const [showRain, setShowRain] = useState<boolean>(false);
   const rainfallTimeoutsRef = useRef<number[]>([]);
@@ -208,13 +210,14 @@ function CinematicFxFrame({
 
       return (
         <TextCaption
+          key={`text${currentShotId}`}
           textsArray={zoomableFx ? zoomableTextArray : notZoomableTextArray}
         />
       );
     } else {
       return null;
     }
-  }, [isForCurrentShot, currentShotFx?.textCaption, zoomableFx]);
+  }, [isForCurrentShot, currentShotFx?.textCaption, zoomableFx, currentShotId]);
 
   // Limpieza de timeouts
   useEffect(() => {

@@ -629,6 +629,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
           ) : null}
 
           <CinematicFxFrame
+            currentShotId={actualShot.id}
             zoomableFx={true}
             isForCurrentShot={true}
             currentShotFx={actualShot.specialFX}
@@ -637,6 +638,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
         </CurrentPictureAndZoomableFxWrapper>
 
         <CinematicFxFrame
+          currentShotId={actualShot.id}
           zoomableFx={false}
           isForCurrentShot={true}
           currentShotFx={actualShot.specialFX}
@@ -679,6 +681,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
             ) : null}
 
             <CinematicFxFrame
+              currentShotId={actualShot.id}
               zoomableFx={true}
               isForCurrentShot={false}
               currentShotFx={actualShot.specialFX}
@@ -687,6 +690,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
           </NextPictureAndZoomableFxWrapper>
 
           <CinematicFxFrame
+            currentShotId={actualShot.id}
             zoomableFx={false}
             isForCurrentShot={false}
             currentShotFx={actualShot.specialFX}
