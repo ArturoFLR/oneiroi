@@ -58,12 +58,35 @@ export interface ManualFadeInData {
   duration: number; //Duración del fade-in, en ms
 }
 
+export type TextCaptionPosition = "top" | "center" | "bottom";
+export type TextCaptionFontSize = "small" | "medium" | "big";
+
+//Está pensada para texto explicativo en cinemáticas.
+export interface TextCaptionData {
+  isZoomable: boolean;
+  text: string; //El texto a renderizar.
+  delay?: number; //Cuánto tarda en aparecer en pantalla.
+  duration?: number; //Cuánto tarda en desaparecer. Si se omite, permanece durante todo el plano.
+  fontSize?: TextCaptionFontSize | number; //El tamaño en palabras predefinidas ("small" | "medium" | "big") o un número que se transforma a "vw"
+  fontFamily?: string; //La fuente a usar.+
+  color?: string; //Color del texto
+  textShadow?: string; //Color de drop-shadow aplicado al texto para mejorar su legibilidad sobre distintos fondos.
+  width?: number; //Ancho en porcentaje del contenedor del texto.
+  position?: TextCaptionPosition; //Sitúa el texto en la parte superior, central o inferior. Compatible con positionTop y positionLeft.
+  positionTop?: number; //Posición en porcentaje. Si se ha usado "position" el posicionamiento será relativo. Si no, será absoluto.
+  positionLeft?: number; //Posición en porcentaje. Si se ha usado "position" el posicionamiento será relativo. Si no, será absoluto.
+  fadeInDuration?: number; //Duración del efecto de fade-in cuando se muestra el texto. En ms.
+  fadeOutDuration?: number; //Duración del efecto de fade-out cuando el texto desaparece. En ms.
+  zIndex?: number; //Sólo se tendrá en cuenta el que se ponga en el primer texto. Permite modificar el z-index de TODOS los textos del plano, para crear efectos con otros FX.
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
   lightning?: LightningData[];
   rain?: RainData;
   videoFx?: VideoFxData[];
   manualFadeIn?: ManualFadeInData;
+  textCaption?: TextCaptionData[];
 }
 
 export interface ZoomData {
