@@ -112,6 +112,7 @@ interface AnimatedGifFxProps {
   initialFadeDuration: number;
   finalFadeDuration: number;
   loop: boolean;
+  playFrom?: number;
   opacity?: number;
   extraCss?: string;
   speed?: number;
@@ -126,6 +127,7 @@ function VideoFx({
   finalFadeDuration,
   delay,
   loop,
+  playFrom,
   opacity,
   extraCss,
   speed,
@@ -137,6 +139,7 @@ function VideoFx({
   useEffect(() => {
     if (!videoElement.current) return;
 
+    //Asignamos velocidad
     if (typeof speed === "number") videoElement.current.playbackRate = speed;
 
     if (delay > 0) {
@@ -154,6 +157,16 @@ function VideoFx({
     const handleLoadedMetadata = () => {
       if (!videoElement.current) return;
 
+      //Asignamos punto de reproducción
+      if (typeof playFrom === "number") {
+        videoElement.current.currentTime = playFrom / 1000; //Transformamos en segundos.
+        console.log(videoElement.current.currentTime);
+      }
+
+      //Si hay loop, salimos
+      if (loop) return;
+
+      //Si no hay loop, establecemos timer para el fade-out.
       const videoDuration = videoElement.current.duration * 1000; //En milisegundos
       const securityMargin = 100;
       const momentToFadeOut =
@@ -166,7 +179,7 @@ function VideoFx({
       videoTimersRef.current.push(videoTimer2);
     };
 
-    if (!loop) {
+    if (!loop || typeof playFrom === "number") {
       videoElement.current.addEventListener(
         "loadedmetadata",
         handleLoadedMetadata
@@ -183,7 +196,7 @@ function VideoFx({
       if (video)
         video.removeEventListener("loadedmetadata", handleLoadedMetadata);
     };
-  }, [delay, finalFadeDuration, loop, speed]);
+  }, [delay, finalFadeDuration, loop, speed, playFrom]);
 
   return (
     <MainContainer

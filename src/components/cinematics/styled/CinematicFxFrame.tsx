@@ -160,6 +160,7 @@ function CinematicFxFrame({
             initialFadeDuration={video.initialFadeDuration}
             finalFadeDuration={video.finalFadeDuration}
             loop={video.loop}
+            playFrom={video.playFrom}
             opacity={video.opacity}
             speed={video.speed}
             extraCss={video.extraCss}

@@ -42,6 +42,7 @@ export interface VideoFxData {
   initialFadeDuration: number; //Tiempo en ms de fade cuando comienza el vídeo (por si el inicio del mismo es abrupto, como el humo)
   finalFadeDuration: number; // Tiempo en ms al acabar el vídeo, por si es abrupto. Sólo se aplica si no hay loop.
   loop: boolean; //Se reproduce en loop?  El loop se aplicará sin fade entre reproducciones, por lo que sólo se deben poner en loop los vídeos cuyo final encaje con una nueva reproducción. Si no, mejor usar varios videoFx y coordinarlos mediante delay y sus fade-outs con los fade-in de los siguientes
+  playFrom?: number; //Permite que el vídeo comience su reproducción desde el ms indicado.
   opacity?: number; //Por defecto es 1
   speed?: number; // Velocidad de reproducción. Velocidad por defecto: 1. Usar 2 para el doble, 0.5 para la mitad, -1 para reproducir en reversa.
   extraCss?: string; //Se utiliza para poder añadir filtros o efectos css que ayuden a integrar el vídeo con el fondo. Funciona bien esto: "mix-blend-mode: exclusion;"
