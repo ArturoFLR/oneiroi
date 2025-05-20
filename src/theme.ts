@@ -23,8 +23,10 @@ export const GLOBAL_COLORS = {
     buttonDarkBlueBg: "#242c39",
   },
   text: {
-    textCaption: "rgb(241, 243, 228)",
-    textCaptionShadow: "rgb(24, 24, 24)",
+    cinematics: {
+      textCaption: "rgb(241, 243, 228)",
+      textCaptionShadow: "rgb(24, 24, 24)",
+    },
   },
   map: {
     backgrGradient1: "#02251a",

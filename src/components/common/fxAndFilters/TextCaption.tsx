@@ -145,8 +145,9 @@ function TextCaption({ textsArray }: TextCaptionProps) {
   const defaultDelay: number = 0;
   const defaultFontSize: TextCaptionFontSize = "medium";
   const defaultFontFamily: string = GLOBAL_FONTS.textCinematics.narratorNeutral;
-  const defaultColor: string = GLOBAL_COLORS.text.textCaption;
-  const defaultTextShadow: string = GLOBAL_COLORS.text.textCaptionShadow;
+  const defaultColor: string = GLOBAL_COLORS.text.cinematics.textCaption;
+  const defaultTextShadow: string =
+    GLOBAL_COLORS.text.cinematics.textCaptionShadow;
   const defaultWidth: number = 80;
   const defaultPosition: TextCaptionPosition = "center";
   const defaultFadeInDuration: number = 300;
