@@ -10,6 +10,8 @@ import {
 } from "./cinematicTypes";
 import CinematicSoundManager from "./CinematicSoundManager";
 import CinematicPreloader from "./CinematicPreloader";
+import { SoundDirectorAPI1 } from "../../classes/sound/singletons";
+import AnimatedCircleButton from "../buttons/AnimatedCircleButton";
 
 interface CinematicDirectorProps {
   cinematicData: CinematicSceneAuto;
@@ -102,6 +104,21 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
     );
   }
 
+  //Se ejecuta si el usuario decide saltarse la cinemática.
+  function skipCinematic() {
+    // Limpiamos todos los timers.
+    shotDurationTimersRef.current.forEach((timer) => {
+      clearTimeout(timer);
+    });
+
+    //Paramos todos los sonidos del entorno.
+    SoundDirectorAPI1.stopAllSounds();
+
+    if (lastShot.onEnd) {
+      lastShot.onEnd(); // Ejecutamos el método onEnd del último plano.
+    }
+  }
+
   // Establece la duración del plano actual mediante un setTimeout y gestiona el cambio al plano siguiente.
   useEffect(() => {
     if (isLoading) return; // Si aún estamos cargando, no hacemos nada.
@@ -172,6 +189,10 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
 
   return (
     <ScreenDarkener color={mode}>
+      <AnimatedCircleButton onClick={skipCinematic}>
+        Saltar
+      </AnimatedCircleButton>
+
       {isLoading ? (
         <CinematicPreloader
           cinematicData={cinematicData}

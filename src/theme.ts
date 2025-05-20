@@ -14,6 +14,14 @@ export const GLOBAL_COLORS = {
     highlightedText: "#fddd5c",
     text: "#fddd5c",
   },
+  icons: {
+    bulbColor: "#fddd5c",
+    bulbGlow: "#ffcc00",
+    npcColor: "#9EB7E5",
+  },
+  buttons: {
+    skipCinematicBg: "#242c39",
+  },
   text: {
     textCaption: "rgb(241, 243, 228)",
     textCaptionShadow: "rgb(24, 24, 24)",
@@ -24,11 +32,6 @@ export const GLOBAL_COLORS = {
     cellInnerBorder: "#61a4b4",
     cellOuterBorder: "#000000",
     cellBackground: "#45626cb7",
-  },
-  icons: {
-    bulbColor: "#fddd5c",
-    bulbGlow: "#ffcc00",
-    npcColor: "#9EB7E5",
   },
   screenDarkener: {
     light: "rgba(0, 0, 0, 0.5)",
