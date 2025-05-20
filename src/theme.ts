@@ -20,7 +20,7 @@ export const GLOBAL_COLORS = {
     npcColor: "#9EB7E5",
   },
   buttons: {
-    skipCinematicBg: "#242c39",
+    buttonDarkBlueBg: "#242c39",
   },
   text: {
     textCaption: "rgb(241, 243, 228)",

@@ -76,7 +76,7 @@ const StyledButton = styled.button`
   height: 110px;
   border: none;
   border-radius: 100%;
-  background: ${GLOBAL_COLORS.buttons.skipCinematicBg};
+  background: ${GLOBAL_COLORS.buttons.buttonDarkBlueBg};
   overflow: hidden;
   user-select: none;
   transition: scale 200ms;
@@ -123,7 +123,7 @@ const StyledButton = styled.button`
     left: 2px;
     right: 2px;
     bottom: 2px;
-    background: ${GLOBAL_COLORS.buttons.skipCinematicBg};
+    background: ${GLOBAL_COLORS.buttons.buttonDarkBlueBg};
     border-radius: 100%;
     z-index: 2;
   }
