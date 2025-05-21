@@ -26,10 +26,9 @@ const MainContainer = styled.div<MainContainerProps>`
   align-items: center;
   max-width: 75%;
   padding: 2.5vh 3.5vw;
-  border: 2px solid ${GLOBAL_COLORS.orange.text};
+  border: 2px solid ${GLOBAL_COLORS.modals.configModals.border};
   border-radius: 15px;
-  background-color: ${GLOBAL_COLORS.black};
-  color: ${GLOBAL_COLORS.orange.text};
+  background-color: ${GLOBAL_COLORS.modals.configModals.background};
   font-family: ${GLOBAL_FONTS.modal.mainText};
 
   ${({ $isClicked }) => {
@@ -46,12 +45,14 @@ const MainContainer = styled.div<MainContainerProps>`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const MainText = styled.p`
+  color: ${GLOBAL_COLORS.modals.configModals.mainText};
   font-size: 2vw;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const SecondaryText = styled.p`
+  color: ${GLOBAL_COLORS.modals.configModals.secondaryText};
   font-size: 1.6vw;
   margin-top: 1rem;
 `;

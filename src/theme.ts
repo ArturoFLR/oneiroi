@@ -6,26 +6,52 @@ export const GLOBAL_FONTS = {
     narratorEmotional: '"Protest Revolution", sans-serif', //Estilo pincel, con partes semitransparentes. Para narraciones con carga emocional.
     narratorNeutral: `"Cabin Condensed", sans-serif`, //Más formal, para narración o subtítulos más neutrales, como el nombre y fecha del lugar.
   },
+  modal: {
+    mainText: `"Tilt Neon", sans-serif`,
+    secondaryText: `"Tilt Neon", sans-serif`,
+  },
+  buttons: {
+    TextButton: `"Mohave", sans-serif`,
+  },
 };
 
 export const GLOBAL_COLORS = {
   orange: {
     glow: "#ffcc00",
     highlightedText: "#fddd5c",
-    text: "#fddd5c",
+    text: "#ffa500",
   },
+  black: "#000000",
+  white: "#ffffff",
   icons: {
     bulbColor: "#fddd5c",
     bulbGlow: "#ffcc00",
     npcColor: "#9EB7E5",
   },
   buttons: {
-    buttonDarkBlueBg: "#242c39",
+    AnimatedCircleButton: {
+      background1: "#242c39",
+      backgorund2: "#ffcc00",
+    },
+    TextButton: {
+      text: "#ffa500",
+      textShadow: "#ffffff",
+      textHover: "#fddd5c",
+    },
+  },
+  modals: {
+    configModals: {
+      mainText: "#ffa500",
+      secondaryText: "#ffa500",
+      background: "#000000",
+      border: "#ffa500",
+    },
+    narrativeModals: {},
   },
   text: {
     cinematics: {
-      textCaption: "rgb(241, 243, 228)",
-      textCaptionShadow: "rgb(24, 24, 24)",
+      textCaption: "#f1f3e4",
+      textCaptionShadow: "#181818",
     },
   },
   map: {
@@ -36,8 +62,8 @@ export const GLOBAL_COLORS = {
     cellBackground: "#45626cb7",
   },
   screenDarkener: {
-    light: "rgba(0, 0, 0, 0.5)",
-    dark: "rgba(0, 0, 0, 0.8)",
-    black: "rgba(0, 0, 0, 1)",
+    light: "#00000080",
+    dark: "#000000cc",
+    black: "#000000",
   },
 };

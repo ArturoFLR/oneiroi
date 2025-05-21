@@ -76,7 +76,7 @@ const StyledButton = styled.button`
   height: 110px;
   border: none;
   border-radius: 100%;
-  background: ${GLOBAL_COLORS.buttons.buttonDarkBlueBg};
+  background: ${GLOBAL_COLORS.buttons.AnimatedCircleButton.background1};
   overflow: hidden;
   user-select: none;
   transition: scale 200ms;
@@ -103,12 +103,12 @@ const StyledButton = styled.button`
       from 0deg,
       rgb(83, 74, 37) 0%,
       rgb(83, 74, 37) 37%,
-      ${GLOBAL_COLORS.orange.glow} 40%,
-      ${GLOBAL_COLORS.orange.glow} 44%,
+      ${GLOBAL_COLORS.buttons.AnimatedCircleButton.backgorund2} 40%,
+      ${GLOBAL_COLORS.buttons.AnimatedCircleButton.backgorund2} 44%,
       rgb(83, 74, 37) 47%,
       rgb(83, 74, 37) 85%,
-      ${GLOBAL_COLORS.orange.glow} 88%,
-      ${GLOBAL_COLORS.orange.glow} 92%,
+      ${GLOBAL_COLORS.buttons.AnimatedCircleButton.backgorund2} 88%,
+      ${GLOBAL_COLORS.buttons.AnimatedCircleButton.backgorund2} 92%,
       rgb(83, 74, 37) 95%
     );
     background-size: 100% 100%;
@@ -123,7 +123,7 @@ const StyledButton = styled.button`
     left: 2px;
     right: 2px;
     bottom: 2px;
-    background: ${GLOBAL_COLORS.buttons.buttonDarkBlueBg};
+    background: ${GLOBAL_COLORS.buttons.AnimatedCircleButton.background1};
     border-radius: 100%;
     z-index: 2;
   }
