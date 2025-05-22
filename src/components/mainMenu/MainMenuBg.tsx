@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import DistortionWrapper from "../common/fxAndFilters/DistortionWrapper";
 import { useLayoutEffect, useState } from "react";
 
-import bgImage from "../../assets/graphics/backgrounds/clouds-stars_02.webp";
+import bgImage from "@assets/graphics/backgrounds/clouds-stars_02.webp";
 import posterImg from "@assets/graphics/backgrounds/main-menu-bg.webp";
 import posterLogo from "@assets/graphics/logo/oneiroi-logo_1.webp";
 
@@ -120,11 +120,11 @@ function MainMenuBg() {
   return (
     <MainContainer>
       <PosterContainer>
-        <Poster src={posterImg} />
+        <Poster src={posterImg} alt="Portada de Oneiroi" />
 
         <LogoContainer>
-          <DistortionWrapper intensity={2.5}>
-            <Logo src={posterLogo} />
+          <DistortionWrapper increment={0.001} intensity={3}>
+            <Logo src={posterLogo} alt="Logo de Oneiroi" />
           </DistortionWrapper>
         </LogoContainer>
       </PosterContainer>
