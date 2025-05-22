@@ -61,6 +61,7 @@ export const GLOBAL_COLORS = {
     cellOuterBorder: "#000000",
     cellBackground: "#45626cb7",
   },
+  mainMenu: {},
   screenDarkener: {
     light: "#00000080",
     dark: "#000000cc",
