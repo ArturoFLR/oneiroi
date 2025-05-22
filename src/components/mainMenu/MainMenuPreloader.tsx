@@ -29,10 +29,10 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
     totalItems += mainMenuInterfaceSounds.length;
 
     // Imágen de fondo
-    totalItems += 1;
+    totalItems += mainMenuImages.length;
 
     // Música
-    totalItems += 1;
+    totalItems += mainMenuMusics.length;
 
     return totalItems;
   }, []);
