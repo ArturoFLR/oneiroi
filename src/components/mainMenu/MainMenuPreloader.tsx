@@ -7,6 +7,7 @@ import {
 } from "../../data/dataToPreload/mainMenuPreloadData";
 import { SoundDirectorAPI1, SoundStore1 } from "../../classes/sound/singletons";
 import { AudioEnvironment } from "../../classes/sound/soundTypes";
+import ScreenDarkener from "../common/ScreenDarkener";
 
 interface MainMenuPreloaderProps {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -155,7 +156,7 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
   }, [loadingProgress, setIsLoading]);
 
   return (
-    <>
+    <ScreenDarkener color="black">
       <LoadingSpinner progress={loadingProgress} />
       <div
         style={{
@@ -171,7 +172,7 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
           Preload
         </p>
       </div>
-    </>
+    </ScreenDarkener>
   );
 }
 
