@@ -4,6 +4,7 @@ import {
   mainMenuImages,
   mainMenuInterfaceSounds,
   mainMenuMusics,
+  mainMenuSounds,
 } from "../../data/dataToPreload/mainMenuPreloadData";
 import { SoundDirectorAPI1, SoundStore1 } from "../../classes/sound/singletons";
 import { AudioEnvironment } from "../../classes/sound/soundTypes";
@@ -20,6 +21,7 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
   const areImagesPreloadingRef = useRef<boolean>(false);
   const areInterfaceSoundsPreloadingRef = useRef<boolean>(false);
   const isMusicPreloadingRef = useRef<boolean>(false);
+  const areUniqueSoundsPreloadingRef = useRef<boolean>(false);
 
   // Calcula el número total de items a cargar, entre imágenes y sonidos.
   const getTotalItemsToLoad = useMemo(() => {
@@ -27,6 +29,9 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
 
     // Sonidos de interfaz
     totalItems += mainMenuInterfaceSounds.length;
+
+    // Sonidos únicos
+    totalItems += mainMenuSounds.length;
 
     // Imágen de fondo
     totalItems += mainMenuImages.length;
@@ -106,6 +111,32 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
     });
   }, [advanceCompletion]);
 
+  const preloadSounds = useCallback(() => {
+    if (areUniqueSoundsPreloadingRef.current) return;
+    areUniqueSoundsPreloadingRef.current = true;
+
+    mainMenuSounds.forEach((sound) => {
+      if (!SoundStore1.audioStore.mainMenu.sounds[sound.soundName]) {
+        SoundDirectorAPI1.preloadSound(
+          AudioEnvironment.MainMenu,
+          "sounds",
+          sound.soundName,
+          sound.soundSrc,
+          sound.config
+        ).then((result) => {
+          if (result) {
+            advanceCompletion();
+          } else {
+            console.error(
+              `Cinematic Director: Error cargando el sonido: ${sound.soundSrc}`
+            );
+            advanceCompletion();
+          }
+        });
+      }
+    });
+  }, [advanceCompletion]);
+
   const preloadImages = useCallback(() => {
     if (areImagesPreloadingRef.current) return;
     areImagesPreloadingRef.current = true;
@@ -129,6 +160,7 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
   // Realiza la precarga elementos.
   useEffect(() => {
     preloadMusic();
+    preloadSounds();
     preloadInterfaceSounds();
     preloadImages();
     //La precarga de fuentes se realiza directamente en el return del componente, generando contenido no visible.
@@ -138,6 +170,7 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
       advanceCompletion();
     }
   }, [
+    preloadSounds,
     preloadImages,
     preloadMusic,
     preloadInterfaceSounds,
