@@ -2,7 +2,7 @@ import { GLOBAL_COLORS } from "../../theme";
 import styled from "styled-components";
 
 interface MainFrameProps {
-  $color: "light" | "dark" | "black";
+  $color: ScreenDarkenerColor;
 }
 
 const bgColorMap = {
@@ -24,8 +24,10 @@ const MainFrame = styled.div<MainFrameProps>`
   z-index: 990;
 `;
 
+export type ScreenDarkenerColor = "light" | "dark" | "black";
+
 interface ScreenDarkenerProps {
-  color?: "light" | "dark" | "black";
+  color?: ScreenDarkenerColor;
   children?: React.ReactNode;
 }
 
