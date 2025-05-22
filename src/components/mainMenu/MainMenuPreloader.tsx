@@ -33,7 +33,7 @@ function MainMenuPreloader({ setIsLoading }: MainMenuPreloaderProps) {
     // Sonidos únicos
     totalItems += mainMenuSounds.length;
 
-    // Imágen de fondo
+    // Imágenes
     totalItems += mainMenuImages.length;
 
     // Música
