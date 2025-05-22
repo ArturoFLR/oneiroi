@@ -7,6 +7,7 @@ import {
 
 import click1Sound from "@assets/audio/sounds/interface/interface-click.mp3";
 
+import blurredImageBg from "@assets/graphics/backgrounds/clouds-stars_02.webp";
 import mainMenuBg from "@assets/graphics/backgrounds/main-menu-bg.webp";
 import mainMenuLogo from "@assets/graphics/logo/oneiroi-logo_1.webp";
 
@@ -21,6 +22,10 @@ export const mainMenuInterfaceSounds: MainMenuInterfaceSoundData[] = [
 ];
 
 export const mainMenuImages: MainMenuImgData[] = [
+  {
+    src: blurredImageBg,
+    alt: "Fondo de nubes y estrellas",
+  },
   {
     src: mainMenuBg,
     alt: "Portada de Oneiroi",
