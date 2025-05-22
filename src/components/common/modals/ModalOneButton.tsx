@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from "styled-components";
-import ScreenDarkener from "../ScreenDarkener";
+import ScreenDarkener, { ScreenDarkenerColor } from "../ScreenDarkener";
 import TextButton from "../../buttons/TextButton";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import { useEffect, useRef, useState } from "react";
@@ -78,6 +78,7 @@ interface ModalOneButtonProps {
   mainText?: string;
   secondaryText?: string;
   buttonText: string;
+  screenDarkenerColor?: ScreenDarkenerColor;
 }
 
 function ModalOneButton({
@@ -85,6 +86,7 @@ function ModalOneButton({
   mainText,
   secondaryText,
   buttonText,
+  screenDarkenerColor,
 }: ModalOneButtonProps) {
   const [isClicked, setIsClicked] = useState(false);
   const timerRef = useRef<number>(0);
@@ -108,7 +110,7 @@ function ModalOneButton({
   }, []);
 
   return (
-    <ScreenDarkener>
+    <ScreenDarkener color={screenDarkenerColor}>
       <MainContainer $isClicked={isClicked}>
         {mainText && <MainText>{mainText}</MainText>}
         {secondaryText && <SecondaryText>{secondaryText}</SecondaryText>}
