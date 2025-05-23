@@ -50,7 +50,7 @@ const MainContainer = styled.div`
     background-image: url(${bgImage});
     background-size: cover;
     background-repeat: no-repeat;
-    filter: brightness(0.9) blur(6px);
+    filter: brightness(0.6) blur(6px);
     z-index: 0;
   }
 `;
