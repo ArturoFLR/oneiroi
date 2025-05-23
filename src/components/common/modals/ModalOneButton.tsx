@@ -2,7 +2,7 @@ import styled, { css, keyframes } from "styled-components";
 import ScreenDarkener, { ScreenDarkenerColor } from "../ScreenDarkener";
 import TextButton from "../../buttons/TextButton";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const clickedAnimation = keyframes`
   0%{
@@ -91,7 +91,7 @@ function ModalOneButton({
   const [isClicked, setIsClicked] = useState(false);
   const timerRef = useRef<number>(0);
 
-  function handleClick() {
+  const handleClick = useCallback(() => {
     setIsClicked(true);
 
     const clickTimer = window.setTimeout(() => {
@@ -99,15 +99,29 @@ function ModalOneButton({
     }, 350);
 
     timerRef.current = clickTimer;
-  }
+  }, [onClick]);
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleClick();
+      }
+    },
+    [handleClick]
+  );
 
   useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    //Limpiamos timers y eventos
     return () => {
       if (timerRef.current) {
         clearTimeout(timerRef.current);
       }
+
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleKeyDown]);
 
   return (
     <ScreenDarkener color={screenDarkenerColor}>
