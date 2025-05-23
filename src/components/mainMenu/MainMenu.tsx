@@ -30,7 +30,7 @@ function MainMenu() {
     );
 
     //Reproducimos con delay el sonido de un gong, haciéndolo coincidir con la aparición del logo.
-    const delay = 7900; //
+    const delay = 7600; //
     const timer = window.setTimeout(() => {
       SoundDirectorAPI1.createAnimatedPanSound(
         AudioEnvironment.MainMenu,
@@ -41,7 +41,7 @@ function MainMenu() {
         0.75,
         1700,
         500,
-        { volume: 0.45, src: gongSound, rate: 0.9 }
+        { volume: 0.35, src: gongSound, rate: 0.8 }
       );
     }, delay);
 

@@ -86,7 +86,7 @@ const LogoContainer = styled.div`
   width: 50%;
   opacity: 0;
   will-change: opacity;
-  animation: ${fadeIn} 2s 8s ease-in-out forwards;
+  animation: ${fadeIn} 2s 7.6s ease-in-out forwards;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
