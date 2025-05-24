@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type GameMainState = "init" | "mainMenu" | "cinematicS"; //Añadir según sea necesario
+export type GameMainState = "init" | "mainMenu" | "cinematic"; //Añadir según sea necesario
 
 interface MainState {
   gameMainState: GameMainState;
@@ -14,11 +14,11 @@ const mainStateSlice = createSlice({
   name: "mainState",
   initialState,
   reducers: {
-    changeMainState: (state, action: PayloadAction<GameMainState>) => {
+    setMainState: (state, action: PayloadAction<GameMainState>) => {
       state.gameMainState = action.payload;
     },
   },
 });
 
-export const { changeMainState } = mainStateSlice.actions;
+export const { setMainState } = mainStateSlice.actions;
 export default mainStateSlice.reducer;
