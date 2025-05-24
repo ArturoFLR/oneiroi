@@ -1,12 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import mainStateReducer from "./slices/mainStateSlice";
 
 export const store = configureStore({
   reducer: {
-    //Añadir los reducers aquí
-    //nombre del estado: nombre del reducer
-    //Ej:
-    //mainState: mainStateReducer,
-    //
+    mainState: mainStateReducer,
   },
 });
 

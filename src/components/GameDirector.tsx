@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import ModalOneButton from "./common/modals/ModalOneButton";
 import { SoundDirectorAPI1 } from "../classes/sound/singletons";
 import MainMenu from "./mainMenu/MainMenu";
-
-export type GameMainState = "init" | "mainMenu"; //Añadir según sea necesario
+import { GameMainState } from "../store/slices/mainStateSlice";
 
 function GameDirector() {
   const [gameMainState, setGameMainState] = useState<GameMainState>("init");
