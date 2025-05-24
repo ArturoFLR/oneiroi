@@ -1,15 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ModalOneButton from "./common/modals/ModalOneButton";
 import { SoundDirectorAPI1 } from "../classes/sound/singletons";
 import MainMenu from "./mainMenu/MainMenu";
-import { GameMainState } from "../store/slices/mainStateSlice";
+import { useAppDispatch, useAppSelector } from "../store/hooks/reduxHooks";
+import { setMainState } from "../store/slices/mainStateSlice";
 
 function GameDirector() {
-  const [gameMainState, setGameMainState] = useState<GameMainState>("init");
+  //Redux
+  const gameMainState = useAppSelector(
+    (state) => state.mainState.gameMainState
+  );
+  const dispatch = useAppDispatch();
+  //Redux Fin
 
   function handleAudioInitClick() {
     SoundDirectorAPI1.initAudio();
-    setGameMainState("mainMenu");
+    dispatch(setMainState("mainMenu"));
   }
 
   useEffect(() => {
