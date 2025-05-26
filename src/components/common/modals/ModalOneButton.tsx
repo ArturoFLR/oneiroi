@@ -24,12 +24,13 @@ const MainContainer = styled.div<MainContainerProps>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-width: 75%;
-  padding: 2.5vh 3.5vw;
+  max-width: 65%;
+  padding: 2.5vh;
   border: 2px solid ${GLOBAL_COLORS.modals.configModals.border};
   border-radius: 15px;
   background-color: ${GLOBAL_COLORS.modals.configModals.background};
   font-family: ${GLOBAL_FONTS.modal.mainText};
+  text-align: center;
 
   ${({ $isClicked }) => {
     if ($isClicked) {
@@ -45,16 +46,18 @@ const MainContainer = styled.div<MainContainerProps>`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const MainText = styled.p`
+  width: 100%;
   color: ${GLOBAL_COLORS.modals.configModals.mainText};
-  font-size: 2vw;
+  font-size: 1.8vw;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const SecondaryText = styled.p`
+  width: 90%;
   color: ${GLOBAL_COLORS.modals.configModals.secondaryText};
-  font-size: 1.6vw;
-  margin-top: 1rem;
+  font-size: 1.4vw;
+  margin-top: 3vh;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
