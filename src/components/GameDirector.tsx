@@ -4,6 +4,8 @@ import { SoundDirectorAPI1 } from "../classes/sound/singletons";
 import MainMenu from "./mainMenu/MainMenu";
 import { useAppDispatch, useAppSelector } from "../store/hooks/reduxHooks";
 import { setMainState } from "../store/slices/mainStateSlice";
+import CinematicDirector from "./cinematics/CinematicDirector";
+import { cinematicIntro } from "../../playground/cinematic/cinematicDemo";
 
 function GameDirector() {
   //Redux
@@ -43,6 +45,10 @@ function GameDirector() {
       )}
 
       {gameMainState === "mainMenu" && <MainMenu />}
+
+      {gameMainState === "cinematic" && (
+        <CinematicDirector mode="black" cinematicData={cinematicIntro} />
+      )}
     </>
   );
 }
