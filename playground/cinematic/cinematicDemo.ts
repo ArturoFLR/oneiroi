@@ -1,13 +1,7 @@
-import { AudioEnvironment } from "../../src/classes/sound/soundTypes";
-import {
-  SoundDirectorAPI1,
-  SoundStore1,
-} from "../../src/classes/sound/singletons";
 import { CinematicSceneAuto } from "../../src/components/cinematics/cinematicTypes";
 import {
   shot1AmbientSound,
   shot1Music,
-  shot2UniqueSounds,
   // shot3Music,
   // shot3AmbientSound,
   shot3UniqueSounds,
@@ -15,11 +9,9 @@ import {
 
 import alienSunset1 from "@assets/graphics/cinematics/intro/alien-landscape_01.webp";
 import alienRuins1 from "@assets/graphics/cinematics/intro/alien-landscape_05.webp";
-import stormyClouds1 from "@assets/graphics/cinematics/intro/stormy-clouds_03.webp";
 import stormyClouds2 from "@assets/graphics/cinematics/intro/stormy-clouds_02.webp";
 import ruins1 from "@assets/graphics/cinematics/intro/alien-landscape_06.webp";
 import ambientSmoke from "@assets/graphics/videofx/atmosphere/Atmosphere_06.webm";
-import fume1 from "@assets/graphics/videofx/effects/Particle_Stream_01.webm";
 import fume2 from "@assets/graphics/videofx/effects/Particle_Stream_02.webm";
 import { GLOBAL_FONTS } from "../../src/theme";
 import { store } from "../../src/store/store";
