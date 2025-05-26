@@ -22,6 +22,8 @@ import ambientSmoke from "@assets/graphics/videofx/atmosphere/Atmosphere_06.webm
 import fume1 from "@assets/graphics/videofx/effects/Particle_Stream_01.webm";
 import fume2 from "@assets/graphics/videofx/effects/Particle_Stream_02.webm";
 import { GLOBAL_FONTS } from "../../src/theme";
+import { store } from "../../src/store/store";
+import { setMainState } from "../../src/store/slices/mainStateSlice";
 
 export const cinematicIntro: CinematicSceneAuto = [
   {
@@ -326,10 +328,7 @@ export const cinematicIntro: CinematicSceneAuto = [
     widePicture: true,
     onEndAudioFadeDuration: 2000,
     onEnd: () => {
-      const soundStoreData = SoundStore1.audioStore.cinematic;
-      console.log(Object.keys(soundStoreData.music));
-      console.log(Object.keys(soundStoreData.sounds));
-      console.log(Object.keys(soundStoreData.soundscapes));
+      store.dispatch(setMainState("mainMenu"));
     },
   },
 ];
