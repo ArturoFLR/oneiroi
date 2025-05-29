@@ -36,7 +36,7 @@ function MainMenu() {
       const hasUserSeenIntro = loadFromLocalStorage("hasSeenIntro");
 
       if (!hasUserSeenIntro) {
-        saveToLocalStorage("hasSeenIntro", "true");
+        saveToLocalStorage("hasSeenIntro", true);
         dispatch(setMainState("cinematic"));
       }
     } else {
