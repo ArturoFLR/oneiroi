@@ -53,7 +53,7 @@ interface CurrentPictureContainerProps {
 const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
   position: relative;
   overflow: hidden;
-  width: ${({ $widePicture }) => ($widePicture ? "70vw" : "40vw")};
+  width: ${({ $widePicture }) => ($widePicture ? "80vw" : "40vw")};
   aspect-ratio: ${({ $widePicture }) =>
     $widePicture ? "1376 / 768" : "1 / 1"};
   border-radius: 10px;
