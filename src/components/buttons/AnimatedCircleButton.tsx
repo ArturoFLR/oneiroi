@@ -72,8 +72,8 @@ const StyledButton = styled.button`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 110px;
-  height: 110px;
+  width: 80px;
+  height: 80px;
   border: none;
   border-radius: 100%;
   background: ${GLOBAL_COLORS.buttons.AnimatedCircleButton.background1};
