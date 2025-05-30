@@ -332,15 +332,15 @@ export const shot9UniqueSounds: CinematicUniqueSounds = [strongThunder1_09];
 const strongThunder1_10: CinematicUniqueSound = {
   category: "sounds",
   soundName: "strongThunder1_10",
-  soundSrc: thunderStrong4,
+  soundSrc: thunderStrong2,
   delay: 0,
   config: {
     volume: 0.7,
     rate: 0.9,
-    src: [thunderStrong4],
+    src: [thunderStrong2],
   },
   loop: false,
-  stereo: 0.35,
+  stereo: 0.45,
 };
 
 export const shot10UniqueSounds: CinematicUniqueSounds = [strongThunder1_10];
@@ -359,7 +359,7 @@ const strongThunder1_11: CinematicUniqueSound = {
     src: [thunderStrong3],
   },
   loop: false,
-  stereo: -0.5,
+  stereo: 0,
 };
 
 export const shot11UniqueSounds: CinematicUniqueSounds = [strongThunder1_11];
@@ -370,15 +370,15 @@ export const shot11UniqueSounds: CinematicUniqueSounds = [strongThunder1_11];
 const strongThunder1_12: CinematicUniqueSound = {
   category: "sounds",
   soundName: "strongThunder1_12",
-  soundSrc: thunderStrong2,
+  soundSrc: thunderStrong4,
   delay: 0,
   config: {
     volume: 0.9,
-    rate: 0.55,
-    src: [thunderStrong2],
+    rate: 0.8,
+    src: [thunderStrong4],
   },
   loop: false,
-  stereo: 0,
+  stereo: -0.65,
 };
 
 export const shot12UniqueSounds: CinematicUniqueSounds = [strongThunder1_12];
@@ -536,7 +536,7 @@ const evilAh1_19: CinematicUniqueSound = {
   delay: 2000,
   config: {
     volume: 1,
-    rate: 1,
+    rate: 0.94,
     src: [evilAh1],
   },
   loop: false,
@@ -550,7 +550,7 @@ const evilAh2_19: CinematicUniqueSound = {
   delay: 2000,
   config: {
     volume: 1,
-    rate: 1.05,
+    rate: 0.98,
     src: [evilAh1],
   },
   loop: false,

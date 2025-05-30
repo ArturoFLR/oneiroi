@@ -45,16 +45,14 @@ export const shot2Fx: CinematicFXData = {
 export const shot3Fx: CinematicFXData = {
   textCaption: [
     {
-      isZoomable: true,
+      isZoomable: false,
       text: "Entre estas ruinas mancilladas",
       delay: 1000,
-      duration: 5800,
+      duration: 3300,
       fadeInDuration: 2000,
       fadeOutDuration: 2000,
       position: "center",
-      positionLeft: 10,
-      positionTop: 5,
-      fontSize: "small",
+      fontSize: "medium",
       fontFamily: GLOBAL_FONTS.textCinematics.narratorEmotional,
       zIndex: 1,
     },
@@ -117,7 +115,7 @@ export const shot3Fx: CinematicFXData = {
       delay: 6500,
       loop: false,
       speed: 0.7,
-      opacity: 0.8,
+      opacity: 0.7,
       extraCss: "mix-blend-mode: exclusion;",
     },
     {
@@ -145,7 +143,7 @@ export const shot4Fx: CinematicFXData = {
       isZoomable: false,
       text: "En estos bosques muertos",
       delay: 0,
-      duration: 5000,
+      duration: 3300,
       fadeInDuration: 2000,
       fadeOutDuration: 2000,
       position: "center",
@@ -374,14 +372,14 @@ export const shot19Fx: CinematicFXData = {
 export const shot20Fx: CinematicFXData = {
   tremor: {
     delay: 0,
-    intensity: "high",
+    intensity: "low",
   },
   lightning: [
     { isZoomable: false, delay: 500, size: "big" },
-    { isZoomable: true, delay: 1000, size: "big" },
+    // { isZoomable: true, delay: 1000, size: "big" },
   ],
   rain: {
-    isZoomable: true,
+    isZoomable: false,
     delay: 0,
     intensity: "high",
     isStarting: false,
@@ -390,18 +388,5 @@ export const shot20Fx: CinematicFXData = {
 };
 
 ///////////////////////////////////////////   SHOT 21  ///////////////////////////////////////////
-
-export const shot21Fx: CinematicFXData = {
-  textCaption: [
-    {
-      text: "¡DESPIERTA!",
-      delay: 3000,
-      fadeInDuration: 50,
-      fontSize: "big",
-      fontFamily: GLOBAL_FONTS.textCinematics.narratorEmotional,
-      isZoomable: false,
-    },
-  ],
-};
 
 ///////////////////////////////////////////   SHOT 22  ///////////////////////////////////////////
