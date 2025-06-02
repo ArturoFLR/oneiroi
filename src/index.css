@@ -28,11 +28,3 @@ body {
   font-size: 1.6rem;
   background-color: #000000;
 }
-
-.mainContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100vw;
-  min-height: 100vh;
-}
