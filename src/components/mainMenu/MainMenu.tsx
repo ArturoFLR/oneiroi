@@ -14,6 +14,8 @@ import {
 import mainMenuMusic from "@assets/audio/music/crystal-oasis.mp3";
 import gongSound from "@assets/audio/sounds/effects/gong/gong.mp3";
 import ModalOneButton from "../common/modals/ModalOneButton";
+import { setCinematicToPlay } from "../../store/slices/cinematicSlice";
+import { introCinematic } from "../../data/cinematics/intro/intro";
 
 function MainMenu() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -37,6 +39,8 @@ function MainMenu() {
 
       if (!hasUserSeenIntro) {
         saveToLocalStorage("hasSeenIntro", true);
+
+        dispatch(setCinematicToPlay(introCinematic));
         dispatch(setMainState("cinematic"));
       }
     } else {

@@ -5,13 +5,13 @@ import MainMenu from "./mainMenu/MainMenu";
 import { useAppDispatch, useAppSelector } from "../store/hooks/reduxHooks";
 import { setMainState } from "../store/slices/mainStateSlice";
 import CinematicDirector from "./cinematics/CinematicDirector";
-import { introCinematic } from "../data/cinematics/intro/intro";
 
 function GameDirector() {
   //Redux
   const gameMainState = useAppSelector(
     (state) => state.mainState.gameMainState
   );
+  const cinematicData = useAppSelector((state) => state.cinematicData);
   const dispatch = useAppDispatch();
   //Redux Fin
 
@@ -47,7 +47,10 @@ function GameDirector() {
       {gameMainState === "mainMenu" && <MainMenu />}
 
       {gameMainState === "cinematic" && (
-        <CinematicDirector mode="black" cinematicData={introCinematic} />
+        <CinematicDirector
+          mode="black"
+          cinematicData={cinematicData.cinematicToPlay}
+        />
       )}
     </>
   );

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CinematicSceneAuto } from "../../components/cinematics/cinematicTypes";
-import { introCinematic } from "../../data/cinematics/intro/intro";
+import { placeholderCinematic } from "../../data/cinematics/placeholder";
 
 // Este slice controla qué cinemática será reproducida si el estado principal cambia a "cinematic"
 
@@ -9,7 +9,7 @@ interface CinematicData {
 }
 
 const initialState: CinematicData = {
-  cinematicToPlay: introCinematic,
+  cinematicToPlay: placeholderCinematic,
 };
 
 const cinematicSlice = createSlice({
