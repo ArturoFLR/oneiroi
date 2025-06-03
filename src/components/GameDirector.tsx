@@ -5,15 +5,21 @@ import MainMenu from "./mainMenu/MainMenu";
 import { useAppDispatch, useAppSelector } from "../store/hooks/reduxHooks";
 import { setMainState } from "../store/slices/mainStateSlice";
 import CinematicDirector from "./cinematics/CinematicDirector";
+import { cinematicsMap } from "../data/cinematics/cinematicsMap";
 
 function GameDirector() {
   //Redux
   const gameMainState = useAppSelector(
     (state) => state.mainState.gameMainState
   );
-  const cinematicData = useAppSelector((state) => state.cinematicData);
+  const cinematicToPlayName = useAppSelector(
+    (state) => state.cinematicData.cinematicToPlayName
+  );
   const dispatch = useAppDispatch();
   //Redux Fin
+
+  // Convertimos el nombre de la cinemática a reproducir a la variable que la contiene:
+  const cinematicToPlayData = cinematicsMap[cinematicToPlayName];
 
   function handleAudioInitClick() {
     SoundDirectorAPI1.initAudio();
@@ -47,10 +53,7 @@ function GameDirector() {
       {gameMainState === "mainMenu" && <MainMenu />}
 
       {gameMainState === "cinematic" && (
-        <CinematicDirector
-          mode="black"
-          cinematicData={cinematicData.cinematicToPlay}
-        />
+        <CinematicDirector mode="black" cinematicData={cinematicToPlayData} />
       )}
     </>
   );

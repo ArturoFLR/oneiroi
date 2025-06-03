@@ -1,23 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { CinematicSceneAuto } from "../../components/cinematics/cinematicTypes";
-import { placeholderCinematic } from "../../data/cinematics/placeholder";
 
 // Este slice controla qué cinemática será reproducida si el estado principal cambia a "cinematic"
 
+// Añadir aquí los nombres únicos de las cinemáticas que vayamos creando.
+export type CinematicName = "intro";
+
 interface CinematicData {
-  cinematicToPlay: CinematicSceneAuto;
+  cinematicToPlayName: CinematicName;
 }
 
 const initialState: CinematicData = {
-  cinematicToPlay: placeholderCinematic,
+  cinematicToPlayName: "intro",
 };
 
 const cinematicSlice = createSlice({
   name: "cinematicData",
   initialState,
   reducers: {
-    setCinematicToPlay: (state, action: PayloadAction<CinematicSceneAuto>) => {
-      state.cinematicToPlay = action.payload;
+    setCinematicToPlay: (state, action: PayloadAction<CinematicName>) => {
+      state.cinematicToPlayName = action.payload;
     },
   },
 });
