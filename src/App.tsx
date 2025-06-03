@@ -13,9 +13,9 @@ function App() {
       <Provider store={store}>
         {/* <SoundTesting /> */}
         {/* <div className="mainContainer">
-        <h1>Mapa Casa de Natalia</h1>
-        <MapGenerator mapCells={nataliaHouseMapCells} />
-      </div> */}
+          <h1>Mapa Casa de Natalia</h1>
+          <MapGenerator mapCells={nataliaHouseMapCells} />
+        </div> */}
         {/* <CinematicTester /> */}
         <GameDirector />
       </Provider>
