@@ -28,16 +28,17 @@ export interface MapCellConfig {
   group?: string;
   name?: string;
   namePosition?: NamePosition;
-  visited?: boolean;
+  numberOfVisits?: number;
   hidden?: boolean;
   reachableCells?: ReachableCell[];
   doorsToShow?: SomeDoorsToShow;
-  event?: string;
   hasPuzzle?: boolean;
   hasNpc?: boolean;
   hasSpirit?: boolean;
   imageSrc?: string;
   items?: Item[];
+  onEnter?: () => void;
+  onExit?: () => void;
 }
 
 export type BordersType = "void" | "cell" | "group"; //"void" se usa cuando la casilla linda con una casilla vacía (void) o con el borde del mapa. "cell" cuando linda con una casilla que no es del mismo grupo (group).
