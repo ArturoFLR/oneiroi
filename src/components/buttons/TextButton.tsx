@@ -1,5 +1,5 @@
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../theme";
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 
 const pulseAnimation = keyframes`
   0% {
@@ -11,37 +11,42 @@ const pulseAnimation = keyframes`
 `;
 
 interface StyledButtonProps {
-  $fontSize: "small" | "medium" | "big";
+  $fontSize: string;
+  $fontFamily: string;
+  $color?: string;
+  $textShadow?: string;
+  $hoverColor?: string;
+  $animated?: boolean;
 }
-
-const fontSizeMap = {
-  small: "1.4vw",
-  medium: "1.7vw",
-  big: "2.6vw",
-};
 
 const StyledButton = styled.button<StyledButtonProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   width: fit-content;
-  color: ${GLOBAL_COLORS.buttons.TextButton.text};
-  font-family: ${GLOBAL_FONTS.buttons.TextButton};
-  font-size: ${({ $fontSize }) => fontSizeMap[$fontSize]};
-  filter: drop-shadow(
-    0.7px 0.7px 0px ${GLOBAL_COLORS.buttons.TextButton.textShadow}
-  );
+  color: ${({ $color }) => $color};
+  font-family: ${({ $fontFamily }) => $fontFamily};
+  font-size: ${({ $fontSize }) => $fontSize};
+  filter: drop-shadow(0.7px 0.7px 0px ${({ $textShadow }) => $textShadow});
   background-color: transparent;
   border: 0px;
   cursor: pointer;
-  animation: ${pulseAnimation} 0.9s ease-in-out infinite alternate;
+  animation: ${({ $animated }) => {
+    if ($animated) {
+      return css`
+        ${pulseAnimation} 0.9s ease-in-out infinite alternate
+      `;
+    } else {
+      return "none";
+    }
+  }};
   transition-duration: 200ms;
 
   &:hover {
     animation-play-state: paused;
     /* animation: none; */
     scale: 1.15;
-    color: ${GLOBAL_COLORS.buttons.TextButton.textHover};
+    color: ${({ $hoverColor }) => $hoverColor};
   }
 `;
 
@@ -54,14 +59,41 @@ const StyledButton = styled.button<StyledButtonProps>`
 interface TextButtonProps {
   onClick: () => void;
   children?: React.ReactNode;
-  fontSize?: "small" | "medium" | "big";
+  fontSize: string; // Usar la dunción "calcFontSize" en /utils para pasarle este valor.
+  fontFamily?: string;
+  color?: string;
+  textShadow?: string;
+  hoverColor?: string;
+  animated?: boolean;
 }
 
-function TextButton({ onClick, children, fontSize }: TextButtonProps) {
-  fontSize = fontSize || "medium"; //Valor por defecto
+function TextButton({
+  onClick,
+  children,
+  fontSize,
+  fontFamily,
+  color,
+  textShadow,
+  hoverColor,
+  animated,
+}: TextButtonProps) {
+  // Valores por defecto
+  fontFamily = fontFamily || GLOBAL_FONTS.buttons.ModalTextButton;
+  color = color || GLOBAL_COLORS.buttons.ModalTextButton.text;
+  textShadow = textShadow || GLOBAL_COLORS.buttons.ModalTextButton.textShadow;
+  hoverColor = hoverColor || GLOBAL_COLORS.buttons.ModalTextButton.textHover;
+  animated = typeof animated === "undefined" ? true : animated;
 
   return (
-    <StyledButton onClick={onClick} $fontSize={fontSize}>
+    <StyledButton
+      onClick={onClick}
+      $fontSize={fontSize}
+      $fontFamily={fontFamily}
+      $color={color}
+      $textShadow={textShadow}
+      $hoverColor={hoverColor}
+      $animated={animated}
+    >
       {children}
     </StyledButton>
   );
