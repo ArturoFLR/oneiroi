@@ -11,7 +11,8 @@ export const GLOBAL_FONTS = {
     secondaryText: `"Tilt Neon", sans-serif`,
   },
   buttons: {
-    TextButton: `"Mohave", sans-serif`,
+    ModalTextButton: `"Mohave", sans-serif`,
+    MenuTextButton: `"Caveat", cursive;`,
   },
 };
 
@@ -33,9 +34,14 @@ export const GLOBAL_COLORS = {
       background1: "#242c39",
       backgorund2: "#ffcc00",
     },
-    TextButton: {
+    ModalTextButton: {
       text: "#ffa500",
       textShadow: "#ffffff",
+      textHover: "#fddd5c",
+    },
+    MenuTextButton: {
+      text: "#FFFFFFFF",
+      textShadow: "#C68401FF",
       textHover: "#fddd5c",
     },
   },
