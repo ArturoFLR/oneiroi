@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import MainMenuPreloader from "./MainMenuPreloader";
-import MainMenuBg from "./MainMenuBg";
+import MainMenuBg from "./styled/MainMenuBg";
 import { SoundDirectorAPI1 } from "../../classes/sound/singletons";
 import { AudioEnvironment } from "../../classes/sound/soundTypes";
 import { useAppDispatch } from "../../store/hooks/reduxHooks";
@@ -15,6 +15,7 @@ import mainMenuMusic from "@assets/audio/music/crystal-oasis.mp3";
 import gongSound from "@assets/audio/sounds/effects/gong/gong.mp3";
 import ModalOneButton from "../common/modals/ModalOneButton";
 import { setCinematicToPlay } from "../../store/slices/cinematicSlice";
+import MainMenuOptions from "./styled/MainMenuOptions";
 
 function MainMenu() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -29,6 +30,11 @@ function MainMenu() {
 
   function handleStorageModalClick() {
     setIsStorageModalShown(false);
+  }
+
+  function handleWatchIntroClick() {
+    dispatch(setCinematicToPlay("intro"));
+    dispatch(setMainState("cinematic"));
   }
 
   //Si el usuario no ha visto la cinemática de introducción, la reproduce.
@@ -96,7 +102,9 @@ function MainMenu() {
 
       {!isLoading && (
         <>
-          <MainMenuBg />
+          <MainMenuBg>
+            <MainMenuOptions onWatchIntroClick={handleWatchIntroClick} />
+          </MainMenuBg>
 
           {isStorageModalShown && (
             <ModalOneButton
