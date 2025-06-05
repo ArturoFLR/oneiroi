@@ -21,9 +21,31 @@ function GameDirector() {
   // Convertimos el nombre de la cinemática a reproducir a la variable que la contiene:
   const cinematicToPlayData = cinematicsMap[cinematicToPlayName];
 
-  function handleAudioInitClick() {
+  function initAudio() {
     SoundDirectorAPI1.initAudio();
     dispatch(setMainState("mainMenu"));
+  }
+
+  type FullscreenElement = HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void>;
+    msRequestFullscreen?: () => void;
+  };
+
+  function goFullscreen() {
+    const element = document.documentElement as FullscreenElement;
+
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  }
+
+  function handleInitGameClick() {
+    initAudio();
+    goFullscreen();
   }
 
   useEffect(() => {
@@ -44,7 +66,7 @@ function GameDirector() {
             mainText="No borres la caché del navegador, o perderás tus partidas guardadas"
             secondaryText="Si juegas desde un móvil, te recomendamos usar auriculares"
             buttonText="Continuar"
-            onClick={handleAudioInitClick}
+            onClick={handleInitGameClick}
             screenDarkenerColor="black"
           />
         </>
