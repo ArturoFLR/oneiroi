@@ -29,5 +29,6 @@ const cinematicSlice = createSlice({
   },
 });
 
-export const { setCinematicToPlay } = cinematicSlice.actions;
+export const { setCinematicToPlay, setIsUserWatchingCinematics } =
+  cinematicSlice.actions;
 export default cinematicSlice.reducer;
