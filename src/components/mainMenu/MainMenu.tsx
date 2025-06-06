@@ -3,7 +3,7 @@ import MainMenuPreloader from "./MainMenuPreloader";
 import MainMenuBg from "./styled/MainMenuBg";
 import { SoundDirectorAPI1 } from "../../classes/sound/singletons";
 import { AudioEnvironment } from "../../classes/sound/soundTypes";
-import { useAppDispatch } from "../../store/hooks/reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks/reduxHooks";
 import { setMainState } from "../../store/slices/mainStateSlice";
 import {
   isLocalStorageAvailable,
@@ -14,25 +14,42 @@ import {
 import mainMenuMusic from "@assets/audio/music/crystal-oasis.mp3";
 import gongSound from "@assets/audio/sounds/effects/gong/gong.mp3";
 import ModalOneButton from "../common/modals/ModalOneButton";
-import { setCinematicToPlay } from "../../store/slices/cinematicSlice";
+import {
+  setCinematicToPlay,
+  setIsUserWatchingCinematics,
+} from "../../store/slices/cinematicSlice";
 import MainMenuOptions from "./styled/MainMenuOptions";
+// import { SavegameData } from "../../utils/loadSaveGame/loadSaveTypes";
 
 function MainMenu() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isStorageModalShown, setIsStorageModalShown] =
     useState<boolean>(false);
+  // const [savedGamesData, setSavedGamesData] = useState<SavegameData[] | null>(
+  //   null
+  // );
 
   const isMusicPlaying = useRef<boolean>(false);
 
   //Redux
   const dispatch = useAppDispatch();
+
+  const isUserWatchingCinematics = useAppSelector(
+    (state) => state.cinematicData.isUserWatchingCinematics
+  );
   //Redux Fin
 
   function handleStorageModalClick() {
     setIsStorageModalShown(false);
   }
 
+  // Funciones para los botones de las opciones principales
+  function handleNewGameClick() {
+    dispatch(setIsUserWatchingCinematics(false));
+  }
+
   function handleWatchIntroClick() {
+    dispatch(setIsUserWatchingCinematics(true));
     dispatch(setCinematicToPlay("intro"));
     dispatch(setMainState("cinematic"));
   }
@@ -96,14 +113,21 @@ function MainMenu() {
     };
   }, [isLoading]);
 
+  // Se encarga de leer los datos de las partidas guardadas
+  // useLayoutEffect(() => {});
+
   return (
     <>
       {isLoading && <MainMenuPreloader setIsLoading={setIsLoading} />}
 
       {!isLoading && (
         <>
-          <MainMenuBg>
-            <MainMenuOptions onWatchIntroClick={handleWatchIntroClick} />
+          <MainMenuBg isUserWatchingCinematics={isUserWatchingCinematics}>
+            <MainMenuOptions
+              setIsStorageModalShown={setIsStorageModalShown}
+              onWatchIntroClick={handleWatchIntroClick}
+              onNewGameClick={handleNewGameClick}
+            />
           </MainMenuBg>
 
           {isStorageModalShown && (
