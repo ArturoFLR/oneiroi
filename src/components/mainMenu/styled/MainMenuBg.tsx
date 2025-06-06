@@ -184,10 +184,11 @@ const OptionsContainer = styled.div<OptionsContainer>`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 interface MainMenuBGProps {
+  isUserWatchingCinematics: boolean;
   children: React.ReactElement;
 }
 
-function MainMenuBg({ children }: MainMenuBGProps) {
+function MainMenuBg({ children, isUserWatchingCinematics }: MainMenuBGProps) {
   const [animationDistance, setAnimationDistance] = useState<string>("0px");
   const [animationToPlay, setAnimationToPlay] = useState<number>(1);
 
@@ -218,8 +219,13 @@ function MainMenuBg({ children }: MainMenuBGProps) {
   }, [calcDistance]);
 
   // Establece un listener para saber cuándo ha terminado una animación, para poder aplicar la siguiente.
-
   useEffect(() => {
+    // Si el usuario viene de ver una cinemática voluntariamente, es porque ya ha visto la animación del menú principal. Nos la ahorramos.
+    if (isUserWatchingCinematics) {
+      setAnimationToPlay(0);
+      return;
+    }
+
     const posterElement = posterContainerElement.current;
 
     // Como Styled Components hashea el nombre de las animaciones, necesitamos saber qué nombre les dará:
@@ -242,7 +248,12 @@ function MainMenuBg({ children }: MainMenuBGProps) {
     return () => {
       posterElement?.removeEventListener("animationend", handleAnimationEnd);
     };
-  }, [calcDistance, animationToPlay, animationDistance]);
+  }, [
+    calcDistance,
+    animationToPlay,
+    animationDistance,
+    isUserWatchingCinematics,
+  ]);
 
   return (
     <MainContainer $animationToPlay={animationToPlay}>
