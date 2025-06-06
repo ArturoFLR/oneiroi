@@ -1,9 +1,9 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import TextButton from "../../buttons/TextButton";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import calcFontSize from "../../../utils/calcFontSize";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
-// import MainMenuLoadGame from "./MainMenuLoadGame";
+import MainMenuLoadGame from "./MainMenuLoadGame";
 
 const skewAnim = keyframes`
 	0% {
@@ -29,38 +29,60 @@ const MainContainer = styled.div`
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const ButtonAnimationWrapper1 = styled.div`
+interface ButtonAnimationWrapperProps {
+  $playAnimation: boolean;
+}
+
+const ButtonAnimationWrapper = styled.div<ButtonAnimationWrapperProps>`
   width: fit-content;
   transform-origin: bottom;
-  transform: rotateX(-90deg);
-  animation: ${skewAnim} 1.5s 0.1s ease-in-out forwards;
+
+  ${({ $playAnimation }) =>
+    $playAnimation ? "transform: rotateX(-90deg);" : null}
+
+  animation: ${({ $playAnimation }) => {
+    if ($playAnimation) {
+      return css`
+        ${skewAnim} 1.5s 0.1s ease-in-out forwards
+      `;
+    } else return "none";
+  }};
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const ButtonAnimationWrapper2 = styled.div`
-  width: fit-content;
-  transform-origin: bottom;
-  transform: rotateX(-90deg);
-  animation: ${skewAnim} 1.5s 0.4s ease-in-out forwards;
+const ButtonAnimationWrapper2 = styled(ButtonAnimationWrapper)`
+  animation: ${({ $playAnimation }) => {
+    if ($playAnimation) {
+      return css`
+        ${skewAnim} 1.5s 0.4s ease-in-out forwards
+      `;
+    } else return "none";
+  }};
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const ButtonAnimationWrapper3 = styled.div`
-  width: fit-content;
-  transform-origin: bottom;
-  transform: rotateX(-90deg);
-  animation: ${skewAnim} 1.5s 0.7s ease-in-out forwards;
+const ButtonAnimationWrapper3 = styled(ButtonAnimationWrapper)`
+  animation: ${({ $playAnimation }) => {
+    if ($playAnimation) {
+      return css`
+        ${skewAnim} 1.5s 0.7s ease-in-out forwards
+      `;
+    } else return "none";
+  }};
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const ButtonAnimationWrapper4 = styled.div`
-  width: fit-content;
-  transform-origin: bottom;
-  transform: rotateX(-90deg);
-  animation: ${skewAnim} 1.5s 1s ease-in-out forwards;
+const ButtonAnimationWrapper4 = styled(ButtonAnimationWrapper)`
+  animation: ${({ $playAnimation }) => {
+    if ($playAnimation) {
+      return css`
+        ${skewAnim} 1.5s 1s ease-in-out forwards
+      `;
+    } else return "none";
+  }};
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -70,17 +92,29 @@ const ButtonAnimationWrapper4 = styled.div`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 interface MainMenuOptionsProps {
+  setIsStorageModalShown: React.Dispatch<React.SetStateAction<boolean>>;
+  onNewGameClick: () => void;
   onWatchIntroClick: () => void;
 }
 
-function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
+function MainMenuOptions({
+  setIsStorageModalShown,
+  onWatchIntroClick,
+  onNewGameClick,
+}: MainMenuOptionsProps) {
   const [optionsType, setOptionsType] = useState<"main" | "load">("main");
   const [buttonsTextSize, setButtonsTextSize] = useState<string>("16px");
+  const [backButtonSize, setBackButtonSize] = useState<string>("16px");
+  const [noStorageWarningSize, setNoStorageWarningSize] =
+    useState<string>("16px");
 
   const mainContainerElement = useRef<HTMLDivElement>(null);
+  const hasTextAnimationPlayed = useRef<boolean>(false);
 
   // Proporción de los textos
   const buttonTextProportion = 9;
+  const backButtonProportion = 12;
+  const noStorageWarningProportion = 17;
 
   function placeholder() {
     console.log("Click!");
@@ -91,13 +125,22 @@ function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
     setButtonsTextSize(
       calcFontSize(mainContainerElement.current, buttonTextProportion, 37)
     );
+
+    setBackButtonSize(
+      calcFontSize(mainContainerElement.current, backButtonProportion, 25)
+    );
+
+    setNoStorageWarningSize(
+      calcFontSize(mainContainerElement.current, noStorageWarningProportion, 20)
+    );
   }, []);
 
   function onContinueClick() {
+    hasTextAnimationPlayed.current = true;
     setOptionsType("load");
   }
 
-  function handleExitContinueClick() {
+  function handleBackClick() {
     setOptionsType("main");
   }
 
@@ -125,9 +168,11 @@ function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
     <MainContainer ref={mainContainerElement}>
       {optionsType === "main" && (
         <>
-          <ButtonAnimationWrapper1>
+          <ButtonAnimationWrapper
+            $playAnimation={!hasTextAnimationPlayed.current}
+          >
             <TextButton
-              onClick={placeholder}
+              onClick={onNewGameClick}
               fontSize={buttonsTextSize}
               animated={false}
               color={GLOBAL_COLORS.buttons.MenuTextButton.text}
@@ -137,9 +182,11 @@ function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
             >
               Nueva Partida
             </TextButton>
-          </ButtonAnimationWrapper1>
+          </ButtonAnimationWrapper>
 
-          <ButtonAnimationWrapper2>
+          <ButtonAnimationWrapper2
+            $playAnimation={!hasTextAnimationPlayed.current}
+          >
             <TextButton
               onClick={onContinueClick}
               fontSize={buttonsTextSize}
@@ -153,7 +200,9 @@ function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
             </TextButton>
           </ButtonAnimationWrapper2>
 
-          <ButtonAnimationWrapper3>
+          <ButtonAnimationWrapper3
+            $playAnimation={!hasTextAnimationPlayed.current}
+          >
             <TextButton
               onClick={onWatchIntroClick}
               fontSize={buttonsTextSize}
@@ -167,7 +216,9 @@ function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
             </TextButton>
           </ButtonAnimationWrapper3>
 
-          <ButtonAnimationWrapper4>
+          <ButtonAnimationWrapper4
+            $playAnimation={!hasTextAnimationPlayed.current}
+          >
             <TextButton
               onClick={placeholder}
               fontSize={buttonsTextSize}
@@ -183,7 +234,15 @@ function MainMenuOptions({ onWatchIntroClick }: MainMenuOptionsProps) {
         </>
       )}
 
-      {/* {optionsType === "load" && <MainMenuLoadGame />} */}
+      {optionsType === "load" && (
+        <MainMenuLoadGame
+          setIsStorageModalShown={setIsStorageModalShown}
+          onBackClick={handleBackClick}
+          titleTextSize={buttonsTextSize}
+          backButtonTextSize={backButtonSize}
+          noStorageWarningTextSize={noStorageWarningSize}
+        />
+      )}
     </MainContainer>
   );
 }
