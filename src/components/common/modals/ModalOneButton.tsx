@@ -123,6 +123,8 @@ function ModalOneButton({
   const mainTextProportion = 22;
   const secondaryTextProportin = 28;
 
+  // Cambiamos isClicked a true para ejecutar la animación (hacerse pequeño).
+  // Luego creamos un timer para ejecutar el onClick que nos llega por props cuando acabe la animación.
   const handleClick = useCallback(() => {
     setIsClicked(true);
 
