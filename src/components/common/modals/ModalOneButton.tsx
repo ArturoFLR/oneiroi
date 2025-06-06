@@ -31,7 +31,7 @@ const MainContainer = styled.div<MainContainerProps>`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-width: 65%;
+  width: 65%;
   padding: 2.5vh 1.5vw;
   border: 2px solid ${GLOBAL_COLORS.modals.configModals.border};
   border-radius: 15px;
@@ -50,7 +50,7 @@ const MainContainer = styled.div<MainContainerProps>`
   }}
 
   @media (max-width: 600px) {
-    max-width: 90%;
+    width: 90%;
   }
 `;
 
@@ -111,17 +111,17 @@ function ModalOneButton({
   screenDarkenerColor,
 }: ModalOneButtonProps) {
   const [isClicked, setIsClicked] = useState(false);
-  const [buttonTextSize, setButtonTextSize] = useState<string>("18px");
-  const [mainTextSize, setMainTextSize] = useState<string>("22px");
-  const [secondaryTextSize, setSecondaryTextSize] = useState<string>("16px");
+  const [buttonTextSize, setButtonTextSize] = useState<string>("0px");
+  const [mainTextSize, setMainTextSize] = useState<string>("0px");
+  const [secondaryTextSize, setSecondaryTextSize] = useState<string>("0px");
 
   const mainContainerElement = useRef<HTMLDivElement>(null);
   const timerRef = useRef<number>(0);
 
   // Proporción de los textos
-  const buttonTextProportion = 16;
-  const mainTextProportion = 22;
-  const secondaryTextProportin = 28;
+  const buttonTextProportion = 23;
+  const mainTextProportion = 31;
+  const secondaryTextProportin = 36;
 
   // Cambiamos isClicked a true para ejecutar la animación (hacerse pequeño).
   // Luego creamos un timer para ejecutar el onClick que nos llega por props cuando acabe la animación.
@@ -161,13 +161,13 @@ function ModalOneButton({
   // Recalcula el tamaño de las distintas fuentes usando la utility calcFontSize
   const setNewFontSize = useCallback(() => {
     setButtonTextSize(
-      calcFontSize(mainContainerElement.current, buttonTextProportion)
+      calcFontSize(mainContainerElement.current, buttonTextProportion, 28)
     );
     setMainTextSize(
-      calcFontSize(mainContainerElement.current, mainTextProportion)
+      calcFontSize(mainContainerElement.current, mainTextProportion, 19)
     );
     setSecondaryTextSize(
-      calcFontSize(mainContainerElement.current, secondaryTextProportin)
+      calcFontSize(mainContainerElement.current, secondaryTextProportin, 16)
     );
   }, []);
 
