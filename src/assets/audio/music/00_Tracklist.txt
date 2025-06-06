@@ -1,0 +1,2 @@
+track_01 = Icewind Dale, Jeremy Soule.
+crystal-oasis = Guild Wars, Jeremy Soule.
