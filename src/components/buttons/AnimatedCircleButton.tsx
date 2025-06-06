@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../theme";
 import styled, { css, keyframes } from "styled-components";
+import calcFontSize from "../../utils/calcFontSize";
 
 const borderGlow = keyframes`
   0% {
@@ -36,12 +37,15 @@ const reduceScale = keyframes`
 
 interface PositionerContainerProps {
   $animateClick: boolean;
+  $windowWidth: number;
+  $windowHeight: number;
 }
 
 const PositionerContainer = styled.div<PositionerContainerProps>`
   position: absolute;
   top: 5%;
-  left: 90%;
+  left: ${({ $windowWidth, $windowHeight }) =>
+    $windowWidth > $windowHeight ? "90%" : "75%"};
 
   ${({ $animateClick }) => {
     return css`
@@ -52,13 +56,17 @@ const PositionerContainer = styled.div<PositionerContainerProps>`
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const TextContainer = styled.div`
+interface TextContainerProps {
+  $fontSize: string;
+}
+
+const TextContainer = styled.div<TextContainerProps>`
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   color: ${GLOBAL_COLORS.orange.text};
-  font-size: 2rem;
+  font-size: ${({ $fontSize }) => $fontSize};
   font-weight: 500;
   font-family: ${GLOBAL_FONTS.map.cellName};
   z-index: 3;
@@ -142,7 +150,14 @@ interface SkipCinematicProps {
 
 function AnimatedCircleButton({ onClick, children }: SkipCinematicProps) {
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [textSize, setTextSize] = useState<string>("18px");
+  const [windowSize, setWindowSize] = useState<number[]>([0, 0]);
+
+  const positionerContainerElement = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<number>(0);
+
+  //Proporción de tamaño del texto respecto a su contenedor
+  const buttonTextProportion = 4;
 
   function handleClick() {
     setIsClicked(true);
@@ -154,6 +169,41 @@ function AnimatedCircleButton({ onClick, children }: SkipCinematicProps) {
     timeoutRef.current = timeout;
   }
 
+  // Al inicio calcula el tamaño de las fuentes usando la utility calcFontSize (para el texto)
+  // y el ancho / alto de la pantalla (para posicionar el PositionerContainer)
+  // Establece un listener para recalcular cuando hay un resize de window.
+  useLayoutEffect(() => {
+    function setNewFontSize() {
+      setTextSize(
+        calcFontSize(
+          positionerContainerElement.current,
+          buttonTextProportion,
+          18
+        )
+      );
+    }
+
+    function setNewWindowSize() {
+      setWindowSize([window.innerWidth, window.innerHeight]);
+    }
+
+    function updateFontsAndWindow() {
+      setNewFontSize();
+      setNewWindowSize();
+    }
+
+    //Cálculo inicial
+    updateFontsAndWindow();
+
+    //Listener para recalcular si hay resize
+    window.addEventListener("resize", updateFontsAndWindow);
+
+    return () => {
+      window.removeEventListener("resize", updateFontsAndWindow);
+    };
+  }, [buttonTextProportion]);
+
+  // Eliminación de Timers
   useEffect(() => {
     return () => {
       window.clearTimeout(timeoutRef.current);
@@ -161,9 +211,14 @@ function AnimatedCircleButton({ onClick, children }: SkipCinematicProps) {
   }, []);
 
   return (
-    <PositionerContainer $animateClick={isClicked}>
+    <PositionerContainer
+      ref={positionerContainerElement}
+      $animateClick={isClicked}
+      $windowWidth={windowSize[0]}
+      $windowHeight={windowSize[1]}
+    >
       <StyledButton onClick={handleClick}>
-        <TextContainer>{children}</TextContainer>
+        <TextContainer $fontSize={textSize}>{children}</TextContainer>
       </StyledButton>
     </PositionerContainer>
   );
