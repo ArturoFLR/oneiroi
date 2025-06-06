@@ -17,7 +17,7 @@ export function playMusic() {
     AudioEnvironment.Cinematic,
     "music",
     "soule1",
-    "../../src/assets/audio/music/track_01.mp3",
+    "../../src/assets/audio/music/crystal-oasis.mp3",
     {
       volume: 1,
       src: "",
@@ -302,7 +302,7 @@ export async function createLoop2() {
     AudioEnvironment.Cinematic,
     "music",
     "soule2",
-    "../../src/assets/audio/music/track_01.mp3",
+    "../../src/assets/audio/music/crystal-oasis.mp3",
     8000,
     7000
   );
