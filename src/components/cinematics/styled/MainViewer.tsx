@@ -91,6 +91,10 @@ const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
       `;
     }
   }}
+
+  @media screen and (orientation: portrait) {
+    width: 99vw;
+  }
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
