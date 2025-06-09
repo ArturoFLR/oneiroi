@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // Este slice controla qué cinemática será reproducida si el estado principal cambia a "cinematic"
 
 // Añadir aquí los nombres únicos de las cinemáticas que vayamos creando.
-export type CinematicName = "intro";
+export type CinematicName = "intro" | "alisedaPark01";
 
 interface CinematicData {
   cinematicToPlayName: CinematicName; // Qué cinemática se reproduce si cambiamos el estado generar a "cinematic"
