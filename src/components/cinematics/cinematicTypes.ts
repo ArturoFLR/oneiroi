@@ -144,6 +144,7 @@ export interface CinematicMusic {
 
 export interface CinematicShot {
   id: number;
+  isManual?: boolean; // Indica si es necesario pulsar un botón para pasar al plano siguiente. Por defecto es "false" (planos automáticos)
   mainImageUrl?: string; //Si no se define, se aplica el "backgroundColor"
   mainImageAlt?: string; //Texto alternativo para la imagen
   backgroundColor?: string; //Color que sustituye a la imagen de fondo
