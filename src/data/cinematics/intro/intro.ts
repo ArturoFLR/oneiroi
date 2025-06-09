@@ -1,6 +1,6 @@
 import { store } from "../../../store/store";
 import { setMainState } from "../../../store/slices/mainStateSlice";
-import { CinematicSceneAuto } from "../../../components/cinematics/cinematicTypes";
+import { CinematicScene } from "../../../components/cinematics/cinematicTypes";
 import { SoundDirectorAPI1 } from "../../../classes/sound/singletons";
 import { AudioEnvironment } from "../../../classes/sound/soundTypes";
 import { GLOBAL_COLORS } from "../../../theme";
@@ -68,7 +68,7 @@ import shot23Img from "@assets/graphics/cinematics/intro/jhonas-waking_14.webp";
 import shot24Img from "@assets/graphics/cinematics/intro/building-at-night_01.webp";
 
 ///////////////////////////////////////////////////////// SHOTS DATA ///////////////////////////////////////////////////////
-export const introCinematic: CinematicSceneAuto = [
+export const introCinematic: CinematicScene = [
   {
     id: 1,
     backgroundColor: GLOBAL_COLORS.black,

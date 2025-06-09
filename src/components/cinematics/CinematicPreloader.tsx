@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LoadingSpinner from "../common/LoadingSpinner";
-import { CinematicMusic, CinematicSceneAuto } from "./cinematicTypes";
+import { CinematicMusic, CinematicScene } from "./cinematicTypes";
 import { SoundDirectorAPI1, SoundStore1 } from "../../classes/sound/singletons";
 import { AudioEnvironment } from "../../classes/sound/soundTypes";
 
 interface LoaderProps {
-  cinematicData: CinematicSceneAuto;
+  cinematicData: CinematicScene;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 

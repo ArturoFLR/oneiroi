@@ -142,7 +142,7 @@ export interface CinematicMusic {
   fadeOutDuration?: number; //Duración del fade-out de la música. Si no se indica, se detiene inmediatamente.
 }
 
-export interface CinematicShotAuto {
+export interface CinematicShot {
   id: number;
   mainImageUrl?: string; //Si no se define, se aplica el "backgroundColor"
   mainImageAlt?: string; //Texto alternativo para la imagen
@@ -163,9 +163,9 @@ export interface CinematicShotAuto {
   onEnd?: () => void; // Usar en el último plano, para decidir a qué parte del juego vamos al acabar la cinemática.
 }
 
-export type CinematicSceneAuto = CinematicShotAuto[];
+export type CinematicScene = CinematicShot[];
 
-// Versiones simplificadas de CinematicShotAuto, sólo con los datos necesarios para el componente MainViewer.
+// Versiones simplificadas de CinematicShot, sólo con los datos necesarios para el componente MainViewer.
 export interface MainViewerActualShotData {
   id: number;
   mainImageUrl?: string; //Si no se define, se aplica el "backgroundColor"
@@ -190,7 +190,7 @@ export interface MainViewerNextShotData {
   specialFX: CinematicFXData | null;
 }
 
-// Versión simplificada de  CinematicShotAuto, sólo con los datos necesarios para el componente CinematicSoundManager.
+// Versión simplificada de  CinematicShot, sólo con los datos necesarios para el componente CinematicSoundManager.
 export interface CinematicSoundManagerShotData {
   ambientSound?: CinematicAmbientSound | number | null;
   uniqueSounds?: CinematicUniqueSounds | null;

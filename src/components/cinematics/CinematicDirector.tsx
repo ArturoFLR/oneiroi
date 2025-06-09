@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import ScreenDarkener from "../common/ScreenDarkener";
 import MainViewer from "./styled/MainViewer";
 import {
-  CinematicSceneAuto,
+  CinematicScene,
   CinematicSoundManagerData,
   MainViewerActualShotData,
   MainViewerNextShotData,
@@ -14,7 +14,7 @@ import { SoundDirectorAPI1 } from "../../classes/sound/singletons";
 import AnimatedCircleButton from "../buttons/AnimatedCircleButton";
 
 interface CinematicDirectorProps {
-  cinematicData: CinematicSceneAuto;
+  cinematicData: CinematicScene;
   mode: "light" | "dark" | "black";
 }
 
@@ -22,7 +22,7 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [actualShotIndex, setActualShotIndex] = useState<number>(0);
 
-  const cinematicDataRef = useRef<CinematicSceneAuto>(cinematicData); // Hacemos una copia para evitar modificar la prop original (rompemos la inmutabilidad del componente => malas prácticas).
+  const cinematicDataRef = useRef<CinematicScene>(cinematicData); // Hacemos una copia para evitar modificar la prop original (rompemos la inmutabilidad del componente => malas prácticas).
   const shotDurationTimersRef = useRef<number[]>([]); // Los timers de cada plano, para poder limpiarlos desde useEffect.
   const isSpecialActionsExecutedRef = useRef<boolean>(false);
 
@@ -125,7 +125,7 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
 
     if (actualShotIndex <= cinematicData.length - 1) {
       const shotDurationTimer = window.setTimeout(() => {
-        isSpecialActionsExecutedRef.current = false;
+        isSpecialActionsExecutedRef.current = false; // EL siguiente useEffect se encargará de pasar este flag a "true" cuando las ejecute.
         setActualShotIndex((prevIndex) => prevIndex + 1); // Cambiamos al siguiente plano
       }, currentShotDuration);
 
