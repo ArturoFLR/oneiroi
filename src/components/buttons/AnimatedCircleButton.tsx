@@ -43,9 +43,9 @@ interface PositionerContainerProps {
 
 const PositionerContainer = styled.div<PositionerContainerProps>`
   position: absolute;
-  top: 5%;
+  bottom: 3%;
   left: ${({ $windowWidth, $windowHeight }) =>
-    $windowWidth > $windowHeight ? "90%" : "75%"};
+    $windowWidth > $windowHeight ? "2%" : "4%"};
 
   ${({ $animateClick }) => {
     return css`
@@ -74,14 +74,21 @@ const TextContainer = styled.div<TextContainerProps>`
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const StyledButton = styled.button`
+interface StyledButtonProps {
+  $windowWidth: number;
+  $windowHeight: number;
+}
+
+const StyledButton = styled.button<StyledButtonProps>`
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 80px;
-  height: 80px;
+  width: ${({ $windowWidth, $windowHeight }) =>
+    $windowWidth >= $windowHeight && $windowWidth < 670 ? "60px" : "80px"};
+  height: ${({ $windowWidth, $windowHeight }) =>
+    $windowWidth >= $windowHeight && $windowWidth < 670 ? "60px" : "80px"};
   border: none;
   border-radius: 100%;
   background: ${GLOBAL_COLORS.buttons.AnimatedCircleButton.background1};
@@ -217,7 +224,11 @@ function AnimatedCircleButton({ onClick, children }: SkipCinematicProps) {
       $windowWidth={windowSize[0]}
       $windowHeight={windowSize[1]}
     >
-      <StyledButton onClick={handleClick}>
+      <StyledButton
+        onClick={handleClick}
+        $windowWidth={windowSize[0]}
+        $windowHeight={windowSize[1]}
+      >
         <TextContainer $fontSize={textSize}>{children}</TextContainer>
       </StyledButton>
     </PositionerContainer>
