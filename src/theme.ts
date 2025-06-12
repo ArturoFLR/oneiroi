@@ -6,6 +6,11 @@ export const GLOBAL_FONTS = {
     narratorEmotional: '"Protest Revolution", sans-serif', //Estilo pincel, con partes semitransparentes. Para narraciones con carga emocional.
     narratorNeutral: `"Cabin Condensed", sans-serif`, //Más formal, para narración o subtítulos más neutrales, como el nombre y fecha del lugar.
   },
+  manualText: {
+    narrator: `"Cabin Condensed", sans-serif`,
+    dialogs: `"Cabin Condensed", sans-serif`,
+    highlight: `"Cabin Condensed", sans-serif`,
+  },
   modal: {
     mainText: `"Tilt Neon", sans-serif`,
     secondaryText: `"Tilt Neon", sans-serif`,
@@ -58,6 +63,17 @@ export const GLOBAL_COLORS = {
     cinematics: {
       textCaption: "#f1f3e4",
       textCaptionShadow: "#181818",
+    },
+    manualText: {
+      narrator: "#f1f3e4",
+      dialogs: "#f1f3e4",
+      highlight: "#f1f3e4",
+      textShadow: "#181818",
+      npcColor1: "#7BDF96FF",
+      npcColor2: "#C7DDFCFF",
+      npcColor3: "#E7F495FF",
+      npcColor4: "#F59494FF",
+      npcTextShadow: "#FDFDFDFF",
     },
   },
   map: {
