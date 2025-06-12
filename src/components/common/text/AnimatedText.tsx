@@ -12,6 +12,7 @@ const AnimatedParagraph = styled.p<AnimatedParagraphProps>`
   width: 100%;
   font-size: ${({ $fontSize }) => $fontSize};
   font-family: ${({ $fontFamily }) => $fontFamily};
+  line-height: 125%;
   color: ${({ $color }) => $color};
 `;
 
@@ -46,8 +47,8 @@ function AnimatedText({
 
   useEffect(() => {
     textIntervalRef.current = window.setInterval(() => {
-      if (actualTextIndexRef.current < text.length - 1) {
-        setTextToShow((prev) => prev + text[actualTextIndexRef.current]);
+      if (actualTextIndexRef.current < text.length) {
+        setTextToShow(textToShow + text[actualTextIndexRef.current]);
         actualTextIndexRef.current++;
       } else {
         window.clearInterval(textIntervalRef.current);
@@ -61,7 +62,7 @@ function AnimatedText({
     return () => {
       window.clearInterval(textIntervalRef.current);
     };
-  }, [animationTime, text, onEnd]);
+  }, [animationTime, text, textToShow, onEnd]);
 
   return (
     <AnimatedParagraph
