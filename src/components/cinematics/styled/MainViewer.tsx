@@ -7,6 +7,7 @@ import {
 } from "../cinematicTypes";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CinematicFxFrame from "./CinematicFxFrame";
+import AnimatedTextFrame from "../../common/fxAndFilters/AnimatedTextFrame";
 
 const tremorLight = keyframes`
   0%, 100% { transform: translate(0, 0) rotate(0); }
@@ -35,11 +36,31 @@ const tremorHigh = keyframes`
   90% { transform: translate(-4px, 7px) rotate(2.2deg); }
 `;
 
+interface MainContainerPositionerProps {
+  $windowWidth: number;
+  $windowHeight: number;
+}
+
+const MainContainerPositioner = styled.div<MainContainerPositionerProps>`
+  ${({ $windowWidth, $windowHeight }) => {
+    if ($windowWidth >= $windowHeight) {
+      return css`
+        position: relative;
+      `;
+    } else {
+      return css`
+        position: absolute;
+        top: 0.5vh;
+      `;
+    }
+  }}
+`;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const MainContainer = styled.div`
   position: relative;
-  overflow: hidden;
+  /* overflow: hidden; */
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +79,7 @@ const CurrentPictureContainer = styled.div<CurrentPictureContainerProps>`
     $widePicture ? "1376 / 768" : "1 / 1"};
   border-radius: 10px;
   background-color: ${({ $bgColor }) => ($bgColor ? $bgColor : "transparent")};
+  margin: auto;
   z-index: 1;
   transform-origin: center;
 
@@ -214,6 +236,7 @@ const CurrentPictureAndZoomableFxWrapper = styled.div<CurrentPictureAndFxWrapper
     $zoomData ? $zoomData.zoomStartPosition.left : 0}%;
   width: 100%;
   height: 100%;
+  margin: auto;
 
   ${({ $zoomData, $shotDuration }) => {
     if ($zoomData)
@@ -230,6 +253,7 @@ const NextPictureAndZoomableFxWrapper = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
+  margin: auto;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,11 +263,16 @@ const NextPictureAndZoomableFxWrapper = styled.div`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 interface MainViewerProps {
+  onNextShotClick: () => void;
   actualShot: MainViewerActualShotData;
   nextShot: null | MainViewerNextShotData;
 }
 
-function MainViewer({ actualShot, nextShot }: MainViewerProps) {
+function MainViewer({
+  actualShot,
+  nextShot,
+  onNextShotClick,
+}: MainViewerProps) {
   const [applyFade, setApplyFade] = useState<boolean>(false);
   const [isZoomAPIAnimPlaying, setIsZoomAPIAnimPlaying] =
     useState<boolean>(false);
@@ -251,6 +280,8 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     useState<boolean>(false);
   const [isNextContainerTrembling, setIsNextContainerTrembling] =
     useState<boolean>(false);
+  const [isManualTextShown, setIsManualTextShown] = useState<boolean>(false);
+  const [windowSize, setWindowSize] = useState<number[]>([0, 0]);
 
   const nextPictureContainerElement = useRef<HTMLDivElement>(null);
   const currentPictureAndZoomableFxWrapperElement =
@@ -291,13 +322,98 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     animData.current.shotId = -1;
   }
 
+  // En esta función se incluye el código que debe ejecutarse en MainViewer para cambiar de plano manualmente,
+  // al pulsar el botón "Siguiente" en una cinemática manual. Incluye la función que llega de CinematicDirector,
+  // con el código que debe ejecutarse en ese componente también, y si hay un fundido se hará mediante un timer.
+  const nextShotClickTimerRef = useRef<number>(0);
+
+  function handleNextShotClick() {
+    if (actualShot.shotTransition === "cut") {
+      onNextShotClick();
+    } else {
+      setApplyFade(true);
+      const nextShotButtonTimer = window.setTimeout(() => {
+        onNextShotClick();
+      }, actualShot.fadeDuration);
+
+      nextShotClickTimerRef.current = nextShotButtonTimer;
+    }
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////  MANUAL TEXT  ////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Esta función devuelve el componente AnimatedTextFrame, si corresponde. Se usa en el "return" de MainViewer
+  function generateManualText() {
+    if (actualShot.specialFX?.manualText) {
+      const manualTextData = actualShot.specialFX.manualText;
+
+      const nextShotIsContinuationInfo =
+        nextShot?.specialFX?.manualText?.isContinuation;
+      const nextShotIsContinuation = nextShotIsContinuationInfo
+        ? nextShotIsContinuationInfo
+        : false;
+
+      return (
+        <AnimatedTextFrame
+          isContinuation={manualTextData.isContinuation}
+          nextShotIsContinuation={nextShotIsContinuation}
+          text={manualTextData.text}
+          size={manualTextData.size}
+          npcName={manualTextData.npcName}
+          npcColor={manualTextData.npcColor}
+          fontFamily={manualTextData.fontFamily}
+          color={manualTextData.color}
+          animationTime={manualTextData.animationTime}
+          textProportion={manualTextData.textProportion}
+          buttonProportion={manualTextData.buttonProportion}
+          handleNextShotClick={handleNextShotClick}
+        />
+      );
+    } else return null;
+  }
+
+  // Genera el delay indicado por el usuario para mostrar el texto.
+  useLayoutEffect(() => {
+    // Comenzamos no mostrando el texto si el plano no tiene este efecto, o lo tiene con delay.
+    if (
+      !actualShot.specialFX?.manualText ||
+      (actualShot.specialFX.manualText.delay &&
+        actualShot.specialFX.manualText.delay > 0)
+    ) {
+      setIsManualTextShown(false);
+    }
+
+    let manualTextTimer: number = 0;
+
+    // Si en este plano hay texto manual, creamos un timer para mostrarlo
+    if (actualShot.specialFX?.manualText) {
+      const textDelay = actualShot.specialFX?.manualText.delay
+        ? actualShot.specialFX?.manualText.delay
+        : 0;
+
+      if (textDelay === 0) {
+        setIsManualTextShown(true);
+      } else {
+        manualTextTimer = window.setTimeout(() => {
+          setIsManualTextShown(true);
+        }, textDelay);
+      }
+    }
+
+    return () => {
+      window.clearTimeout(manualTextTimer);
+    };
+  }, [actualShot.specialFX?.manualText]);
+
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////  FADE  ////////////////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //Aplica el efecto de fade mediante un timer, si corresponde.
   useEffect(() => {
     let fadeTimeout: number | undefined = undefined;
-    if (actualShot.shotTransition === "fade") {
+    if (actualShot.shotTransition === "fade" && !actualShot.isManual) {
       const timeToApplyFade = actualShot.shotDuration - actualShot.fadeDuration;
 
       fadeTimeout = window.setTimeout(() => {
@@ -312,6 +428,7 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     actualShot.shotTransition,
     actualShot.shotDuration,
     actualShot.fadeDuration,
+    actualShot.isManual,
   ]);
 
   // Garantiza que NextPictureContainer sea invisible al comienzo de un nuevo shot.
@@ -602,107 +719,143 @@ function MainViewer({ actualShot, nextShot }: MainViewerProps) {
     };
   }, [actualShot?.specialFX?.tremor, nextShot?.specialFX?.tremor]);
 
+  // Limpieza de los timers del botón "Siguiente" para las cinemáticas manuales
+  useEffect(() => {
+    return () => {
+      window.clearTimeout(nextShotClickTimerRef.current);
+    };
+  }, []);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////  EFECTOS PARA ESTILOS  ////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // Calcula la proporción de la pantalla y la distancia que hay entre el contenedor principal y el borde superior
+  // de Window (para poder situar el contenedor en la parte superior de la pantalla sin hacerlo absolute). Establece un listener
+  // para que se recalcule todo esto si hay un "resize" de la pantalla.
+  useLayoutEffect(() => {
+    function setNewWindowSize() {
+      setWindowSize([window.innerWidth, window.innerHeight]);
+    }
+
+    // Hace el cálculo inicial
+    setNewWindowSize();
+
+    window.addEventListener("resize", setNewWindowSize);
+
+    return () => {
+      window.removeEventListener("resize", setNewWindowSize);
+    };
+  }, []);
+
   return (
-    <MainContainer id="cinematicViewerContainer">
-      <CurrentPictureContainer
-        id="cinemaCurrentPictureContainer"
-        $widePicture={actualShot.widePicture}
-        $bgColor={mainContainerBgColor}
-        $tremorIntensity={
-          isCurrentContainerTrembling
-            ? actualShot.specialFX?.tremor?.intensity
-            : undefined
-        }
-      >
-        <CurrentPictureAndZoomableFxWrapper
-          ref={currentPictureAndZoomableFxWrapperElement}
-          $zoomData={
-            zoomAnimation1DataRef.current.shotId === actualShot.id ||
-            zoomAnimation2DataRef.current.shotId === actualShot.id
-              ? undefined
-              : actualShot.zoom
-          }
-          $shotDuration={actualShot.shotDuration}
-        >
-          {actualShot.mainImageAlt ? (
-            <MainPicture
-              key={actualShot.mainImageUrl}
-              src={actualShot.mainImageUrl}
-              alt={actualShot.mainImageAlt}
-            />
-          ) : null}
-
-          <CinematicFxFrame
-            currentShotId={actualShot.id}
-            zoomableFx={true}
-            isForCurrentShot={true}
-            currentShotFx={actualShot.specialFX}
-            nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
-          />
-        </CurrentPictureAndZoomableFxWrapper>
-
-        <CinematicFxFrame
-          currentShotId={actualShot.id}
-          zoomableFx={false}
-          isForCurrentShot={true}
-          currentShotFx={actualShot.specialFX}
-          nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
-        />
-      </CurrentPictureContainer>
-
-      {nextShot ? (
-        <NextPictureContainer
-          id="cinemaNextPictureContainer"
-          $widePicture={nextShot.widePicture}
-          $bgColor={nextContainerBgColor}
-          $fade={applyFade}
-          $fadeDuration={actualShot.fadeDuration}
-          ref={nextPictureContainerElement}
+    <MainContainerPositioner
+      $windowWidth={windowSize[0]}
+      $windowHeight={windowSize[1]}
+    >
+      <MainContainer id="cinematicViewerContainer">
+        <CurrentPictureContainer
+          id="cinemaCurrentPictureContainer"
+          $widePicture={actualShot.widePicture}
+          $bgColor={mainContainerBgColor}
           $tremorIntensity={
-            isNextContainerTrembling
-              ? nextShot.specialFX?.tremor?.intensity
+            isCurrentContainerTrembling
+              ? actualShot.specialFX?.tremor?.intensity
               : undefined
           }
         >
-          <NextPictureAndZoomableFxWrapper
-            ref={nextPictureAndZoomableFxWrapperElement}
+          <CurrentPictureAndZoomableFxWrapper
+            ref={currentPictureAndZoomableFxWrapperElement}
+            $zoomData={
+              zoomAnimation1DataRef.current.shotId === actualShot.id ||
+              zoomAnimation2DataRef.current.shotId === actualShot.id
+                ? undefined
+                : actualShot.zoom
+            }
+            $shotDuration={actualShot.shotDuration}
           >
-            {nextShot.mainImageUrl ? (
-              <NextPicture
-                key={nextShot.mainImageUrl}
-                src={nextShot.mainImageUrl}
-                alt={nextShot.mainImageAlt}
-                style={{
-                  display:
-                    actualShot.shotTransition === "cut" && !applyFade
-                      ? "none"
-                      : "block",
-                  // Forzar capa de composición
-                  willChange:
-                    actualShot.shotTransition === "fade" ? "opacity" : "auto",
-                }}
+            {actualShot.mainImageAlt ? (
+              <MainPicture
+                key={actualShot.mainImageUrl}
+                src={actualShot.mainImageUrl}
+                alt={actualShot.mainImageAlt}
               />
             ) : null}
 
             <CinematicFxFrame
               currentShotId={actualShot.id}
               zoomableFx={true}
-              isForCurrentShot={false}
+              isForCurrentShot={true}
               currentShotFx={actualShot.specialFX}
               nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
             />
-          </NextPictureAndZoomableFxWrapper>
+          </CurrentPictureAndZoomableFxWrapper>
 
           <CinematicFxFrame
             currentShotId={actualShot.id}
             zoomableFx={false}
-            isForCurrentShot={false}
+            isForCurrentShot={true}
             currentShotFx={actualShot.specialFX}
             nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
           />
-        </NextPictureContainer>
-      ) : null}
-    </MainContainer>
+        </CurrentPictureContainer>
+
+        {nextShot ? (
+          <NextPictureContainer
+            id="cinemaNextPictureContainer"
+            $widePicture={nextShot.widePicture}
+            $bgColor={nextContainerBgColor}
+            $fade={applyFade}
+            $fadeDuration={actualShot.fadeDuration}
+            ref={nextPictureContainerElement}
+            $tremorIntensity={
+              isNextContainerTrembling
+                ? nextShot.specialFX?.tremor?.intensity
+                : undefined
+            }
+          >
+            <NextPictureAndZoomableFxWrapper
+              ref={nextPictureAndZoomableFxWrapperElement}
+            >
+              {nextShot.mainImageUrl ? (
+                <NextPicture
+                  key={nextShot.mainImageUrl}
+                  src={nextShot.mainImageUrl}
+                  alt={nextShot.mainImageAlt}
+                  style={{
+                    display:
+                      actualShot.shotTransition === "cut" && !applyFade
+                        ? "none"
+                        : "block",
+                    // Forzar capa de composición
+                    willChange:
+                      actualShot.shotTransition === "fade" ? "opacity" : "auto",
+                  }}
+                />
+              ) : null}
+
+              <CinematicFxFrame
+                currentShotId={actualShot.id}
+                zoomableFx={true}
+                isForCurrentShot={false}
+                currentShotFx={actualShot.specialFX}
+                nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
+              />
+            </NextPictureAndZoomableFxWrapper>
+
+            <CinematicFxFrame
+              currentShotId={actualShot.id}
+              zoomableFx={false}
+              isForCurrentShot={false}
+              currentShotFx={actualShot.specialFX}
+              nextShotFx={nextShot?.specialFX ? nextShot.specialFX : null}
+            />
+          </NextPictureContainer>
+        ) : null}
+
+        {isManualTextShown && generateManualText()}
+      </MainContainer>
+    </MainContainerPositioner>
   );
 }
 
