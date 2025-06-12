@@ -81,6 +81,26 @@ export interface TextCaptionData {
   zIndex?: number; //Sólo se tendrá en cuenta el que se ponga en el primer texto. Permite modificar el z-index de TODOS los textos del plano, para crear efectos con otros FX.
 }
 
+// IMPORTANTE: Para usar este efecto, se debe usar FORZOSAMENTE la propiedad "isManual= true".
+// Si no, no podremos cambiar de plano.
+// Genera un texto animado. Cada string dentro del array "text" se verá como un párrafo diferente. Cuando todos
+// los textos estén en pantalla aparecerá un botón "Siguiente" que CAMBIA AL PLANO SIGUIENTE.
+// Por tanto, si queremos varias pantallas de texto con la misma imagen de fondo, debemos crear
+// varios planos con la misma imagen y a cada uno de ellos aplicar este efecto con su texto correspondiente.
+export interface ManualTextData {
+  isContinuation: boolean; // Indica si continúa hablando el mismo NPC que en el plano anterior, o habla uno nuevo. Esto afecta a las animaciones del cuadro de texto, para dar continuidad.
+  text: string[];
+  size?: number; // Será el porcentaje que ocupa del alto de MainViewer (en pantalla panorámica) o del total de la pantalla (en portrait). Es seguro para móviles hasta "35"
+  npcName?: string; // Si indicamos un nombre, aparecerá antes del texto para indicar quién habla.
+  npcColor?: string; // El color con el que aparece el nombre del NPC.
+  delay?: number; // Tiempo hasta que aparece el texto, en milisegundos.
+  fontFamily?: string;
+  color?: string;
+  animationTime?: number; // Milisegundos que pasan entre la aparición de una letra y la siguiente.
+  textProportion?: number; // Proporción del texto respecto del contenedor. Cuanto más alto el nº más pequeño el texto.
+  buttonProportion?: number; // Proporción del botón para pasar al plano siguiente.
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
   lightning?: LightningData[];
@@ -88,6 +108,7 @@ export interface CinematicFXData {
   videoFx?: VideoFxData[];
   manualFadeIn?: ManualFadeInData;
   textCaption?: TextCaptionData[];
+  manualText?: ManualTextData;
 }
 
 export interface ZoomData {
@@ -169,6 +190,7 @@ export type CinematicScene = CinematicShot[];
 // Versiones simplificadas de CinematicShot, sólo con los datos necesarios para el componente MainViewer.
 export interface MainViewerActualShotData {
   id: number;
+  isManual: boolean;
   mainImageUrl?: string; //Si no se define, se aplica el "backgroundColor"
   mainImageAlt?: string; //Texto alternativo para la imagen
   backgroundColor?: string; //Color que sustituye a la imagen de fondo
