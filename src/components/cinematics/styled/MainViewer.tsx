@@ -148,6 +148,7 @@ const NextPictureContainer = styled(
   z-index: 2;
   opacity: 0;
   transform-origin: center;
+  will-change: opacity;
 
   ${({ $fade, $fadeDuration, $tremorIntensity }) => {
     const parts: Array<ReturnType<typeof css>> = [];
@@ -241,6 +242,7 @@ const CurrentPictureAndZoomableFxWrapper = styled.div<CurrentPictureAndFxWrapper
   ${({ $zoomData, $shotDuration }) => {
     if ($zoomData)
       return css`
+        will-change: scale, top, left;
         animation: ${zoomAnimation($zoomData)} ${$shotDuration}ms forwards
           ${$zoomData.animType};
       `;
