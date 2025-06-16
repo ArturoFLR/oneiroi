@@ -7,19 +7,19 @@ import TextButton from "../../buttons/TextButton";
 
 const scaleDownAnim = keyframes`
   0% {
-    scale: 1;
+    transform: scaleY(1);
   }
   100% {
-    scale: 0;
+    transform: scaleY(0);
   }
 `;
 
 const scaleUpAnim = keyframes`
   0% {
-    scale: 0;
+    transform: scaleY(0);
   }
   100% {
-    scale: 1;
+    transform: scaleY(1);
   }
 `;
 
@@ -36,6 +36,7 @@ interface MainContainerProps {
 
 const MainContainer = styled.div<MainContainerProps>`
   position: absolute;
+  transform-origin: bottom;
 
   ${({ $windowWidth, $windowHeight, $height }) => {
     if ($windowWidth >= $windowHeight) {
@@ -54,7 +55,9 @@ const MainContainer = styled.div<MainContainerProps>`
     }
   }}
 
-  background-color: ${GLOBAL_COLORS.screenDarkener.dark};
+  /* background-color: ${GLOBAL_COLORS.screenDarkener.dark}; */
+  background-image: linear-gradient(to bottom, transparent, ${GLOBAL_COLORS
+    .screenDarkener.dark} 10px);
 
   ${({ $windowWidth, $windowHeight }) => {
     if ($windowWidth < $windowHeight) {
@@ -65,7 +68,7 @@ const MainContainer = styled.div<MainContainerProps>`
     } else return null;
   }}
 
-  padding: 2rem 0rem;
+  padding: 2.7rem 0rem 2rem 0rem;
 
   ${({ $scaleDownAnim, $scaleUpAnim, $animationsDuration }) => {
     if ($scaleDownAnim) {
@@ -249,6 +252,7 @@ function AnimatedTextFrame({
 
   function handleNextShotClickAnims() {
     setShowNextButton(false);
+    setShowNpcName(false);
     setParagraphsToShow(0);
 
     if (!nextShotIsContinuation) {
