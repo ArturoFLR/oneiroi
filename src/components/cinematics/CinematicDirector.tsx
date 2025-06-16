@@ -67,9 +67,17 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
 
   //////////////////////////////////////////////////////////////     MÉTODOS    ///////////////////////////////////////////////////////
 
+  // Función que se encarga de cambiar de plano manualmente cuando se pulsa
+  // el botón "Siguiente" en una cinemática manual.
+  function handleNextShotClick() {
+    isSpecialActionsExecutedRef.current = false;
+    setActualShotIndex((prevIndex) => prevIndex + 1);
+  }
+
   function generateCinematicShot() {
     const mainViewerActualShot: MainViewerActualShotData = {
       id: currentShot.id,
+      isManual: currentShot.isManual ? true : false,
       mainImageUrl: currentShot.mainImageUrl,
       mainImageAlt: currentShot.mainImageAlt,
       backgroundColor: currentShot.backgroundColor,
@@ -98,6 +106,7 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
 
     return (
       <MainViewer
+        onNextShotClick={handleNextShotClick}
         actualShot={mainViewerActualShot}
         nextShot={mainViewerNextShot}
       />
@@ -123,14 +132,14 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
   useEffect(() => {
     if (isLoading) return; // Si aún estamos cargando, no hacemos nada.
 
-    if (actualShotIndex <= cinematicData.length - 1) {
+    if (actualShotIndex <= cinematicData.length - 1 && !currentShot.isManual) {
       const shotDurationTimer = window.setTimeout(() => {
         isSpecialActionsExecutedRef.current = false; // EL siguiente useEffect se encargará de pasar este flag a "true" cuando las ejecute.
         setActualShotIndex((prevIndex) => prevIndex + 1); // Cambiamos al siguiente plano
       }, currentShotDuration);
 
       shotDurationTimersRef.current.push(shotDurationTimer);
-    } else {
+    } else if (actualShotIndex > cinematicData.length - 1) {
       // Si ya se ha reproducido el último plano, ejecutamos el método onEnd del último plano.
       if (lastShot.onEnd) {
         lastShot.onEnd();
@@ -153,6 +162,7 @@ function CinematicDirector({ cinematicData, mode }: CinematicDirectorProps) {
     fadeTransitionDuration,
     cinematicData.length,
     lastShot,
+    currentShot.isManual,
   ]);
 
   // Ejecuta el método specialActions del plano actual, si existe y no se ha ejecutado ya.
