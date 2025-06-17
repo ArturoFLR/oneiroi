@@ -4,6 +4,8 @@ import styled, { css, keyframes } from "styled-components";
 import AnimatedText from "../text/AnimatedText";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import TextButton from "../../buttons/TextButton";
+import { NPCPortraitData } from "../../cinematics/cinematicTypes";
+import NPCPortrait from "../npcs/NPCPortrait";
 
 const scaleDownAnim = keyframes`
   0% {
@@ -25,7 +27,19 @@ const scaleUpAnim = keyframes`
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-interface MainContainerProps {
+const MainContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  z-index: 6;
+`;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+interface TextContainerProps {
   $windowWidth: number;
   $windowHeight: number;
   $scaleUpAnim: boolean;
@@ -34,7 +48,7 @@ interface MainContainerProps {
   $animationsDuration: number;
 }
 
-const MainContainer = styled.div<MainContainerProps>`
+const TextContainer = styled.div<TextContainerProps>`
   position: absolute;
   transform-origin: bottom;
 
@@ -82,7 +96,7 @@ const MainContainer = styled.div<MainContainerProps>`
     } else return null;
   }}
 
-  z-index: 3;
+  z-index: 2;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -136,7 +150,7 @@ const NextButtonContainer = styled.div`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-interface AnimatedTextFrameProps {
+interface ManualTextAndNPCProps {
   isContinuation: boolean;
   nextShotIsContinuation: boolean;
   text: string[];
@@ -148,10 +162,11 @@ interface AnimatedTextFrameProps {
   buttonProportion?: number;
   color?: string;
   fontFamily?: string;
+  npcPortraitData?: NPCPortraitData;
   handleNextShotClick: () => void;
 }
 
-function AnimatedTextFrame({
+function ManualTextAndNPC({
   isContinuation,
   nextShotIsContinuation,
   text,
@@ -163,12 +178,16 @@ function AnimatedTextFrame({
   buttonProportion,
   fontFamily,
   color,
+  npcPortraitData,
   handleNextShotClick,
-}: AnimatedTextFrameProps) {
+}: ManualTextAndNPCProps) {
   const [paragraphsToShow, setParagraphsToShow] = useState<number>(0);
   const [showNpcName, setShowNpcName] = useState<boolean>(false);
   const [showNextButton, setShowNextButton] = useState<boolean>(false);
+  // Controla la animación de la caja de texto
   const [isScaleDownAnim, setIsScaleDownAnim] = useState<boolean>(false);
+  // Controla la animación del retrato de NPC
+  const [isFadeOutAnim, setIsFadeOutAnim] = useState<boolean>(false);
 
   const [windowSize, setWindowSize] = useState<number[]>([0, 0]);
   const [textSize, setTextSize] = useState<string>("0px");
@@ -194,7 +213,7 @@ function AnimatedTextFrame({
     : GLOBAL_FONTS.manualText.narrator;
   const finalColor = color ? color : GLOBAL_COLORS.text.manualText.narrator;
 
-  const animationsDuration = 1000; // La duración, en ms, de scaleUpAnim y scaleDownAnim
+  const animationsDuration = 1000; // La duración, en ms, de scaleUpAnim,  scaleDownAnim y fadeOutAnim
 
   //Esta función se pasa al componente AnimatedText para que aumente el número de párrafos a mostrar (paragraphsToShow)
   // cuando ha terminado de mostrar uno. Si ya se han mostrado todos, hace aparecer el botón "Siguiente".
@@ -245,8 +264,8 @@ function AnimatedTextFrame({
 
   // Esta función hace que:
   // - Si en el siguiente plano no hay texto manual, o lo hay pero el NPC que habla es diferente
-  // (basándose en el id), aplica una animación (scaleDownAnim) y un timer que cambiará el plano
-  // cuando la animación termine. Esto se hace porque podemos tener un tamaño de container diferente y el cambio sería muy brusco.
+  // (basándose en isContinuation), aplica las animaciones (scaleDownAnim y fadeOutAnim) y un timer que cambiará el plano
+  // cuando las animaciónes terminen. Esto se hace porque podemos tener un tamaño de container diferente y el cambio sería muy brusco.
   //
   // - Si en el plano siguiente habla el mismo NPC, no hay animación, para no romper la continuidad.
 
@@ -257,6 +276,7 @@ function AnimatedTextFrame({
 
     if (!nextShotIsContinuation) {
       setIsScaleDownAnim(true);
+      setIsFadeOutAnim(true);
 
       const scaleDownTimer = window.setTimeout(() => {
         handleNextShotClick();
@@ -268,15 +288,12 @@ function AnimatedTextFrame({
     }
   }
 
-  // Al comienzo de un nuevo plano, elimina una posible animación isScaleDown del plano anterior, para que se vea el componente.
-  // useLayoutEffect(() => {
-  //   setIsScaleDownAnim(false);
-  // }, [text]);
-
+  // Al comienzo de un nuevo plano, elimina una posible animación isScaleDown o isFadeOut del plano anterior, para que se vea el componente.
   // Establece el delay necesario para que termine la animación scaleUpAnim antes de que se muestre
   // el nombre del NPC y comience a renderizarse el texto.
   useEffect(() => {
     setIsScaleDownAnim(false);
+    setIsFadeOutAnim(false);
 
     const localtextTimeoutsRef = textTimeoutsRef.current;
     const npcNameDelay = isContinuation ? 0 : animationsDuration + 100;
@@ -344,42 +361,63 @@ function AnimatedTextFrame({
   }, []);
 
   return (
-    <MainContainer
-      id="AnimatedTextFrameContainer"
-      ref={mainContainerElement}
-      $windowWidth={windowSize[0]}
-      $windowHeight={windowSize[1]}
-      $scaleUpAnim={!isContinuation}
-      $scaleDownAnim={isScaleDownAnim}
-      $height={finalSize}
-      $animationsDuration={animationsDuration}
-    >
-      <RelativeContainer>
-        {npcName && showNpcName && (
-          <NpcName $color={finalNpcColor} $fontSize={npcNameSize}>
-            {finalNpcName}:
-          </NpcName>
-        )}
-        {generateParagraphs()}
-      </RelativeContainer>
+    <MainContainer id="ManualTextAndNPCContainer">
+      <TextContainer
+        ref={mainContainerElement}
+        $windowWidth={windowSize[0]}
+        $windowHeight={windowSize[1]}
+        $scaleUpAnim={!isContinuation}
+        $scaleDownAnim={isScaleDownAnim}
+        $height={finalSize}
+        $animationsDuration={animationsDuration}
+      >
+        <RelativeContainer>
+          {npcName && showNpcName && (
+            <NpcName $color={finalNpcColor} $fontSize={npcNameSize}>
+              {finalNpcName}:
+            </NpcName>
+          )}
+          {generateParagraphs()}
+        </RelativeContainer>
 
-      {showNextButton && (
-        <NextButtonContainer>
-          <TextButton
-            fontSize={buttonSize}
-            onClick={handleNextShotClickAnims}
-            animated={true}
-            fontFamily={GLOBAL_FONTS.buttons.ModalTextButton}
-            color={GLOBAL_COLORS.buttons.ModalTextButton.text}
-            hoverColor={GLOBAL_COLORS.buttons.ModalTextButton.textHover}
-            textShadow={GLOBAL_COLORS.buttons.ModalTextButton.textShadow}
-          >
-            Siguiente &gt;&gt;
-          </TextButton>
-        </NextButtonContainer>
+        {showNextButton && (
+          <NextButtonContainer>
+            <TextButton
+              fontSize={buttonSize}
+              onClick={handleNextShotClickAnims}
+              animated={true}
+              fontFamily={GLOBAL_FONTS.buttons.ModalTextButton}
+              color={GLOBAL_COLORS.buttons.ModalTextButton.text}
+              hoverColor={GLOBAL_COLORS.buttons.ModalTextButton.textHover}
+              textShadow={GLOBAL_COLORS.buttons.ModalTextButton.textShadow}
+            >
+              Siguiente &gt;&gt;
+            </TextButton>
+          </NextButtonContainer>
+        )}
+      </TextContainer>
+
+      {npcPortraitData && (
+        <NPCPortrait
+          windowWidth={windowSize[0]}
+          windowHeight={windowSize[1]}
+          fadeInAnim={!isContinuation}
+          fadeOutAnim={isFadeOutAnim}
+          animationsDuration={animationsDuration}
+          imageSrc={npcPortraitData.imageSrc}
+          centered={npcPortraitData.centered}
+          distortionAnim={npcPortraitData.distortionAnim}
+          distortionValues={npcPortraitData.distortionValues}
+          landscapeWidth={npcPortraitData.landscapeWidth}
+          portraitWidth={npcPortraitData.portraitWidth}
+          positionTop={npcPortraitData.positionTop}
+          positionBottom={npcPortraitData.positionBottom}
+          positionLeft={npcPortraitData.positionLeft}
+          positionRight={npcPortraitData.positionRight}
+        />
       )}
     </MainContainer>
   );
 }
 
-export default AnimatedTextFrame;
+export default ManualTextAndNPC;
