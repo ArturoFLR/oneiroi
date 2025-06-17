@@ -22,7 +22,7 @@ export const shot3Fx: CinematicFXData = {
   manualText: {
     isContinuation: false,
     delay: 2000,
-    size: 25,
+    size: 30,
     text: [
       "Cuando llegas al parque Aliseda ya está atardeciendo.",
       "Tu otro trabajo, el de verdad, no te suele permitir acudir antes a este tipo de citas. En parte te viene bien; los del otro lado suelen ser bastante tímidos a plena luz del día.",
@@ -35,7 +35,7 @@ export const shot3Fx: CinematicFXData = {
 export const shot4Fx: CinematicFXData = {
   manualText: {
     isContinuation: true,
-    size: 25,
+    size: 30,
     text: [
       "El parque está situado en mitad de la ciudad, por lo que aún hay bastante movimiento.",
       "Te diriges rápidamente hacia el punto acordado y ves que Natalia ha llegado antes que tú.",

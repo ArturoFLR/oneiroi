@@ -27,7 +27,7 @@ const mainAmbientSound1_2: MainAmbientSound = {
   fadeDuration: 2500,
   securityMargin: 1000,
   config: {
-    volume: 0.3,
+    volume: 0.8,
     src: [fountain1],
   },
 };
@@ -38,7 +38,7 @@ const mainAmbientSound2_2: MainAmbientSound = {
   fadeDuration: 2500,
   securityMargin: 1000,
   config: {
-    volume: 0.9,
+    volume: 1,
     src: [crowd1],
   },
 };
