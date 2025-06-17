@@ -101,6 +101,29 @@ export interface ManualTextData {
   buttonProportion?: number; // Proporción del botón para pasar al plano siguiente.
 }
 
+// Usado en NPCPortraitData
+export interface DistortionValues {
+  initialValues?: number[];
+  maxValues?: number[];
+  increment?: number;
+  speed?: number;
+  intensity?: number;
+}
+
+// Siempre se usa junto con el FX manualText, ya que toma de este el delay, "isContinuation" y el botón para pasar al siguiente plano.
+export interface NPCPortraitData {
+  imageSrc: string;
+  landscapeWidth?: number; // Ancho cuando estamos en modo landscape. Será convertido a porcentaje.
+  portraitWidth?: number; // Ancho cuando estamos en modo retrato. Será convertido a porcentaje.
+  centered?: boolean; // Indica si queremos el retrato centrado en pantalla. Incompatible con las propiedades siguientes (position...).
+  positionTop?: number; // Las siguientes propiedades permiten situar de forma absoluta. Incompatibles con "centered".
+  positionBottom?: number;
+  positionLeft?: number;
+  positionRight?: number;
+  distortionAnim?: boolean; // Permite aplicar una animación de distorsión (pensada para fantasmas)
+  distortionValues?: DistortionValues; // Un objeto con los valores posibles para la distorsión.
+}
+
 export interface CinematicFXData {
   tremor?: CinematicTremorFXData;
   lightning?: LightningData[];
@@ -109,6 +132,7 @@ export interface CinematicFXData {
   manualFadeIn?: ManualFadeInData;
   textCaption?: TextCaptionData[];
   manualText?: ManualTextData;
+  npcPortrait?: NPCPortraitData;
 }
 
 export interface ZoomData {
