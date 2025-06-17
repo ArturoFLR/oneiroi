@@ -7,7 +7,7 @@ import {
 } from "../cinematicTypes";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CinematicFxFrame from "./CinematicFxFrame";
-import AnimatedTextFrame from "../../common/fxAndFilters/AnimatedTextFrame";
+import ManualTextAndNPC from "../../common/fxAndFilters/ManualTextAndNPC";
 
 const tremorLight = keyframes`
   0%, 100% { transform: translate(0, 0) rotate(0); }
@@ -343,11 +343,11 @@ function MainViewer({
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////  MANUAL TEXT  ////////////////////////////////////////////
+  //////////////////////////////////////////////////  MANUAL TEXT && NPC PORTRAITS  //////////////////////////////////////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // Esta función devuelve el componente AnimatedTextFrame, si corresponde. Se usa en el "return" de MainViewer
-  function generateManualText() {
+  // Esta función devuelve el componente ManualTextAndNPC, si corresponde. Se usa en el "return" de MainViewer
+  function generateManualTextAndPortraits() {
     if (actualShot.specialFX?.manualText) {
       const manualTextData = actualShot.specialFX.manualText;
 
@@ -358,7 +358,7 @@ function MainViewer({
         : false;
 
       return (
-        <AnimatedTextFrame
+        <ManualTextAndNPC
           isContinuation={manualTextData.isContinuation}
           nextShotIsContinuation={nextShotIsContinuation}
           text={manualTextData.text}
@@ -370,6 +370,7 @@ function MainViewer({
           animationTime={manualTextData.animationTime}
           textProportion={manualTextData.textProportion}
           buttonProportion={manualTextData.buttonProportion}
+          npcPortraitData={actualShot.specialFX.npcPortrait}
           handleNextShotClick={handleNextShotClick}
         />
       );
@@ -855,7 +856,7 @@ function MainViewer({
           </NextPictureContainer>
         ) : null}
 
-        {isManualTextShown && generateManualText()}
+        {isManualTextShown && generateManualTextAndPortraits()}
       </MainContainer>
     </MainContainerPositioner>
   );
