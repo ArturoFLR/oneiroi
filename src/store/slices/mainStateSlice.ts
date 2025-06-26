@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Este slice controla el estado principal del juego (nos encontramos en el menú principal, en una cinemática, en un mapa...)
 
-export type GameMainState = "init" | "mainMenu" | "cinematic"; //Añadir según sea necesario
+export type GameMainState = "init" | "mainMenu" | "cinematic" | "aiChat"; //Añadir según sea necesario
 
 interface MainState {
   gameMainState: GameMainState;
