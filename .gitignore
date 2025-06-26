@@ -23,3 +23,6 @@ src/assets/
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables
+.env.local
