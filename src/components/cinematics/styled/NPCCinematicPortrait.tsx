@@ -1,7 +1,7 @@
 import styled, { css, keyframes } from "styled-components";
-import DistortionWrapper from "../fxAndFilters/DistortionWrapper";
+import DistortionWrapper from "../../common/fxAndFilters/DistortionWrapper";
 import { GLOBAL_COLORS } from "../../../theme";
-import { DistortionValues } from "../../cinematics/cinematicTypes";
+import { DistortionValues } from "../cinematicTypes";
 
 const fadeInAnim = keyframes`
   0% {
@@ -125,7 +125,7 @@ const ImgStyled = styled.img`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-interface NPCPortraitProps {
+interface NPCCinematicPortraitProps {
   fadeInAnim: boolean;
   fadeOutAnim: boolean;
   animationsDuration: number;
@@ -143,7 +143,7 @@ interface NPCPortraitProps {
   distortionValues?: DistortionValues;
 }
 
-function NPCPortrait({
+function NPCCinematicPortrait({
   fadeInAnim,
   fadeOutAnim,
   animationsDuration,
@@ -159,7 +159,7 @@ function NPCPortrait({
   positionRight,
   distortionAnim,
   distortionValues,
-}: NPCPortraitProps) {
+}: NPCCinematicPortraitProps) {
   //Valores por defecto:
   const finalLandscapeWidth =
     typeof landscapeWidth === "number" ? `${landscapeWidth}%` : "25%";
@@ -203,4 +203,4 @@ function NPCPortrait({
   );
 }
 
-export default NPCPortrait;
+export default NPCCinematicPortrait;

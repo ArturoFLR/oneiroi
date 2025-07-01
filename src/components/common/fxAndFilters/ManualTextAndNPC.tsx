@@ -5,7 +5,7 @@ import AnimatedText from "../text/AnimatedText";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import TextButton from "../../buttons/TextButton";
 import { NPCPortraitData } from "../../cinematics/cinematicTypes";
-import NPCPortrait from "../npcs/NPCPortrait";
+import NPCCinematicPortrait from "../../cinematics/styled/NPCCinematicPortrait";
 
 const scaleDownAnim = keyframes`
   0% {
@@ -398,7 +398,7 @@ function ManualTextAndNPC({
       </TextContainer>
 
       {npcPortraitData && (
-        <NPCPortrait
+        <NPCCinematicPortrait
           windowWidth={windowSize[0]}
           windowHeight={windowSize[1]}
           fadeInAnim={!isContinuation}
