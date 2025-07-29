@@ -26,7 +26,7 @@ export const shot2Fx: CinematicFXData = {
     },
     {
       isZoomable: true,
-      text: "No debo estar aquí",
+      text: "No debería estar aquí",
       fontFamily: GLOBAL_FONTS.textCinematics.narratorEmotional,
       delay: 6000,
       duration: 10000,
