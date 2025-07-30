@@ -73,6 +73,8 @@ export const alisedaParkCinematic: CinematicScene = [
       const storeState = store.getState();
       if (storeState.cinematicData.isUserWatchingCinematics) {
         store.dispatch(setMainState("mainMenu"));
+      } else {
+        store.dispatch(setMainState("aiChat"));
       }
     },
   },
