@@ -46,6 +46,8 @@ function MainMenu() {
   // Funciones para los botones de las opciones principales
   function handleNewGameClick() {
     dispatch(setIsUserWatchingCinematics(false));
+    dispatch(setCinematicToPlay("alisedaPark01"));
+    dispatch(setMainState("cinematic"));
   }
 
   function handleWatchIntroClick() {
