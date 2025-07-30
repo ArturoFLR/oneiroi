@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../store/hooks/reduxHooks";
 import { setMainState } from "../store/slices/mainStateSlice";
 import CinematicDirector from "./cinematics/CinematicDirector";
 import { cinematicsMap } from "../data/cinematics/cinematicsMap";
+import AIChat from "./aiChat/AIChat";
 
 function GameDirector() {
   //Redux
@@ -77,6 +78,8 @@ function GameDirector() {
       {gameMainState === "cinematic" && (
         <CinematicDirector mode="black" cinematicData={cinematicToPlayData} />
       )}
+
+      {gameMainState === "aiChat" && <AIChat />}
     </>
   );
 }
