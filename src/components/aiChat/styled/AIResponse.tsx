@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import AnimatedText from "../../common/text/AnimatedText";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "src/theme";
 
