@@ -48,6 +48,11 @@ const StyledButton = styled.button<StyledButtonProps>`
     scale: 1.15;
     color: ${({ $hoverColor }) => $hoverColor};
   }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -65,6 +70,7 @@ interface TextButtonProps {
   textShadow?: string;
   hoverColor?: string;
   animated?: boolean;
+  disabled?: boolean;
 }
 
 function TextButton({
@@ -76,6 +82,7 @@ function TextButton({
   textShadow,
   hoverColor,
   animated,
+  disabled,
 }: TextButtonProps) {
   // Valores por defecto
   fontFamily = fontFamily || GLOBAL_FONTS.buttons.ModalTextButton;
@@ -83,10 +90,12 @@ function TextButton({
   textShadow = textShadow || GLOBAL_COLORS.buttons.ModalTextButton.textShadow;
   hoverColor = hoverColor || GLOBAL_COLORS.buttons.ModalTextButton.textHover;
   animated = typeof animated === "undefined" ? true : animated;
+  disabled = typeof disabled === "undefined" ? false : disabled;
 
   return (
     <StyledButton
       onClick={onClick}
+      disabled={disabled}
       $fontSize={fontSize}
       $fontFamily={fontFamily}
       $color={color}
