@@ -1,4 +1,5 @@
 import Item from "../item/Item";
+import MapCell from "./MapCell";
 
 export interface ReachableCell {
   col: number;
@@ -49,3 +50,5 @@ export type BordersToShow = {
   south: BordersType;
   west: BordersType;
 };
+
+export type Map = MapCell[];
