@@ -18,6 +18,7 @@
     "@mui/material": "^7.0.2",
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.8.4",
+    "groq-sdk": "^0.29.0",
     "howler": "^2.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
