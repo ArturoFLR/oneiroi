@@ -8,7 +8,7 @@ import { CinematicAmbientSound } from "../../../components/cinematics/cinematicT
 
 import fountain1 from "@assets/audio/sounds/ambient/water/fountain-water.mp3";
 import crowd1 from "@assets/audio/sounds/ambient/crowd/crowd-ambience1.mp3";
-import traffic1 from "@assets/audio/sounds/ambient/city/city-traffic_01.mp3";
+import traffic1 from "@assets/audio/sounds/ambient/city/city-ambient-loopable_01.mp3";
 import birds1 from "@assets/audio/sounds/ambient/animals/birds_01.mp3";
 import dogBark1 from "@assets/audio/sounds/effects/animals/dog-bark_01.mp3";
 import dogBark2 from "@assets/audio/sounds/effects/animals/dog-bark_02.mp3";
@@ -27,7 +27,7 @@ const mainAmbientSound1_2: MainAmbientSound = {
   fadeDuration: 2500,
   securityMargin: 1000,
   config: {
-    volume: 0.8,
+    volume: 0.7,
     src: [fountain1],
   },
 };
@@ -46,7 +46,7 @@ const mainAmbientSound2_2: MainAmbientSound = {
 const mainAmbientSound3_2: MainAmbientSound = {
   name: "traffic1_02",
   src: traffic1,
-  fadeDuration: 2500,
+  fadeDuration: 1000,
   securityMargin: 1000,
   config: {
     volume: 0.5,
