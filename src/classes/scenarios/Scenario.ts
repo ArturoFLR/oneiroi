@@ -1,10 +1,9 @@
 import { Map } from "../map/mapTypes";
-import { ScenarioConfig, ScenarioNameType } from "./scenariosTypes";
+import { ScenarioConfig } from "./scenariosTypes";
 
 export default class Scenario {
-  name: ScenarioNameType;
+  name: string;
   map: Map;
-  stage: number; // Etapa del escenario, para controlar el progreso realizado en él
   startingCellId: number; // ID de la celda donde comienza el escenario
   visited: boolean;
   solved: boolean;
@@ -15,7 +14,6 @@ export default class Scenario {
   constructor(config: ScenarioConfig) {
     this.name = config.name;
     this.map = config.map;
-    this.stage = config.stage;
     this.startingCellId = config.startingCellId;
     this.visited = config.visited;
     this.solved = config.solved;
