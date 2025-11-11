@@ -31,6 +31,7 @@ export default class SoundStore {
     [AudioEnvironment.Map]: { sounds: {}, music: {}, soundscapes: {} },
     [AudioEnvironment.Cinematic]: { sounds: {}, music: {}, soundscapes: {} },
     [AudioEnvironment.Minigame]: { sounds: {}, music: {}, soundscapes: {} },
+    [AudioEnvironment.AIChat]: { sounds: {}, music: {}, soundscapes: {} },
     [AudioEnvironment.InterfacePreloaded]: {
       sounds: {},
       music: {},

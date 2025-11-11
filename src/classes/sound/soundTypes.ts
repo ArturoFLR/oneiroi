@@ -106,6 +106,7 @@ export enum AudioEnvironment {
   Map = "map",
   Cinematic = "cinematic",
   Minigame = "minigame",
+  AIChat = "aiChat",
   InterfacePreloaded = "interfacePreloaded",
 }
 

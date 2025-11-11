@@ -25,6 +25,7 @@ export default class SoundscapesCreator {
     [AudioEnvironment.Map]: {},
     [AudioEnvironment.Cinematic]: {},
     [AudioEnvironment.Minigame]: {},
+    [AudioEnvironment.AIChat]: {},
     [AudioEnvironment.InterfacePreloaded]: {},
   };
 
@@ -319,7 +320,7 @@ export default class SoundscapesCreator {
   }
 
   //Si no se indica el soundscapeName, se aplica el fade a todos los soundscapes que existan en ese momento.
-  //endValue y initialValue no son valores absolutos. Son multiplicadores (volumen actual x endValue, etc). Esto es así para preservar las diferencias
+  //endValue e initialValue no son valores absolutos. Son multiplicadores (volumen actual x endValue, etc). Esto es así para preservar las diferencias
   //de volumen entre los sonidos que componen el soundscape.
   fadeSoundscape(
     env: AudioEnvironment,
