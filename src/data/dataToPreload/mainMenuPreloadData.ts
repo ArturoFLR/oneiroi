@@ -6,6 +6,8 @@ import {
 } from "../../components/mainMenu/mainMenuTypes";
 
 import click1Sound from "@assets/audio/sounds/interface/interface-click.mp3";
+import chime01Sound from "@assets/audio/sounds/interface/congratulations-chime_01.mp3";
+import failureSound01 from "@assets/audio/sounds/interface/failure-sound_01.mp3";
 
 import blurredImageBg from "@assets/graphics/backgrounds/clouds-stars_02.webp";
 import mainMenuBg from "@assets/graphics/backgrounds/main-menu-bg.webp";
@@ -18,6 +20,14 @@ export const mainMenuInterfaceSounds: MainMenuInterfaceSoundData[] = [
   {
     soundName: "click1",
     soundSrc: click1Sound,
+  },
+  {
+    soundName: "successChime01",
+    soundSrc: chime01Sound,
+  },
+  {
+    soundName: "failureSound01",
+    soundSrc: failureSound01,
   },
 ];
 
