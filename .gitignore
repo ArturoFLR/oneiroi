@@ -26,3 +26,7 @@ src/assets/
 
 # Environment variables
 .env.local
+.env
+
+# Local Netlify folder
+.netlify
