@@ -63,20 +63,19 @@ exports.handler = async (event) => {
   } catch (error) {
     if (error instanceof Groq.APIError) {
       if (error.status === 429) {
-        console.log(error.headers);
-        const retrySeconds = parseInt(error.headers.retry - after);
+        const retrySeconds = parseInt(error.headers["retry-after"]);
         const hours = Math.floor(retrySeconds / 3600);
         const minutes = Math.floor((retrySeconds % 3600) / 60);
         const seconds = retrySeconds % 60;
 
-        const retryTime = `${hours} horas, ${minutes} minutos, ${seconds} segundos.`;
+        const retryTime = `${hours} horas, ${minutes} minutos, ${seconds} segundos`;
 
         return {
           statusCode: 429,
           body: JSON.stringify({
             status: 429,
             npcResponse: "",
-            errText: `Se ha superado el nº de peticiones máximas en el sevidor de IA. El servidor volverá a estar operativo en ${retryTime} `,
+            errText: `${retryTime}...`,
           }),
         };
       } else {
@@ -85,7 +84,7 @@ exports.handler = async (event) => {
           body: JSON.stringify({
             status: 500,
             npcResponse: "",
-            errText: `Error del servidor, inténtelo más tarde: ${error.message}`,
+            errText: `${error.message}`,
           }),
         };
       }

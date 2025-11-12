@@ -11,12 +11,7 @@ export async function getNPCResponseAndVars(
       body: JSON.stringify({ npcBehavior, userText }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
     const parsedData = await response.json();
-    console.log("parsedData STATUS", parsedData.status);
 
     if (
       parsedData.status === 0 ||
@@ -34,7 +29,7 @@ export async function getNPCResponseAndVars(
     }
   } catch (error) {
     throw new Error(
-      "Error inesperado, inténtelo más tarde: " +
+      "Revise su conexión e inténtelo más tarde: " +
         (error instanceof Error ? error.message : String(error))
     );
   }

@@ -12,10 +12,6 @@ export async function getChatResume(
       body: JSON.stringify({ textToResume, NPCName, keyTopics }),
     });
 
-    if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
-    }
-
     const parsedData = await response.json();
 
     if (
@@ -34,7 +30,7 @@ export async function getChatResume(
     }
   } catch (error) {
     throw new Error(
-      "Error inesperado, inténtelo más tarde: " +
+      "Revise su conexión e inténtelo más tarde: " +
         (error instanceof Error ? error.message : String(error))
     );
   }
