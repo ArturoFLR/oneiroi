@@ -51,6 +51,8 @@ const StyledButton = styled.button<StyledButtonProps>`
 
   &:disabled {
     cursor: not-allowed;
+    scale: 1;
+    color: ${({ $color }) => $color};
     opacity: 0.5;
   }
 `;
