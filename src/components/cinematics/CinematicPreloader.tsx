@@ -172,7 +172,7 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
               advanceCompletion();
             } else {
               console.error(
-                `Cinematic Director: Error cargando la música: ${(shot.music as CinematicMusic).soundSrc}`
+                `Cinematic Director: Error cargando la música: ${mainSound.src}`
               );
               advanceCompletion();
             }
@@ -192,7 +192,7 @@ function CinematicPreloader({ cinematicData, setIsLoading }: LoaderProps) {
                 advanceCompletion();
               } else {
                 console.error(
-                  `Cinematic Director: Error cargando la música: ${(shot.music as CinematicMusic).soundSrc}`
+                  `Cinematic Director: Error cargando la música: ${secSound.src}`
                 );
                 advanceCompletion();
               }
