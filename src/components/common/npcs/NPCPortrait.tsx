@@ -6,14 +6,25 @@ import speechBubble from "@assets/graphics/icons/npc_portraits/speech-bubble.web
 import loadingGif from "@assets/graphics/icons/npc_portraits/loading.gif";
 
 interface MainContainerProps {
-  isSpeaking: boolean;
+  $isSpeaking: boolean;
+  $windowSize: [number, number];
 }
 
 const MainContainer = styled.div<MainContainerProps>`
+  overflow: hidden;
   position: relative;
-  width: 100%;
+  height: ${({ $windowSize }) =>
+    $windowSize[0] < $windowSize[1] ? "auto" : "40vh"};
+
+  width: ${({ $windowSize }) =>
+    $windowSize[0] < $windowSize[1] ? "35%" : "auto"};
+
+  max-height: 40vh;
+  max-width: 40vh;
+  aspect-ratio: 1/1;
   border: 3px solid ${GLOBAL_COLORS.white};
-  scale: ${({ isSpeaking }) => (isSpeaking ? 1.15 : 1)};
+  border-radius: 10px;
+  scale: ${({ $isSpeaking }) => ($isSpeaking ? 1.15 : 1)};
   transition: scale 0.5s ease-in-out;
 `;
 
@@ -26,19 +37,30 @@ const NPCImage = styled.img`
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const NPCNameContainer = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding-top: 0.4vh;
+  background-image: linear-gradient(to bottom, transparent 10%, #00000093 35%);
+`;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 interface NPCNameProps {
   $fontSize: string;
   $color: string;
 }
 
 const NPCName = styled.p<NPCNameProps>`
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 100%;
   text-align: center;
   font-size: ${({ $fontSize }) => $fontSize};
+  font-weight: bold;
   color: ${({ $color }) => $color};
+  text-shadow: 1px 1px 0.3px
+    ${GLOBAL_COLORS.text.manualText.npcPortraitNameSahdow};
   z-index: 2;
 `;
 
@@ -50,9 +72,10 @@ interface EmojiProps {
 
 const Emoji = styled.p<EmojiProps>`
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 2%;
+  right: 1%;
   font-size: ${({ $fontSize }) => $fontSize};
+  text-shadow: 0px 0px 5px ${GLOBAL_COLORS.text.manualText.npcTextShadow};
   z-index: 2;
 `;
 
@@ -65,22 +88,26 @@ interface SpeechBubbleProps {
 
 const SpeechBubble = styled.div<SpeechBubbleProps>`
   position: absolute;
-  top: -20%;
+  top: 3%;
   ${({ $position }) => ($position === "left" ? "left: 0;" : "right: 0;")};
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  width: 50%;
+  padding-top: 5%;
+  width: 30%;
+  aspect-ratio: 450/480;
   scale: ${({ $content }) => ($content === "loading" ? 1 : 0)};
+  transform: scaleX(-1);
   transition: scale 0.3s ease-in-out;
   background-image: url(${speechBubble});
   background-size: cover;
+  background-repeat: no-repeat;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const LoadingIcon = styled.img`
-  width: 50%;
+  width: 30%;
   margin-top: 10%;
 `;
 
@@ -95,27 +122,21 @@ const LoadingIcon = styled.img`
 // Este sí se puede reutilizar en modales y otras partes del juego, pero no en cinemáticas.
 
 interface NPCPortraitProps {
+  windowSize: [number, number];
   isSpeaking: boolean; // Indica si el NPC está hablando o no. Cuando está hablando, se aumenta el tamaño de su retrato.
   portraitSrc: string;
   npcName: string;
   npcNameSize: string; // El tamaño de la fuente, en formato final (ej: "18px"). Pensado para recibir los resultados de calcFontSize.
   npcEmojiSize: string; // El tamaño del emoji de actitud del NPC, en formato final (ej: "18px"). Pensado para recibir los resultados de calcFontSize.
   npcNameColor?: string;
-  disposition: // Actitud del NPC hacia el jugador.
-  | "none"
-    | "friendly"
-    | "veryFriendly"
-    | "inLove"
-    | "neutral"
-    | "unfriendly"
-    | "veryUnfriendly"
-    | "hostile";
+  disposition: undefined | number; // Actitud del NPC hacia el jugador.
   speechBubblePosition?: "left" | "right";
-  speechBubbleContent?: "none" | "loading";
+  speechBubbleContent?: "none" | "loading"; // Si es "loading", se muestra el gif de carga dentro de un bocadillo. No tiene nada que ver con los emojis de estado.
   distortion?: boolean;
 }
 
 function NPCPortrait({
+  windowSize,
   isSpeaking,
   portraitSrc,
   npcName,
@@ -128,22 +149,12 @@ function NPCPortrait({
   distortion = false,
 }: NPCPortraitProps) {
   // Emojis de actitud del NPC hacia el jugador:
-  const emojisMap: Record<string, string | undefined> = {
-    none: undefined,
-    neutral: "😐",
-    friendly: "🙂",
-    veryFriendly: "😊",
-    inLove: "😍",
-    unfriendly: "🤨",
-    veryUnfriendly: "😠",
-    hostile: "😡",
-    thinking: "🤔",
-  };
-
-  const usedEmoji = emojisMap[disposition];
+  const emojisMap: string[] = ["😡", "😠", "🤨", "😐", "🙂", "😊", "😍"];
+  const emojiIndex = typeof disposition === "number" ? disposition + 3 : null;
+  const usedEmoji = emojiIndex !== null ? emojisMap[emojiIndex] : undefined;
 
   return (
-    <MainContainer isSpeaking={isSpeaking}>
+    <MainContainer $isSpeaking={isSpeaking} $windowSize={windowSize}>
       {distortion ? (
         <DistortionWrapper increment={0.001} intensity={3}>
           <NPCImage src={portraitSrc} alt={npcName}></NPCImage>
@@ -152,15 +163,18 @@ function NPCPortrait({
         <NPCImage src={portraitSrc} alt={npcName}></NPCImage>
       )}
 
-      <NPCName $fontSize={npcNameSize} $color={npcNameColor}>
-        {npcName}
-      </NPCName>
+      <NPCNameContainer>
+        <NPCName $fontSize={npcNameSize} $color={npcNameColor}>
+          {npcName}
+        </NPCName>
+      </NPCNameContainer>
 
       {usedEmoji !== undefined && (
         <Emoji $fontSize={npcEmojiSize}>{usedEmoji}</Emoji>
       )}
 
       <SpeechBubble
+        id="speech-bubble"
         $position={speechBubblePosition}
         $content={speechBubbleContent}
       >
