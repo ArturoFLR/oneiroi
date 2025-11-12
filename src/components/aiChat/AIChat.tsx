@@ -193,7 +193,7 @@ function AIChat() {
       specificNpcVars: {},
     });
 
-    if (analyzeResponseResult.cinematic) {
+    if (analyzeResponseResult.cinematic || analyzeResponseResult.newScenario) {
       const chatResume = await generateChatResume(
         npcData.pastConversations,
         npcName,
@@ -205,24 +205,16 @@ function AIChat() {
       }
 
       setChatPhase("endConversation");
+    } else {
+      setChatPhase("userInput");
+    }
 
+    if (analyzeResponseResult.cinematic) {
       chatFadeOutTimeoutRef.current = window.setTimeout(() => {
         dispatch(setCinematicToPlay(analyzeResponseResult.cinematic!));
         dispatch(setMainState("cinematic"));
       }, fadeDuration);
     } else if (analyzeResponseResult.newScenario) {
-      const chatResume = await generateChatResume(
-        npcData.pastConversations,
-        npcName,
-        npcData.getKeyTopics(allNPCsData, allScenariosData, scenarioName)
-      );
-
-      if (chatResume) {
-        npcData.resumedPastConversation = chatResume + " ";
-      }
-
-      setChatPhase("endConversation");
-
       chatFadeOutTimeoutRef.current = window.setTimeout(() => {
         dispatch(setCurrentScenarioName(analyzeResponseResult.newScenario!));
 
@@ -236,8 +228,6 @@ function AIChat() {
 
         dispatch(setMainState("map"));
       }, fadeDuration);
-    } else {
-      setChatPhase("userInput");
     }
   };
 
