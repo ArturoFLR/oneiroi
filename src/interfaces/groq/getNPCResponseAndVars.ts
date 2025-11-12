@@ -1,5 +1,4 @@
-import getAITextWithoutVars from "../../utils/aiChat/getAITextWithoutVars";
-import getVarsFromAIText from "../../utils/aiChat/getVarsFromAIText";
+import { AIResponseAndVars } from "../../components/aiChat/aiChatTypes";
 
 export async function getNPCResponseAndVars(
   npcBehavior: string,
@@ -12,21 +11,31 @@ export async function getNPCResponseAndVars(
       body: JSON.stringify({ npcBehavior, userText }),
     });
 
-    const data = await response.json();
-    const chatCompletion = data.npcResponse;
-
-    if (chatCompletion) {
-      return {
-        text: getAITextWithoutVars(chatCompletion),
-        newVars: getVarsFromAIText(chatCompletion),
-      };
-    } else {
-      return {
-        text: null,
-        newVars: null,
-      };
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
     }
-  } catch {
-    return false;
+
+    const parsedData = await response.json();
+    console.log("parsedData STATUS", parsedData.status);
+
+    if (
+      parsedData.status === 0 ||
+      parsedData.status === 500 ||
+      parsedData.status === 405
+    ) {
+      throw new Error(parsedData.errText);
+    } else if (parsedData.status === 429) {
+      return parsedData.errText as string;
+    } else {
+      const npcResponseObj = JSON.parse(
+        parsedData.npcResponse
+      ) as AIResponseAndVars;
+      return npcResponseObj;
+    }
+  } catch (error) {
+    throw new Error(
+      "Error inesperado, inténtelo más tarde: " +
+        (error instanceof Error ? error.message : String(error))
+    );
   }
 }
