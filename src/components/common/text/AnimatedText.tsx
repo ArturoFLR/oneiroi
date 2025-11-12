@@ -5,6 +5,7 @@ interface AnimatedParagraphProps {
   $fontSize: string;
   $fontFamily: string;
   $color: string;
+  $lineHeight: string;
 }
 
 const AnimatedParagraph = styled.p<AnimatedParagraphProps>`
@@ -12,7 +13,7 @@ const AnimatedParagraph = styled.p<AnimatedParagraphProps>`
   width: 100%;
   font-size: ${({ $fontSize }) => $fontSize};
   font-family: ${({ $fontFamily }) => $fontFamily};
-  line-height: 125%;
+  line-height: ${({ $lineHeight }) => $lineHeight};
   color: ${({ $color }) => $color};
 `;
 
@@ -28,6 +29,7 @@ interface AnimatedTextProps {
   fontSize: string;
   color: string;
   fontFamily: string;
+  lineHeight?: string;
   onEnd: () => void;
 }
 
@@ -37,6 +39,7 @@ function AnimatedText({
   fontSize,
   color,
   fontFamily,
+  lineHeight = "125%",
   onEnd,
 }: AnimatedTextProps) {
   const [textToShow, setTextToShow] = useState<string>("");
@@ -69,6 +72,7 @@ function AnimatedText({
       $fontSize={fontSize}
       $fontFamily={fontFamily}
       $color={color}
+      $lineHeight={lineHeight}
     >
       {textToShow}
     </AnimatedParagraph>
