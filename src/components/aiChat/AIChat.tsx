@@ -184,8 +184,6 @@ function AIChat() {
       scenarioName
     );
 
-    console.log("analyzeResponseResult:", analyzeResponseResult);
-
     setAIResponse({
       disposition: 0,
       flirt: 0,
@@ -196,7 +194,6 @@ function AIChat() {
     });
 
     if (analyzeResponseResult.cinematic) {
-      console.log("Entra por cinemáticas");
       const chatResume = await generateChatResume(
         npcData.pastConversations,
         npcName,
@@ -210,12 +207,10 @@ function AIChat() {
       setChatPhase("endConversation");
 
       chatFadeOutTimeoutRef.current = window.setTimeout(() => {
-        console.log("Se ejecuta el Timeout de cinemáticas");
         dispatch(setCinematicToPlay(analyzeResponseResult.cinematic!));
         dispatch(setMainState("cinematic"));
       }, fadeDuration);
     } else if (analyzeResponseResult.newScenario) {
-      console.log("Entra por escenarios");
       const chatResume = await generateChatResume(
         npcData.pastConversations,
         npcName,
@@ -229,7 +224,6 @@ function AIChat() {
       setChatPhase("endConversation");
 
       chatFadeOutTimeoutRef.current = window.setTimeout(() => {
-        console.log("Se ejecuta el Timeout de Escenarios");
         dispatch(setCurrentScenarioName(analyzeResponseResult.newScenario!));
 
         if (analyzeResponseResult.mapCellID) {
@@ -322,9 +316,6 @@ function AIChat() {
 
     getNPCResponseAndVars(aiPrompt, userTextRef.current)
       .then((response) => {
-        console.log(aiPrompt);
-        console.log(response);
-
         // Si response es una string, es que hemos recibido un mensaje de error 429 (demasiadas peticiones), y se nos facilita el tiempo que queda para poder volver a hacer peticiones.
         if (typeof response === "string") {
           setServerErrorModalText({
