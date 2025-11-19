@@ -1,10 +1,10 @@
 import { ScenarioNameType } from "../../store/slices/scenarioSlice";
 import Scenario from "../../classes/scenarios/Scenario";
-import nataliaHouseScenario from "./natalia_house/nataliaHouseScenario";
+import nataliaHouseConfig from "./natalia_house/nataliaHouseConfig";
 
 const allScenariosData: Record<ScenarioNameType, Scenario> = {
-  alisedaPark: nataliaHouseScenario, // TODO: Modificar esto cuando estén creados los datos del escenario.
-  nataliaHouse: nataliaHouseScenario,
+  alisedaPark: new Scenario(nataliaHouseConfig), // TODO: Modificar esto cuando estén creados los datos del escenario.
+  nataliaHouse: new Scenario(nataliaHouseConfig),
 };
 
 export default allScenariosData;

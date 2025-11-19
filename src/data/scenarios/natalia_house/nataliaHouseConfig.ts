@@ -1,4 +1,3 @@
-import Scenario from "../../../classes/scenarios/Scenario";
 import { ScenarioConfig } from "../../../classes/scenarios/scenariosTypes";
 import nataliaHouseMap from "./nataliaHouseMap";
 
@@ -12,6 +11,4 @@ const nataliaHouseConfig: ScenarioConfig = {
   onLeave: () => {},
 };
 
-const nataliaHouseScenario = new Scenario(nataliaHouseConfig);
-
-export default nataliaHouseScenario;
+export default nataliaHouseConfig;
