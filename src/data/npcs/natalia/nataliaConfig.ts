@@ -1,5 +1,4 @@
 import nataliaPortrait from "@assets/graphics/portraits/Natalia_9.webp";
-import NPC from "../../../classes/npcs/NPC";
 import { NPCConfig } from "../../../classes/npcs/npcsTypes";
 import { GLOBAL_COLORS } from "../../../theme";
 import {
@@ -36,6 +35,4 @@ const nataliaConfig: NPCConfig = {
   endConversation: endConversation,
 };
 
-const nataliaNPC = new NPC(nataliaConfig);
-
-export default nataliaNPC;
+export default nataliaConfig;
