@@ -1,2 +1,3 @@
 track_01 = Icewind Dale, Jeremy Soule.
 crystal-oasis = Guild Wars, Jeremy Soule.
+ushuaia-quiaca = Gustavo Santaolalla - De Ushuaia a la Quiaca
