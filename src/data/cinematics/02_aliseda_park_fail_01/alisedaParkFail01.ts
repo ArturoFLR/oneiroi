@@ -1,8 +1,6 @@
 import { CinematicScene } from "../../../components/cinematics/cinematicTypes";
 import { GLOBAL_COLORS } from "../../../theme";
-import { store } from "../../../store/store";
-import { setMainState } from "../../../store/slices/mainStateSlice";
-import nataliaNPC from "../../../../src/data/npcs/natalia/nataliaNPC";
+import { resetObjectsAndVariables } from "../../../utils/resetObjectsAndVariables";
 
 //////////////////////////////////////////////////////// ASSETS IMPORTS ///////////////////////////////////////////////////////
 import shot2Img from "@assets/graphics/cinematics/02_aliseda_park_fail_01/jonas-house_01.webp";
@@ -233,8 +231,7 @@ export const alisedaParkFail01Cinematic: CinematicScene = [
     shotTransition: "cut",
     uniqueSounds: shot18UniqueSounds,
     onEnd: () => {
-      nataliaNPC.disposition = 0;
-      store.dispatch(setMainState("mainMenu"));
+      resetObjectsAndVariables();
     },
   },
 ];
