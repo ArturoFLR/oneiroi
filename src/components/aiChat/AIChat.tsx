@@ -18,9 +18,9 @@ import {
 
 import jonasPortrait from "@assets/graphics/portraits/Jonas-portrait_02.jpg";
 import AIChatSoundManager from "./AIChatSoundManager";
-import MainAIChatContainer from "./styled/MainAIChatContainer";
 import { aiChatSoundsMap } from "../../data/aiChatAmbientSounds/aiChatAmbientSoundsMap";
 import AIChatPreloader from "./AIChatPreloader";
+import ScreenFader from "../common/ScreenFader";
 
 function AIChat() {
   const [chatPhase, setChatPhase] = useState<ChatPhase>("stopPreviousSounds");
@@ -393,10 +393,10 @@ function AIChat() {
   }, []);
 
   return (
-    <MainAIChatContainer
+    <ScreenFader
       elementReference={mainContainerElement}
       fadeDuration={fadeDuration}
-      chatPhase={chatPhase}
+      visible={chatPhase !== "endConversation"}
     >
       <AIChatSoundManager
         chatPhase={chatPhase}
@@ -465,7 +465,7 @@ function AIChat() {
           buttonText="Ok"
         />
       )}
-    </MainAIChatContainer>
+    </ScreenFader>
   );
 }
 
