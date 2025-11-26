@@ -7,7 +7,7 @@ export type GameMainState =
   | "mainMenu"
   | "cinematic"
   | "aiChat"
-  | "map"; //Añadir según sea necesario
+  | "scenario"; //Añadir según sea necesario
 
 interface MainState {
   gameMainState: GameMainState;

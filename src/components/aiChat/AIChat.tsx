@@ -163,9 +163,9 @@ function AIChat() {
           );
         }
 
-        dispatch(setMainState("map"));
+        dispatch(setMainState("scenario"));
       } else {
-        dispatch(setMainState("map"));
+        dispatch(setMainState("scenario"));
       }
     }, fadeDuration);
   };
@@ -226,7 +226,7 @@ function AIChat() {
           );
         }
 
-        dispatch(setMainState("map"));
+        dispatch(setMainState("scenario"));
       }, fadeDuration);
     }
   };
