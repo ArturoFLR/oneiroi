@@ -103,7 +103,7 @@ const Video = styled.video<VideoProps>`
 
 type VideoState = "fadeIn" | "fadeOut" | "hidden";
 
-interface AnimatedGifFxProps {
+interface VideoFxProps {
   src: string;
   size: string;
   positionTop: string;
@@ -131,7 +131,7 @@ function VideoFx({
   opacity,
   extraCss,
   speed,
-}: AnimatedGifFxProps) {
+}: VideoFxProps) {
   const [videoState, setVideoState] = useState<VideoState>("hidden");
   const videoElement = useRef<HTMLVideoElement>(null);
   const videoTimersRef = useRef<number[]>([]);
