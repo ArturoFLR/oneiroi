@@ -1,4 +1,5 @@
 import Item from "../item/Item";
+import NPC from "../npcs/NPC";
 import MapCell from "./MapCell";
 
 export interface ReachableCell {
@@ -33,6 +34,7 @@ export interface MapCellConfig {
   numberOfVisits?: number;
   hidden?: boolean;
   reachableCells?: ReachableCell[];
+  npcsList?: NPC[];
   doorsToShow?: SomeDoorsToShow;
   hasPuzzle?: boolean;
   hasNpc?: boolean;

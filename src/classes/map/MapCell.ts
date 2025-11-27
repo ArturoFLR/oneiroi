@@ -1,4 +1,5 @@
 import Item from "../item/Item";
+import NPC from "../npcs/NPC";
 import {
   DoorsToShow,
   MapCellConfig,
@@ -20,12 +21,13 @@ export default class MapCell {
   hidden: boolean; // Afecta a su representación en el mapa. Para ver si es accesible se tendrá en cuenta el "reachableCells" de las demás casillas.
   reachableCells: null | ReachableCell[];
   doorsToShow: DoorsToShow; // Sólo se usa para representarlas gráficamente. Se puede ir de una celda a otra aunque no haya puerta (si, por ejemplo, pertenecen al mismo grupo "salón")
+  npcsList: NPC[] | null; // Si la celda pertenece a un grupo, solo se tomarán los npcs de la celda principal del grupo.
   hasPuzzle: boolean;
   hasNpc: boolean;
   hasSpirit: boolean;
-  imageSrc: string;
+  imageSrc: string; // Si la celda pertenece a un grupo, solo se tomará la imagen de la celda principal del grupo.
   widePicture: boolean;
-  items: null | Item[];
+  items: null | Item[]; // Si la celda pertenece a un grupo, solo se tomarán los items de la celda principal del grupo.
   onEnter: null | (() => void); // Eventos a ejecutar al entrar en una casilla (puede no hacer nada hasta que "numberOfVisits" tenga un valor concreto)
   onExit: null | (() => void); // Eventos a ejecutar al salir de una casilla.
   pausableTimeouts: number[] = []; // Colección de timeouts, para poder ser pausados (por ej. durante una cinemática o combate) o limpiados al salir del mapa.
@@ -52,6 +54,7 @@ export default class MapCell {
     this.doorsToShow.east = config.doorsToShow?.east ?? "none";
     this.doorsToShow.south = config.doorsToShow?.south ?? "none";
     this.doorsToShow.west = config.doorsToShow?.west ?? "none";
+    this.npcsList = config.npcsList ?? null;
     this.hasPuzzle = config.hasPuzzle ?? false;
     this.hasNpc = config.hasNpc ?? false;
     this.hasSpirit = config.hasSpirit ?? false;
