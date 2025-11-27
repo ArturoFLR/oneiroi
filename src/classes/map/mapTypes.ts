@@ -37,6 +37,7 @@ export interface MapCellConfig {
   hasNpc?: boolean;
   hasSpirit?: boolean;
   imageSrc?: string;
+  widePicture?: boolean;
   items?: Item[];
   onEnter?: () => void;
   onExit?: () => void;

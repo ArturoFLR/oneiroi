@@ -12,7 +12,7 @@ export default class MapCell {
   id: number;
   col: number;
   row: number;
-  group: string; // Las celdas vacías pertenecerán al grupo "void". "pasilloH" es para pasillos horizontales, "pasilloV" para verticales. Las que no pertenezcan a un grupo tendrán "";
+  group: string; // Las celdas vacías pertenecerán al grupo "void". Las que no pertenezcan a un grupo tendrán ""; Las celdas que forman parte de un mismo grupo compartirán su imagen, items, npcs, etc (se tomarán de la primera que tenga esos datos). Si queremos que una habitación tenga dos zonas diferenciadas, deberemos crear 2 grupos (salón A y salón B, por ejemplo).
   name: string; // Nombre de la celda que aparecerá en el mapa. Cuando hay un grupo de celdas, sólo se debe poner "name" en una de ellas.
   namePosition: NamePosition; //  Dónde se colocará el nombre de la celda para que quede bien cuando forma parte de un grupo.
   numberOfVisits: number; // Las veces que ha estado el jugador. Más flexible que un boolena a la hora de crear eventos.
@@ -23,6 +23,7 @@ export default class MapCell {
   hasNpc: boolean;
   hasSpirit: boolean;
   imageSrc: string;
+  widePicture: boolean;
   items: null | Item[];
   onEnter: null | (() => void); // Eventos a ejecutar al entrar en una casilla (puede no hacer nada hasta que "numberOfVisits" tenga un valor concreto)
   onExit: null | (() => void); // Eventos a ejecutar al salir de una casilla.
@@ -53,6 +54,7 @@ export default class MapCell {
     this.hasNpc = config.hasNpc ?? false;
     this.hasSpirit = config.hasSpirit ?? false;
     this.imageSrc = config.imageSrc ?? placeholderBackgSrc;
+    this.widePicture = config.widePicture ?? true;
     this.items = config.items ?? null;
     this.onEnter = config.onEnter ?? null;
     this.onExit = config.onExit ?? null;
