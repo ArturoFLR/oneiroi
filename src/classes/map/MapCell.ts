@@ -13,6 +13,7 @@ export default class MapCell {
   col: number;
   row: number;
   group: string; // Las celdas vacías pertenecerán al grupo "void". Las que no pertenezcan a un grupo tendrán ""; Las celdas que forman parte de un mismo grupo compartirán su imagen, items, npcs, etc (se tomarán de la primera que tenga esos datos). Si queremos que una habitación tenga dos zonas diferenciadas, deberemos crear 2 grupos (salón A y salón B, por ejemplo).
+  mainGroupCellId: number | null; // Si la celda pertenece a un grupo, aquí irá el id de la celda principal del grupo (la que tiene la imagen, npcs, items, etc). Si no pertenece a ningún grupo, será null.
   name: string; // Nombre de la celda que aparecerá en el mapa. Cuando hay un grupo de celdas, sólo se debe poner "name" en una de ellas.
   namePosition: NamePosition; //  Dónde se colocará el nombre de la celda para que quede bien cuando forma parte de un grupo.
   numberOfVisits: number; // Las veces que ha estado el jugador. Más flexible que un boolena a la hora de crear eventos.
@@ -35,6 +36,7 @@ export default class MapCell {
     this.col = config.col;
     this.row = config.row;
     this.group = config.group ?? "void";
+    this.mainGroupCellId = config.mainGroupCellId ?? null;
     this.name = config.name ?? "";
     this.namePosition = config.namePosition ?? "middle";
     this.numberOfVisits = config.numberOfVisits ?? 0;

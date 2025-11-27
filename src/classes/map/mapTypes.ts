@@ -27,6 +27,7 @@ export interface MapCellConfig {
   col: number;
   row: number;
   group?: string;
+  mainGroupCellId?: number;
   name?: string;
   namePosition?: NamePosition;
   numberOfVisits?: number;
