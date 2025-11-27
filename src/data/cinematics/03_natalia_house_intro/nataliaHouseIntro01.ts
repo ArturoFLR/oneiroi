@@ -167,7 +167,7 @@ export const nataliaHouseIntro01Cinematic: CinematicScene = [
     onEnd: () => {
       store.dispatch(setCurrentScenarioName("nataliaHouse"));
       store.dispatch(setCurrentMapCellId(1));
-      store.dispatch(setMainState("map"));
+      store.dispatch(setMainState("scenario"));
     },
   },
 ];
