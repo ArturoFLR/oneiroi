@@ -1,5 +1,9 @@
 import MapCell from "../../../classes/map/MapCell";
 
+// Recursos gráficos
+import kitchenImgSrc from "@assets/graphics/scenarios/casa_natalia/rooms/casa-natalia-cocina_03.webp";
+import livingRoomImgSrc from "@assets/graphics/scenarios/casa_natalia/rooms/casa-natalia-salon_01.webp";
+
 // En el nombre de cada celda, el primer número es la columna y el segundo la fila.
 
 const mapCell11 = new MapCell({
@@ -7,6 +11,9 @@ const mapCell11 = new MapCell({
   col: 1,
   row: 1,
   group: "salon",
+  mainGroupCellId: 1,
+  imageSrc: livingRoomImgSrc,
+  widePicture: true,
   reachableCells: [{ col: 2, row: 1 }],
 });
 
@@ -15,6 +22,9 @@ const mapCell21 = new MapCell({
   col: 2,
   row: 1,
   group: "salon",
+  mainGroupCellId: 1,
+  imageSrc: livingRoomImgSrc,
+  widePicture: true,
   name: "Salón",
   reachableCells: [
     { col: 1, row: 1 },
@@ -32,6 +42,9 @@ const mapCell31 = new MapCell({
   col: 3,
   row: 1,
   group: "salon",
+  mainGroupCellId: 1,
+  imageSrc: livingRoomImgSrc,
+  widePicture: true,
   reachableCells: [{ col: 2, row: 1 }],
 });
 
@@ -46,6 +59,7 @@ const mapCell22 = new MapCell({
   col: 2,
   row: 2,
   group: "pasillo",
+  mainGroupCellId: 5,
   reachableCells: [
     { col: 2, row: 1 },
     { col: 2, row: 3 },
@@ -63,7 +77,9 @@ const mapCell13 = new MapCell({
   col: 1,
   row: 3,
   group: "",
-  name: "Baño",
+  name: "Cocina",
+  imageSrc: kitchenImgSrc,
+  widePicture: true,
   reachableCells: [{ col: 2, row: 3 }],
   hasNpc: true,
 });
@@ -74,6 +90,7 @@ const mapCell23 = new MapCell({
   row: 3,
   group: "pasillo",
   name: "Pasillo Secreto de la Muerte",
+  mainGroupCellId: 5,
   namePosition: "top",
   reachableCells: [
     { col: 2, row: 2 },
