@@ -9,6 +9,7 @@ type MapContainerProps = {
 
 const MapContainer = styled.div<MapContainerProps>`
   position: relative;
+  margin: auto;
   display: grid;
   grid-template-columns: repeat(${(props) => props.$cols}, 1fr);
   grid-template-rows: 1fr;
