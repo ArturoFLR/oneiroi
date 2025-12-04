@@ -13,7 +13,7 @@ export default function getMainCell(scenario: Scenario, cellId: number) {
     console.log(
       `Error en getMainCell: La celda con id ${cellId} no existe en el mapa del escenario ${scenario.name}.`
     );
-    return null;
+    return cellId;
   }
 
   if (cell.group && cell.group !== "void") {
@@ -21,7 +21,7 @@ export default function getMainCell(scenario: Scenario, cellId: number) {
       console.log(
         `Error en getMainCell: La celda con id ${cellId} pertenece al grupo "${cell.group}", pero no tiene definido mainGroupCellId.`
       );
-      return null;
+      return cellId;
     } else {
       return cell.mainGroupCellId;
     }
