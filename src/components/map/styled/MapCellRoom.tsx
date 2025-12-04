@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { css, keyframes } from "styled-components";
 import { useLayoutEffect, useRef, useState } from "react";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import { BordersToShow } from "../helpers/generateCellBorders";
@@ -9,7 +9,19 @@ import CustomNpcIcon from "../../icons/CustomNpcIcon";
 
 import spiritImgSrc from "@assets/graphics/icons/map/spirit-icon.png";
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+const clickableCellAnim = keyframes`
+  0% {
+    background-color: ${GLOBAL_COLORS.map.cellBackground};
+  }
+  100% {
+    background-color: ${GLOBAL_COLORS.map.cellClickable};
+  }
+`;
+
 type CellMainFrameProps = {
+  $cliCkable: boolean;
   $bordersToShow: BordersToShow;
   $name: string;
 };
@@ -29,6 +41,15 @@ const CellMainFrame = styled.div<CellMainFrameProps>`
   border-bottom: ${({ $bordersToShow }) => bordersMap[$bordersToShow.south]};
   background-color: ${GLOBAL_COLORS.map.cellBackground};
   z-index: ${({ $name }) => ($name ? "2" : "1")};
+
+  ${({ $cliCkable }) => {
+    if ($cliCkable) {
+      return css`
+        cursor: pointer;
+        animation: ${clickableCellAnim} 700ms ease-in-out alternate infinite;
+      `;
+    }
+  }}
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +74,7 @@ const CellDoorVertical = styled.div<CellDoorProps>`
     doorStylesMap[$doorsToShow.north ?? "none"]};
   border-bottom: ${({ $doorsToShow }) =>
     doorStylesMap[$doorsToShow.south ?? "none"]};
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +89,7 @@ const CellDoorHorizontal = styled.div<CellDoorProps>`
     doorStylesMap[$doorsToShow.west ?? "none"]};
   border-right: ${({ $doorsToShow }) =>
     doorStylesMap[$doorsToShow.east ?? "none"]};
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,6 +116,7 @@ const MapName = styled.p<MapNameProps>`
   font-size: ${({ $fontSize }) => $fontSize};
   font-family: ${GLOBAL_FONTS.map.cellName};
   filter: drop-shadow(1px 3px 0.5px black);
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +140,7 @@ const MapIconsContainer = styled.div<MapIconsContainerProps>`
   top: ${({ $namePosition }) => mapIconsPositionMap[$namePosition]};
   left: 10%;
   width: 80%;
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,6 +160,7 @@ const SpiritIcon = styled.img`
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
   /* Asegurar que la animación funcione suavemente */
   will-change: transform, opacity;
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +173,7 @@ const NpcIconConfig = styled.div<NpcIconConfigProps>`
   display: block;
   font-size: ${({ $fontSize }) => $fontSize};
   color: ${GLOBAL_COLORS.icons.npcColor};
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,11 +199,14 @@ const LightBulbIconConfig = styled.div<LightBulbIconConfigProps>`
   color: ${GLOBAL_COLORS.icons.bulbColor};
   filter: drop-shadow(0 0 6px ${GLOBAL_COLORS.icons.bulbGlow});
   animation: ${lightbulbGlowAnim} 1s linear alternate infinite;
+  pointer-events: none;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type MapCellRoomProps = {
+  id: string | number;
+  clickable: boolean;
   doorsToShow: SomeDoorsToShow;
   bordersToShow: BordersToShow;
   name: string;
@@ -184,9 +214,12 @@ type MapCellRoomProps = {
   hasPuzzle: boolean;
   hasNpc: boolean;
   hasSpirit: boolean;
+  onClick: (e: React.MouseEvent<HTMLElement>) => void;
 };
 
 const MapCellRoom = ({
+  id,
+  clickable,
   doorsToShow,
   bordersToShow,
   name,
@@ -194,6 +227,7 @@ const MapCellRoom = ({
   hasPuzzle,
   hasNpc,
   hasSpirit,
+  onClick,
 }: MapCellRoomProps) => {
   const [fontSize, setFontSize] = useState<string>("0px");
   const cellMainFrameElement = useRef<HTMLDivElement>(null);
@@ -216,9 +250,12 @@ const MapCellRoom = ({
 
   return (
     <CellMainFrame
+      id={id.toString()}
+      $cliCkable={clickable}
       $bordersToShow={bordersToShow}
       $name={name}
       ref={cellMainFrameElement}
+      onClick={onClick}
     >
       <CellDoorVertical $doorsToShow={doorsToShow} />
       <CellDoorHorizontal $doorsToShow={doorsToShow} />
