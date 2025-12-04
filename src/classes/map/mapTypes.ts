@@ -1,11 +1,6 @@
+import { NPCName } from "src/store/slices/aiChatSlice";
 import Item from "../item/Item";
-import NPC from "../npcs/NPC";
 import MapCell from "./MapCell";
-
-export interface ReachableCell {
-  col: number;
-  row: number;
-}
 
 export type DoorsToShow = {
   north: "none" | "open" | "closed";
@@ -33,8 +28,8 @@ export interface MapCellConfig {
   namePosition?: NamePosition;
   numberOfVisits?: number;
   hidden?: boolean;
-  reachableCells?: ReachableCell[];
-  npcsList?: NPC[];
+  reachableCells?: number[];
+  npcsList?: NPCName[];
   doorsToShow?: SomeDoorsToShow;
   hasPuzzle?: boolean;
   hasNpc?: boolean;

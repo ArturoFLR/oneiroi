@@ -1,11 +1,6 @@
+import { NPCName } from "../../store/slices/aiChatSlice";
 import Item from "../item/Item";
-import NPC from "../npcs/NPC";
-import {
-  DoorsToShow,
-  MapCellConfig,
-  NamePosition,
-  ReachableCell,
-} from "./mapTypes";
+import { DoorsToShow, MapCellConfig, NamePosition } from "./mapTypes";
 
 import placeholderBackgSrc from "@assets/graphics/scenarios/placeholder-background.jpg";
 
@@ -19,9 +14,9 @@ export default class MapCell {
   namePosition: NamePosition; //  Dónde se colocará el nombre de la celda para que quede bien cuando forma parte de un grupo.
   numberOfVisits: number; // Las veces que ha estado el jugador. Más flexible que un boolena a la hora de crear eventos.
   hidden: boolean; // Afecta a su representación en el mapa. Para ver si es accesible se tendrá en cuenta el "reachableCells" de las demás casillas.
-  reachableCells: null | ReachableCell[];
+  reachableCells: null | number[]; // Lista de ids de celdas a las que se puede ir desde esta celda.
   doorsToShow: DoorsToShow; // Sólo se usa para representarlas gráficamente. Se puede ir de una celda a otra aunque no haya puerta (si, por ejemplo, pertenecen al mismo grupo "salón")
-  npcsList: NPC[] | null; // Si la celda pertenece a un grupo, solo se tomarán los npcs de la celda principal del grupo.
+  npcsList: NPCName[] | null; // Si la celda pertenece a un grupo, solo se tomarán los npcs de la celda principal del grupo.
   hasPuzzle: boolean;
   hasNpc: boolean;
   hasSpirit: boolean;
