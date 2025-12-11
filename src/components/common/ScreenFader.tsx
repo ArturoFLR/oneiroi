@@ -116,6 +116,7 @@ function ScreenFader({
 }: ScreenFadderProps) {
   return (
     <MainContainer
+      id="screenFader"
       ref={elementReference}
       $visible={visible}
       $fadeDuration={fadeDuration}
