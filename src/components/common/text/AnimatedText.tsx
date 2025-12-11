@@ -30,7 +30,7 @@ interface AnimatedTextProps {
   color: string;
   fontFamily: string;
   lineHeight?: string;
-  onEnd: () => void;
+  onEnd?: () => void;
 }
 
 function AnimatedText({
@@ -40,7 +40,7 @@ function AnimatedText({
   color,
   fontFamily,
   lineHeight = "125%",
-  onEnd,
+  onEnd = () => null,
 }: AnimatedTextProps) {
   const [textToShow, setTextToShow] = useState<string>("");
 
