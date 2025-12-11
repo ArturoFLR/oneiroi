@@ -21,11 +21,19 @@ import { NPCName, setCurrentNPCName } from "../../store/slices/aiChatSlice";
 ///////////////////////////////////////////  ASSET IMPORTS  ////////////////////////////////////////////////////////
 
 import mapIconImgSrc from "@assets/graphics/icons/scenario/icono-mapa.webp";
+import TextViewer from "./styled/TextViewer";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function ScenarioDirector() {
   // const [loadState, setLoadState] = useState<"loading" | "loaded">("loading");
+
+  const [textViewerText, setTextViewerText] = useState<string[]>([]);
+  const [isTextViewerOpen, setIsTextViewerOpen] = useState<boolean>(false);
+  const [isTextViewerWriting, setIsTextViewerWriting] =
+    useState<boolean>(false);
+  const [textViewerBuffer, setTextViewerBuffer] = useState<string[]>([]);
+
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
   const [fadeOutMap, setFadeOutMap] = useState<boolean>(false);
 
@@ -48,6 +56,9 @@ function ScenarioDirector() {
   const [iconsSize, setIconsSize] = useState<string>("0px");
   const [portraitWideSize, setPortraitWideSize] = useState<string>("0px");
   const [portraitNameSize, setPortraitNameSize] = useState<string>("0px");
+  const [textViewerTextSize, setTextViewerTextSize] = useState<string>("0px");
+  const [textViewerArrowButtonSize, setTextViewerArrowButtonSize] =
+    useState<string>("0px");
 
   const screenFaderRef = useRef<HTMLDivElement>(null);
   const fadeOutTimerRef = useRef<number>(0);
@@ -57,6 +68,7 @@ function ScenarioDirector() {
   const mainFadeDuration = 1500;
   const mapFadeDuration = 500;
   const roomViewerFadeDuration = 800;
+  const textViewerTextAnimationTime = 18;
 
   ///////////////////////////////////////////////////Redux y datos del escenario actual.
   const dispatch = useAppDispatch();
@@ -151,11 +163,49 @@ function ScenarioDirector() {
     changeMainStateWithFadeout("aiChat");
   }
 
+  ////////////////////////////////////////////////////   TEXT VIEWER HANDLERS   ///////////////////////////////////////////////////////
+
+  // Abre o cierra TextViewer
+  const toogleTextViewerVisibility = useCallback(() => {
+    setIsTextViewerOpen(!isTextViewerOpen);
+  }, [isTextViewerOpen]);
+
+  // Determina si la animación del texto en curso ha terminado o no
+  const setTextAnimHasEnded = useCallback(() => {
+    setIsTextViewerWriting(false);
+  }, []);
+
+  // Envia un nuevo mensaje al TextViewer (a su buffer)
+  const sendMessageToTextViewer = useCallback(
+    (message: string) => {
+      if (!isTextViewerOpen) {
+        toogleTextViewerVisibility();
+      }
+
+      setTextViewerBuffer((prevBuffer) => [...prevBuffer, message]);
+    },
+    [isTextViewerOpen, toogleTextViewerVisibility]
+  );
+
+  // Si hay mensajes en el buffer y no hay animación del texto en curso, imprime uno de los mensajes del buffer y lo borra.
+  useEffect(() => {
+    if (textViewerBuffer.length > 0 && !isTextViewerWriting) {
+      setIsTextViewerWriting(true);
+
+      const newTextViewerText = [...textViewerText, textViewerBuffer[0]];
+      setTextViewerText(newTextViewerText);
+      textViewerBuffer.shift();
+    }
+  }, [textViewerBuffer, isTextViewerWriting, textViewerText]);
+
+  ////////////////////////////////////////////////////   TEXT VIEWER HANDLERS FIN  ///////////////////////////////////////////////////
+
   //////////////////////////////////////////////////// CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ///////////////////////////////////
 
   const portraitNameProportion = 80;
   const portraitWidthProportion = 11;
-  // const textBoxNameProportion = 40;
+  const textViewerTextProportion = 67;
+  const textViewerArrowButtonProportion = 35;
   const IconsProportion = 25;
 
   // Calcula la proporción de la pantalla y el tamaño de las fuentes, y establece un listener
@@ -168,12 +218,16 @@ function ScenarioDirector() {
       setPortraitWideSize(
         calcFontSize(screenFaderRef.current, portraitWidthProportion, 80)
       );
-      //     setTextBoxNameSize(
-      //       calcFontSize(mainContainerElement.current, textBoxNameProportion, 25)
-      //     );
-      //     setTextBoxTextSize(
-      //       calcFontSize(mainContainerElement.current, textBoxTextProportion, 20)
-      //     );
+      setTextViewerTextSize(
+        calcFontSize(screenFaderRef.current, textViewerTextProportion, 18)
+      );
+      setTextViewerArrowButtonSize(
+        calcFontSize(
+          screenFaderRef.current,
+          textViewerArrowButtonProportion,
+          20
+        )
+      );
 
       setIconsSize(calcFontSize(screenFaderRef.current, IconsProportion, 80));
     }
@@ -190,7 +244,13 @@ function ScenarioDirector() {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [IconsProportion, portraitNameProportion, portraitWidthProportion]);
+  }, [
+    IconsProportion,
+    portraitNameProportion,
+    portraitWidthProportion,
+    textViewerArrowButtonProportion,
+    textViewerTextProportion,
+  ]);
 
   //////////////////////////////////////////////////// FIN CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ////////////////////////////////
 
@@ -214,8 +274,9 @@ function ScenarioDirector() {
       fadeDuration={mainFadeDuration}
       visible={!applyFadeOut}
       flex={true}
-      justifyContent="center"
-      alignItems={windowSize[0] > windowSize[1] ? "center" : undefined}
+      flexDirection="column"
+      justifyContent={windowSize[0] > windowSize[1] ? "center" : "flex-start"}
+      alignItems="center"
     >
       {isMapOpen && (
         <MapGenerator
@@ -239,6 +300,19 @@ function ScenarioDirector() {
         npcPortraitSize={portraitWideSize}
         handlePortraitClick={handlePortraitClick}
       >
+        {windowSize[0] >= windowSize[1] && (
+          <TextViewer
+            windowSize={windowSize}
+            isOpen={isTextViewerOpen}
+            textToShow={textViewerText}
+            animationTime={textViewerTextAnimationTime}
+            textSize={textViewerTextSize}
+            buttonSize={textViewerArrowButtonSize}
+            onArrowButtonClick={toogleTextViewerVisibility}
+            onTextAnimationEnd={setTextAnimHasEnded}
+          />
+        )}
+
         {/* Icono del Mapa */}
         {windowSize[0] > windowSize[1] && (
           <IconContainer
@@ -256,6 +330,19 @@ function ScenarioDirector() {
           />
         )}
       </RoomViewer>
+
+      {windowSize[0] < windowSize[1] && (
+        <TextViewer
+          windowSize={windowSize}
+          isOpen={isTextViewerOpen}
+          textToShow={textViewerText}
+          animationTime={textViewerTextAnimationTime}
+          textSize={textViewerTextSize}
+          buttonSize={textViewerArrowButtonSize}
+          onArrowButtonClick={toogleTextViewerVisibility}
+          onTextAnimationEnd={setTextAnimHasEnded}
+        />
+      )}
 
       {/* Icono del Mapa */}
       {windowSize[0] < windowSize[1] && (
