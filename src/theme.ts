@@ -16,6 +16,11 @@ export const GLOBAL_FONTS = {
     playerText: `"Cabin Condensed", sans-serif`,
     aiText: `"Cabin Condensed", sans-serif`,
   },
+  scenario: {
+    npcName: `"Cabin Condensed", sans-serif`,
+    textViewer: `"Cabin Condensed", sans-serif`,
+    modalText: `"Cabin Condensed", sans-serif`,
+  },
   modal: {
     mainText: `"Tilt Neon", sans-serif`,
     secondaryText: `"Tilt Neon", sans-serif`,
@@ -84,6 +89,7 @@ export const GLOBAL_COLORS = {
     },
   },
   aiChat: {
+    textContainerBg: "#3173bf12",
     playerText: "#f1f3e4",
     aiText: "#f1f3e4",
     aiActions: "#57C57AFF",
@@ -96,12 +102,20 @@ export const GLOBAL_COLORS = {
     npcColor4: "#F59494FF",
     npcTextShadow: "#FDFDFDFF",
   },
+  scenario: {
+    portraitBackground: "#1E2A3AFF",
+    npcName: "#F5F8FBFF",
+    textViewer: "#ECF6ADFF",
+    modalText: "#FDDD5CFF",
+    modalBackground: "#443327",
+  },
   map: {
     backgrGradient1: "#02251a",
     backgrGradient2: "#2e5968",
     cellInnerBorder: "#61a4b4",
     cellOuterBorder: "#000000",
     cellBackground: "#45626cb7",
+    cellClickable: "#5A8391D5",
   },
   mainMenu: {},
   screenDarkener: {
