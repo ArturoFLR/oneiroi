@@ -1,4 +1,5 @@
 import {
+  use,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -22,6 +23,14 @@ import { NPCName, setCurrentNPCName } from "../../store/slices/aiChatSlice";
 
 import mapIconImgSrc from "@assets/graphics/icons/scenario/icono-mapa.webp";
 import TextViewer from "./styled/TextViewer";
+import { ModalData } from "./scenarioTypes";
+import ModalViewer from "./styled/ModalViewer";
+
+import nataliaImg from "@assets/graphics/portraits/Natalia_9.webp";
+import jonasImg from "@assets/graphics/portraits/Jonas-portrait_02.jpg";
+import wideImg1 from "@assets/graphics/backgrounds/clouds-stars_02.webp";
+import wideImg2 from "@assets/graphics/scenarios/casa_natalia/rooms/casa-natalia-salon_01.webp";
+import squareImg1 from "@assets/graphics/backgrounds/main-menu-bg.webp";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +42,14 @@ function ScenarioDirector() {
   const [isTextViewerWriting, setIsTextViewerWriting] =
     useState<boolean>(false);
   const [textViewerBuffer, setTextViewerBuffer] = useState<string[]>([]);
+
+  const [modalViewerData, setModalViewerData] = useState<ModalData>({
+    text: ["Placeholder Modal"],
+  });
+  const [isModalViewerOpen, setIsModalViewerOpen] = useState<boolean>(false);
+  const [isModalViewerFadingOut, setIsModalViewerFadingOut] =
+    useState<boolean>(false);
+  const [modalViewerBuffer, setModalViewerBuffer] = useState<ModalData[]>([]);
 
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
   const [fadeOutMap, setFadeOutMap] = useState<boolean>(false);
@@ -59,16 +76,21 @@ function ScenarioDirector() {
   const [textViewerTextSize, setTextViewerTextSize] = useState<string>("0px");
   const [textViewerArrowButtonSize, setTextViewerArrowButtonSize] =
     useState<string>("0px");
+  const [modalViewerTextSize, setModalViewerTextSize] = useState<string>("0px");
+  const [modalViewerButtonSize, setModalViewerButtonSize] =
+    useState<string>("0px");
 
   const screenFaderRef = useRef<HTMLDivElement>(null);
   const fadeOutTimerRef = useRef<number>(0);
   const closeMapTimerRef = useRef<number>(0);
   const fadeOutRoomViewerTimerRef = useRef<number>(0);
+  const modalViewerFadeTimerRef = useRef<number>(0);
 
   const mainFadeDuration = 1500;
   const mapFadeDuration = 500;
   const roomViewerFadeDuration = 800;
   const textViewerTextAnimationTime = 18;
+  const modalViewerFadeDuration = 500;
 
   ///////////////////////////////////////////////////Redux y datos del escenario actual.
   const dispatch = useAppDispatch();
@@ -200,6 +222,117 @@ function ScenarioDirector() {
 
   ////////////////////////////////////////////////////   TEXT VIEWER HANDLERS FIN  ///////////////////////////////////////////////////
 
+  ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS   ///////////////////////////////////////////////////////
+
+  function openModalViewer() {
+    setIsModalViewerOpen(true);
+  }
+
+  function closeModalViewer(callback?: () => void) {
+    setIsModalViewerFadingOut(true);
+
+    modalViewerFadeTimerRef.current = window.setTimeout(() => {
+      setIsModalViewerOpen(false);
+      if (callback) callback();
+    }, modalViewerFadeDuration);
+  }
+
+  function addNewModalToBuffer(modal: ModalData) {
+    setModalViewerBuffer((prevBuffer) => [...prevBuffer, modal]);
+  }
+
+  // Si hay modales en el buffer y no hay ninguno abierto en este momento, abre el más antiguo y lo borra del buffer.
+  useEffect(() => {
+    if (modalViewerBuffer.length > 0 && !isModalViewerOpen) {
+      setModalViewerData(modalViewerBuffer[0]);
+      modalViewerBuffer.shift();
+
+      setIsModalViewerFadingOut(false);
+      openModalViewer();
+    }
+  }, [modalViewerBuffer, isModalViewerOpen]);
+
+  // Modal Viewer TEST
+  // const modalViewerTestFlag = useRef(false);
+
+  // useEffect(() => {
+  //   if (modalViewerTestFlag.current) return;
+  //   modalViewerTestFlag.current = true;
+
+  //   const modal1: ModalData = {
+  //     text: ["Este modal solo tiene texto. A ver qué tal."],
+  //   };
+
+  //   const modal2: ModalData = {
+  //     text: [
+  //       "Este modal también tiene únicamente texto, pero tiene dos párrafos, para ver qué tal andan de espacio entre ellos.",
+  //       "El párrafo anterior era bastante largo para poder comprobar qué tal están los espacios entre líneas.",
+  //     ],
+  //   };
+
+  //   const modal3: ModalData = {
+  //     text: ["Este modal tiene texto y un retrato de NPC. A ver qué tal."],
+  //     startImgUrl: nataliaImg,
+  //     startImgAlt: "Natalia",
+  //     startImgBorder: true,
+  //     startImgIsWide: false,
+  //     startImgPosition: "center",
+  //     endImgUrl: wideImg1,
+  //     endImgAlt: "Nubes",
+  //     endImgBorder: false,
+  //     endImgIsWide: true,
+  //     endImgPosition: "center",
+  //   };
+
+  //   const modal4: ModalData = {
+  //     text: [
+  //       "Jonas, te pido por favor que dejes en paz la ropa de mi abuela. No me parece serio que andes por la casa con sus enaguas.",
+  //       "Hazme caso o te enciendo el pelo lumbre.",
+  //     ],
+  //     startImgUrl: nataliaImg,
+  //     startImgAlt: "Natalia",
+  //     startImgBorder: true,
+  //     startImgIsWide: false,
+  //     startImgPosition: "center",
+  //   };
+
+  //   const modal5: ModalData = {
+  //     text: [
+  //       "En la parte superior izquierda de la pantalla puedes ver el icono mapa, que te permite moverte por los escenarios.",
+  //     ],
+  //     startImgUrl: wideImg1,
+  //     startImgAlt: "Nubes",
+  //     startImgBorder: true,
+  //     startImgIsWide: true,
+  //     startImgPosition: "center",
+  //     onOkClick: () => console.log("Click!"),
+  //   };
+
+  //   window.setTimeout(() => {
+  //     addNewModalToBuffer(modal1);
+  //   }, 3000);
+
+  //   window.setTimeout(() => {
+  //     addNewModalToBuffer(modal2);
+  //   }, 6000);
+
+  //   window.setTimeout(() => {
+  //     addNewModalToBuffer(modal3);
+  //   }, 10000);
+
+  //   window.setTimeout(() => {
+  //     addNewModalToBuffer(modal4);
+  //   }, 12000);
+
+  //   window.setTimeout(() => {
+  //     addNewModalToBuffer(modal5);
+  //   }, 15000);
+  // }, []);
+
+  // Modal Viewer TEST FIN
+
+  ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS FIN  ////////////////////////////////////////////////////
+
   //////////////////////////////////////////////////// CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ///////////////////////////////////
 
   const portraitNameProportion = 80;
@@ -207,6 +340,8 @@ function ScenarioDirector() {
   const textViewerTextProportion = 67;
   const textViewerArrowButtonProportion = 35;
   const IconsProportion = 25;
+  const ModalViewerButtonProportion = 30;
+  const ModalViewerTextProportion = 50;
 
   // Calcula la proporción de la pantalla y el tamaño de las fuentes, y establece un listener
   // para que se recalculen si hay un "resize" de la pantalla.
@@ -230,6 +365,13 @@ function ScenarioDirector() {
       );
 
       setIconsSize(calcFontSize(screenFaderRef.current, IconsProportion, 80));
+
+      setModalViewerButtonSize(
+        calcFontSize(screenFaderRef.current, ModalViewerButtonProportion, 30)
+      );
+      setModalViewerTextSize(
+        calcFontSize(screenFaderRef.current, ModalViewerTextProportion, 22)
+      );
     }
     function setNewWindowSize() {
       setWindowSize([window.innerWidth, window.innerHeight]);
@@ -265,6 +407,7 @@ function ScenarioDirector() {
       clearTimeout(fadeOutTimerRef.current);
       clearTimeout(closeMapTimerRef.current);
       clearTimeout(fadeOutRoomViewerTimerRef.current);
+      clearTimeout(modalViewerFadeTimerRef.current);
     };
   }, []);
 
@@ -359,6 +502,18 @@ function ScenarioDirector() {
           width={iconsSize}
           onClick={openMap}
         />
+      )}
+
+      {isModalViewerOpen && (
+        <ModalViewer
+          windowSize={windowSize}
+          modalData={modalViewerData}
+          fadeDuration={modalViewerFadeDuration}
+          isFadingOut={isModalViewerFadingOut}
+          textSize={modalViewerTextSize}
+          buttonSize={modalViewerButtonSize}
+          onOkButtonClick={closeModalViewer}
+        ></ModalViewer>
       )}
     </ScreenFader>
   );

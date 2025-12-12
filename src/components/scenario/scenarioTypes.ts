@@ -1,5 +1,22 @@
 import { LightningSize, RainIntensity } from "../cinematics/cinematicTypes";
 
+export type ModalImgPosition = "left" | "center" | "right";
+
+export interface ModalData {
+  startImgUrl?: string;
+  startImgAlt?: string;
+  startImgIsWide?: boolean;
+  startImgPosition?: ModalImgPosition;
+  startImgBorder?: boolean; // Aplica un borde de 2px blanco
+  text: string[];
+  endImgUrl?: string;
+  endImgAlt?: string;
+  endImgIsWide?: boolean;
+  endImgPosition?: ModalImgPosition;
+  endImgBorder?: boolean; // Aplica un borde de 2px blanco
+  onOkClick?: () => void;
+}
+
 export type ScenarioRainData = {
   intensity: RainIntensity; //Genera más o menos gotas que caen a más o menos velocidad.
   isStarting: boolean; // Si es true, comenzará a llover en ese momento. Si es false, las gotas estarán por toda la pantalla desde el inicio.
