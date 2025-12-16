@@ -67,7 +67,7 @@ function MapGenerator({
       visible={visible}
       fadeDuration={fadeDuration}
       color="light"
-      zIndex={50}
+      zIndex={25}
       flex={true}
       onClick={(e: React.MouseEvent<HTMLElement>) => onClickOutsideMap(e)}
     >
