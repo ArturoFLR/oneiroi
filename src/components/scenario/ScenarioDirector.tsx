@@ -1,5 +1,4 @@
 import {
-  use,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -18,19 +17,29 @@ import MapCell from "../../classes/map/MapCell";
 import { setCurrentMapCellId } from "../../store/slices/scenarioSlice";
 import getMainCell from "../../utils/scenario/getMainCell";
 import { NPCName, setCurrentNPCName } from "../../store/slices/aiChatSlice";
+import {
+  setIsMapTutorial2Seen,
+  setIsMapTutorialSeen,
+  setIsNPCTutorialSeen,
+  setIsPersonalTutorialSeen,
+} from "../../store/slices/tutorialSlice";
+import TextViewer from "./styled/TextViewer";
+import { ModalData } from "./scenarioTypes";
+import {
+  mapTutorialModal,
+  mapTutorialModal2,
+  npcTutorialModal,
+  personalTutorialModal,
+} from "../../data/tutorialData/tutorialModalsData";
+import ModalWithPictures from "../common/modals/ModalWithPictures";
 
 ///////////////////////////////////////////  ASSET IMPORTS  ////////////////////////////////////////////////////////
 
 import mapIconImgSrc from "@assets/graphics/icons/scenario/icono-mapa.webp";
-import TextViewer from "./styled/TextViewer";
-import { ModalData } from "./scenarioTypes";
-import ModalViewer from "./styled/ModalViewer";
-
-import nataliaImg from "@assets/graphics/portraits/Natalia_9.webp";
-import jonasImg from "@assets/graphics/portraits/Jonas-portrait_02.jpg";
-import wideImg1 from "@assets/graphics/backgrounds/clouds-stars_02.webp";
-import wideImg2 from "@assets/graphics/scenarios/casa_natalia/rooms/casa-natalia-salon_01.webp";
-import squareImg1 from "@assets/graphics/backgrounds/main-menu-bg.webp";
+import personalImgSrc from "@assets/graphics/icons/scenario/icono-persona.webp";
+import optionsImgSrc from "@assets/graphics/icons/scenario/icono-opciones.webp";
+import inventoryImgSrc from "@assets/graphics/icons/scenario/icono-inventario.webp";
+import powersImgSrc from "@assets/graphics/icons/scenario/icono-hechizos.webp";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,10 +55,13 @@ function ScenarioDirector() {
   const [modalViewerData, setModalViewerData] = useState<ModalData>({
     text: ["Placeholder Modal"],
   });
-  const [isModalViewerOpen, setIsModalViewerOpen] = useState<boolean>(false);
-  const [isModalViewerFadingOut, setIsModalViewerFadingOut] =
+  const [isModalWithPicturesOpen, setIsModalWithPicturesOpen] =
     useState<boolean>(false);
-  const [modalViewerBuffer, setModalViewerBuffer] = useState<ModalData[]>([]);
+  const [isModalWithPicturesFadingOut, setIsModalWithPicturesFadingOut] =
+    useState<boolean>(false);
+  const [modalWithPicturesBuffer, setModalWithPicturesBuffer] = useState<
+    ModalData[]
+  >([]);
 
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false);
   const [fadeOutMap, setFadeOutMap] = useState<boolean>(false);
@@ -76,8 +88,9 @@ function ScenarioDirector() {
   const [textViewerTextSize, setTextViewerTextSize] = useState<string>("0px");
   const [textViewerArrowButtonSize, setTextViewerArrowButtonSize] =
     useState<string>("0px");
-  const [modalViewerTextSize, setModalViewerTextSize] = useState<string>("0px");
-  const [modalViewerButtonSize, setModalViewerButtonSize] =
+  const [modalWithPicturesTextSize, setModalWithPicturesTextSize] =
+    useState<string>("0px");
+  const [modalWithPicturesButtonSize, setModalWithPicturesButtonSize] =
     useState<string>("0px");
 
   const screenFaderRef = useRef<HTMLDivElement>(null);
@@ -85,21 +98,28 @@ function ScenarioDirector() {
   const closeMapTimerRef = useRef<number>(0);
   const fadeOutRoomViewerTimerRef = useRef<number>(0);
   const modalViewerFadeTimerRef = useRef<number>(0);
+  const tutorialWaitingTimerRef = useRef<number>(0);
+  // Se usa la siguiente flag para que el useEffect se ejecute solo una vez a pesar del StrictMode
+  const tutorialUseEffectFlagRef = useRef<boolean>(false);
+
+  // Flag que evita que se ejecuten eventos del escenario cuando ya se ha iniciado el fundido que precede al cambio hacia aiChat
+  const isNPCProtraitClicked = useRef<boolean>(false);
 
   const mainFadeDuration = 1500;
   const mapFadeDuration = 500;
   const roomViewerFadeDuration = 800;
   const textViewerTextAnimationTime = 18;
-  const modalViewerFadeDuration = 500;
+  const modalWithPicturesFadeDuration = 500;
+  const tutorialWaitingTime = 1000;
 
-  ///////////////////////////////////////////////////Redux y datos del escenario actual.
+  ///////////////////////////////////////////////////REDUX y datos del escenario actual.
   const dispatch = useAppDispatch();
 
   const scenarioData = useAppSelector(
     (state) => allScenariosData[state.scenarioData.scenarioName]
   );
-
   const mapCellId = useAppSelector((state) => state.scenarioData.mapCellId);
+  const tutorialData = useAppSelector((state) => state.tutorialData);
 
   const scenarioMapData: MapCell[] = scenarioData.map;
   const actualCellData = scenarioData.map.find(
@@ -109,7 +129,7 @@ function ScenarioDirector() {
   const isActualImgWide = actualCellData.widePicture;
   const actualCellNPCList = actualCellData?.npcsList;
 
-  /////////////////////////////////////////////////////Redux Fin
+  /////////////////////////////////////////////////////REDUX FIN
 
   //Esta función permite pasar a otro estado principal (aiChat, cinematic, main menu, etc) aplicando un fadeout primero.
   function changeMainStateWithFadeout(newMainState: GameMainState) {
@@ -129,6 +149,13 @@ function ScenarioDirector() {
       }
     });
   }, [actualCellData, scenarioMapData]);
+
+  // Gestiona los cambios cuando el usuario pulsa sobre un retrato de NPC
+  function handlePortraitClick(npcName: NPCName) {
+    isNPCProtraitClicked.current = true;
+    dispatch(setCurrentNPCName(npcName));
+    changeMainStateWithFadeout("aiChat");
+  }
 
   /////////////////////////////////////////////////////   MAP HANDLERS   ///////////////////////////////////////////////////////
   function openMap() {
@@ -177,13 +204,12 @@ function ScenarioDirector() {
     } else return; //Si la celda no es alcanzable, no hacemos nada
   }
 
-  //////////////////////////////////////////////////// MAP HANDLERS FIN ///////////////////////////////////////////////////////
+  // Cuando cambia la celda actual, hacemos visibles las celdas alcanzables desde ella, si no lo son ya.
+  useEffect(() => {
+    makeReachableCellsVisible();
+  }, [mapCellId, makeReachableCellsVisible]);
 
-  // Gestiona los cambios cuando el usuario pulsa sobre un retrato de NPC
-  function handlePortraitClick(npcName: NPCName) {
-    dispatch(setCurrentNPCName(npcName));
-    changeMainStateWithFadeout("aiChat");
-  }
+  //////////////////////////////////////////////////// MAP HANDLERS FIN ///////////////////////////////////////////////////////
 
   ////////////////////////////////////////////////////   TEXT VIEWER HANDLERS   ///////////////////////////////////////////////////////
 
@@ -225,113 +251,78 @@ function ScenarioDirector() {
   ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS   ///////////////////////////////////////////////////////
 
   function openModalViewer() {
-    setIsModalViewerOpen(true);
+    setIsModalWithPicturesOpen(true);
   }
 
   function closeModalViewer(callback?: () => void) {
-    setIsModalViewerFadingOut(true);
+    setIsModalWithPicturesFadingOut(true);
 
     modalViewerFadeTimerRef.current = window.setTimeout(() => {
-      setIsModalViewerOpen(false);
+      setIsModalWithPicturesOpen(false);
       if (callback) callback();
-    }, modalViewerFadeDuration);
+    }, modalWithPicturesFadeDuration);
   }
 
   function addNewModalToBuffer(modal: ModalData) {
-    setModalViewerBuffer((prevBuffer) => [...prevBuffer, modal]);
+    setModalWithPicturesBuffer((prevBuffer) => [...prevBuffer, modal]);
   }
 
   // Si hay modales en el buffer y no hay ninguno abierto en este momento, abre el más antiguo y lo borra del buffer.
   useEffect(() => {
-    if (modalViewerBuffer.length > 0 && !isModalViewerOpen) {
-      setModalViewerData(modalViewerBuffer[0]);
-      modalViewerBuffer.shift();
+    if (modalWithPicturesBuffer.length > 0 && !isModalWithPicturesOpen) {
+      setModalViewerData(modalWithPicturesBuffer[0]);
+      modalWithPicturesBuffer.shift();
 
-      setIsModalViewerFadingOut(false);
+      setIsModalWithPicturesFadingOut(false);
       openModalViewer();
     }
-  }, [modalViewerBuffer, isModalViewerOpen]);
+  }, [modalWithPicturesBuffer, isModalWithPicturesOpen]);
 
-  // Modal Viewer TEST
-  // const modalViewerTestFlag = useRef(false);
+  ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS FIN  ////////////////////////////////////////////
 
-  // useEffect(() => {
-  //   if (modalViewerTestFlag.current) return;
-  //   modalViewerTestFlag.current = true;
+  ////////////////////////////////////////////////////   TUTORIAL HANDLERS   //////////////////////////////////////////////////
 
-  //   const modal1: ModalData = {
-  //     text: ["Este modal solo tiene texto. A ver qué tal."],
-  //   };
+  // Lanza los tutoriales para: NPC, Mapa y Personal
+  useEffect(() => {
+    if (tutorialUseEffectFlagRef.current) return;
 
-  //   const modal2: ModalData = {
-  //     text: [
-  //       "Este modal también tiene únicamente texto, pero tiene dos párrafos, para ver qué tal andan de espacio entre ellos.",
-  //       "El párrafo anterior era bastante largo para poder comprobar qué tal están los espacios entre líneas.",
-  //     ],
-  //   };
+    tutorialWaitingTimerRef.current = window.setTimeout(() => {
+      if (isNPCProtraitClicked.current) return;
+      tutorialUseEffectFlagRef.current = true;
 
-  //   const modal3: ModalData = {
-  //     text: ["Este modal tiene texto y un retrato de NPC. A ver qué tal."],
-  //     startImgUrl: nataliaImg,
-  //     startImgAlt: "Natalia",
-  //     startImgBorder: true,
-  //     startImgIsWide: false,
-  //     startImgPosition: "center",
-  //     endImgUrl: wideImg1,
-  //     endImgAlt: "Nubes",
-  //     endImgBorder: false,
-  //     endImgIsWide: true,
-  //     endImgPosition: "center",
-  //   };
+      if (!tutorialData.isNPCTutorialSeen) {
+        addNewModalToBuffer(npcTutorialModal);
+        dispatch(setIsNPCTutorialSeen(true));
+      }
 
-  //   const modal4: ModalData = {
-  //     text: [
-  //       "Jonas, te pido por favor que dejes en paz la ropa de mi abuela. No me parece serio que andes por la casa con sus enaguas.",
-  //       "Hazme caso o te enciendo el pelo lumbre.",
-  //     ],
-  //     startImgUrl: nataliaImg,
-  //     startImgAlt: "Natalia",
-  //     startImgBorder: true,
-  //     startImgIsWide: false,
-  //     startImgPosition: "center",
-  //   };
+      if (!tutorialData.isMapTutorialSeen) {
+        addNewModalToBuffer(mapTutorialModal);
+        dispatch(setIsMapTutorialSeen(true));
+      }
 
-  //   const modal5: ModalData = {
-  //     text: [
-  //       "En la parte superior izquierda de la pantalla puedes ver el icono mapa, que te permite moverte por los escenarios.",
-  //     ],
-  //     startImgUrl: wideImg1,
-  //     startImgAlt: "Nubes",
-  //     startImgBorder: true,
-  //     startImgIsWide: true,
-  //     startImgPosition: "center",
-  //     onOkClick: () => console.log("Click!"),
-  //   };
+      if (!tutorialData.isPersonalTutorialSeen) {
+        addNewModalToBuffer(personalTutorialModal);
+        dispatch(setIsPersonalTutorialSeen(true));
+      }
+    }, tutorialWaitingTime);
+  }, [
+    dispatch,
+    tutorialData.isNPCTutorialSeen,
+    tutorialData.isMapTutorialSeen,
+    tutorialData.isPersonalTutorialSeen,
+  ]);
 
-  //   window.setTimeout(() => {
-  //     addNewModalToBuffer(modal1);
-  //   }, 3000);
+  // Lanza el tutorial para mapa2 (cuando el usuario pulsa en él)
+  useEffect(() => {
+    if (isMapOpen && !tutorialData.isMapTutorial2Seen) {
+      tutorialWaitingTimerRef.current = window.setTimeout(() => {
+        addNewModalToBuffer(mapTutorialModal2);
+        dispatch(setIsMapTutorial2Seen(true));
+      }, tutorialWaitingTime);
+    }
+  }, [dispatch, tutorialData.isMapTutorial2Seen, isMapOpen]);
 
-  //   window.setTimeout(() => {
-  //     addNewModalToBuffer(modal2);
-  //   }, 6000);
-
-  //   window.setTimeout(() => {
-  //     addNewModalToBuffer(modal3);
-  //   }, 10000);
-
-  //   window.setTimeout(() => {
-  //     addNewModalToBuffer(modal4);
-  //   }, 12000);
-
-  //   window.setTimeout(() => {
-  //     addNewModalToBuffer(modal5);
-  //   }, 15000);
-  // }, []);
-
-  // Modal Viewer TEST FIN
-
-  ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS FIN  ////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////   TUTORIAL HANDLERS FIN  ////////////////////////////////////////////
 
   //////////////////////////////////////////////////// CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ///////////////////////////////////
 
@@ -339,9 +330,9 @@ function ScenarioDirector() {
   const portraitWidthProportion = 11;
   const textViewerTextProportion = 67;
   const textViewerArrowButtonProportion = 35;
-  const IconsProportion = 25;
-  const ModalViewerButtonProportion = 30;
-  const ModalViewerTextProportion = 50;
+  const iconsProportion = 25;
+  const modalWithPicturesButtonProportion = 30;
+  const modalWithPicturesTextProportion = 50;
 
   // Calcula la proporción de la pantalla y el tamaño de las fuentes, y establece un listener
   // para que se recalculen si hay un "resize" de la pantalla.
@@ -364,13 +355,21 @@ function ScenarioDirector() {
         )
       );
 
-      setIconsSize(calcFontSize(screenFaderRef.current, IconsProportion, 80));
+      setIconsSize(calcFontSize(screenFaderRef.current, iconsProportion, 80));
 
-      setModalViewerButtonSize(
-        calcFontSize(screenFaderRef.current, ModalViewerButtonProportion, 30)
+      setModalWithPicturesButtonSize(
+        calcFontSize(
+          screenFaderRef.current,
+          modalWithPicturesButtonProportion,
+          30
+        )
       );
-      setModalViewerTextSize(
-        calcFontSize(screenFaderRef.current, ModalViewerTextProportion, 22)
+      setModalWithPicturesTextSize(
+        calcFontSize(
+          screenFaderRef.current,
+          modalWithPicturesTextProportion,
+          22
+        )
       );
     }
     function setNewWindowSize() {
@@ -387,7 +386,7 @@ function ScenarioDirector() {
       window.removeEventListener("resize", handleResize);
     };
   }, [
-    IconsProportion,
+    iconsProportion,
     portraitNameProportion,
     portraitWidthProportion,
     textViewerArrowButtonProportion,
@@ -396,11 +395,6 @@ function ScenarioDirector() {
 
   //////////////////////////////////////////////////// FIN CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ////////////////////////////////
 
-  // Cuando cambia la celda actual, hacemos visibles las celdas alcanzables desde ella, si no lo son ya.
-  useEffect(() => {
-    makeReachableCellsVisible();
-  }, [mapCellId, makeReachableCellsVisible]);
-
   // Limpieza de Timers
   useEffect(() => {
     return () => {
@@ -408,6 +402,7 @@ function ScenarioDirector() {
       clearTimeout(closeMapTimerRef.current);
       clearTimeout(fadeOutRoomViewerTimerRef.current);
       clearTimeout(modalViewerFadeTimerRef.current);
+      clearTimeout(tutorialWaitingTimerRef.current);
     };
   }, []);
 
@@ -504,16 +499,16 @@ function ScenarioDirector() {
         />
       )}
 
-      {isModalViewerOpen && (
-        <ModalViewer
+      {isModalWithPicturesOpen && (
+        <ModalWithPictures
           windowSize={windowSize}
           modalData={modalViewerData}
-          fadeDuration={modalViewerFadeDuration}
-          isFadingOut={isModalViewerFadingOut}
-          textSize={modalViewerTextSize}
-          buttonSize={modalViewerButtonSize}
+          fadeDuration={modalWithPicturesFadeDuration}
+          isFadingOut={isModalWithPicturesFadingOut}
+          textSize={modalWithPicturesTextSize}
+          buttonSize={modalWithPicturesButtonSize}
           onOkButtonClick={closeModalViewer}
-        ></ModalViewer>
+        ></ModalWithPictures>
       )}
     </ScreenFader>
   );
