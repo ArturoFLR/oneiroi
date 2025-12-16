@@ -12,12 +12,18 @@ import allNPCsData from "../../../data/npcs/allNPCsData";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const MainContainer = styled.div`
+interface MainContainerProps {
+  $windowSize: [number, number];
+}
+
+const MainContainer = styled.div<MainContainerProps>`
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
   justify-content: flex-start;
+
   align-items: center;
   border-radius: 10px;
   z-index: 10;
@@ -82,7 +88,6 @@ const BlackOverlayFader = styled.div<BlackOverlayFaderProps>`
   width: 100%;
   height: 100%;
   background-color: ${GLOBAL_COLORS.black};
-  z-index: 50;
   animation: ${({ $fadeOut, $fadeDuration }) =>
     $fadeOut
       ? css`
@@ -93,6 +98,7 @@ const BlackOverlayFader = styled.div<BlackOverlayFaderProps>`
         `};
 
   pointer-events: none;
+  z-index: 50;
 `;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,7 +175,7 @@ function RoomViewer({
   }
 
   return (
-    <MainContainer id="room-viewer-main-container">
+    <MainContainer id="room-viewer-main-container" $windowSize={windowSize}>
       <MainPicture
         src={roomImgUrl}
         $widePicture={widePicture}
