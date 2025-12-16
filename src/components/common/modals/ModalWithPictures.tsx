@@ -1,6 +1,6 @@
-import ScreenFader from "../../common/ScreenFader";
+import ScreenFader from "../ScreenFader";
 import styled, { css } from "styled-components";
-import { ModalData, ModalImgPosition } from "../scenarioTypes";
+import { ModalData, ModalImgPosition } from "../../scenario/scenarioTypes";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import TextButton from "../../buttons/TextButton";
 
@@ -106,7 +106,7 @@ const ButtonContainer = styled.div`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-interface ModalViewerProps {
+interface ModalWithPicturesProps {
   windowSize: [number, number];
   modalData: ModalData;
   fadeDuration: number;
@@ -116,7 +116,7 @@ interface ModalViewerProps {
   onOkButtonClick: (callback?: () => void) => void;
 }
 
-function ModalViewer({
+function ModalWithPictures({
   windowSize,
   modalData,
   fadeDuration,
@@ -124,7 +124,7 @@ function ModalViewer({
   textSize,
   buttonSize,
   onOkButtonClick,
-}: ModalViewerProps) {
+}: ModalWithPicturesProps) {
   // Valores por defecto del modal
   modalData.startImgAlt = modalData.startImgAlt || "";
   modalData.startImgIsWide = modalData.startImgIsWide || false;
@@ -196,4 +196,4 @@ function ModalViewer({
   );
 }
 
-export default ModalViewer;
+export default ModalWithPictures;
