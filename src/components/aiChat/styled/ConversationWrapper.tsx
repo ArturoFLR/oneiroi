@@ -3,9 +3,9 @@ import styled from "styled-components";
 import PlayerInput from "./PlayerInput";
 import AIResponse from "./AIResponse";
 import TextButton from "../../buttons/TextButton";
+import { ChatPhase } from "../aiChatTypes";
 
 import asfaltBackground from "@assets/graphics/backgrounds/asfalt-light.png";
-import { ChatPhase } from "../aiChatTypes";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ const MainContainer = styled.div`
   border-radius: 10px;
   padding: 2vh 4vw;
   background-image: url(${asfaltBackground});
-  background-color: #3173bf12;
+  background-color: ${GLOBAL_COLORS.aiChat.textContainerBg};
   background-blend-mode: saturation;
 `;
 
