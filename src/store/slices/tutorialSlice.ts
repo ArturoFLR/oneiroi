@@ -4,8 +4,10 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface TutorialData {
   isNPCTutorialSeen: boolean;
+  isNPCTutorial2Seen: boolean;
   isMapTutorialSeen: boolean;
-  isPersonaTutorialSeen: boolean;
+  isMapTutorial2Seen: boolean;
+  isPersonalTutorialSeen: boolean;
   isOptionsTutorialSeen: boolean;
   isInventoryTutorialSeen: boolean;
   isPowersTutorialSeen: boolean;
@@ -13,8 +15,10 @@ interface TutorialData {
 
 const initialState: TutorialData = {
   isNPCTutorialSeen: false,
+  isNPCTutorial2Seen: false,
   isMapTutorialSeen: false,
-  isPersonaTutorialSeen: false,
+  isMapTutorial2Seen: false,
+  isPersonalTutorialSeen: false,
   isOptionsTutorialSeen: false,
   isInventoryTutorialSeen: false,
   isPowersTutorialSeen: false,
@@ -27,11 +31,17 @@ const soundSlice = createSlice({
     setIsNPCTutorialSeen: (state, action: PayloadAction<boolean>) => {
       state.isNPCTutorialSeen = action.payload;
     },
+    setIsNPCTutorial2Seen: (state, action: PayloadAction<boolean>) => {
+      state.isNPCTutorial2Seen = action.payload;
+    },
     setIsMapTutorialSeen: (state, action: PayloadAction<boolean>) => {
       state.isMapTutorialSeen = action.payload;
     },
-    setIsPersonaTutorialSeen: (state, action: PayloadAction<boolean>) => {
-      state.isPersonaTutorialSeen = action.payload;
+    setIsMapTutorial2Seen: (state, action: PayloadAction<boolean>) => {
+      state.isMapTutorial2Seen = action.payload;
+    },
+    setIsPersonalTutorialSeen: (state, action: PayloadAction<boolean>) => {
+      state.isPersonalTutorialSeen = action.payload;
     },
     setIsOptionsTutorialSeen: (state, action: PayloadAction<boolean>) => {
       state.isOptionsTutorialSeen = action.payload;
@@ -45,5 +55,14 @@ const soundSlice = createSlice({
   },
 });
 
-export const { setIsNPCTutorialSeen } = soundSlice.actions;
+export const {
+  setIsNPCTutorialSeen,
+  setIsNPCTutorial2Seen,
+  setIsMapTutorialSeen,
+  setIsMapTutorial2Seen,
+  setIsPersonalTutorialSeen,
+  setIsOptionsTutorialSeen,
+  setIsInventoryTutorialSeen,
+  setIsPowersTutorialSeen,
+} = soundSlice.actions;
 export default soundSlice.reducer;
