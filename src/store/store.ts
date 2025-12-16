@@ -4,6 +4,7 @@ import cinematicDataReducer from "./slices/cinematicSlice";
 import aiChatDataReducer from "./slices/aiChatSlice";
 import scenarioDataReducer from "./slices/scenarioSlice";
 import soundDataReducer from "./slices/soundSlice";
+import tutorialDataReducer from "./slices/tutorialSlice";
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     aiChatData: aiChatDataReducer,
     scenarioData: scenarioDataReducer,
     soundData: soundDataReducer,
+    tutorialData: tutorialDataReducer,
   },
 });
 
