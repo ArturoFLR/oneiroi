@@ -15,12 +15,19 @@ import {
   setCurrentMapCellId,
   setCurrentScenarioName,
 } from "../../store/slices/scenarioSlice";
-
-import jonasPortrait from "@assets/graphics/portraits/Jonas-portrait_02.jpg";
+import { setIsNPCTutorial2Seen } from "../../store/slices/tutorialSlice";
 import AIChatSoundManager from "./AIChatSoundManager";
 import { aiChatSoundsMap } from "../../data/aiChatAmbientSounds/aiChatAmbientSoundsMap";
 import AIChatPreloader from "./AIChatPreloader";
 import ScreenFader from "../common/ScreenFader";
+
+import jonasPortrait from "@assets/graphics/portraits/Jonas-portrait_02.jpg";
+import { ModalData } from "../scenario/scenarioTypes";
+import ModalWithPictures from "../common/modals/ModalWithPictures";
+import {
+  npcTutorial2Modal,
+  npcTutorial3Modal,
+} from "../../data/tutorialData/tutorialModalsData";
 
 function AIChat() {
   const [chatPhase, setChatPhase] = useState<ChatPhase>("stopPreviousSounds");
@@ -46,20 +53,40 @@ function AIChat() {
   const [forbiddenTopicModalText, setForbiddenTopicModalText] =
     useState<string>("");
 
+  const [modalViewerData, setModalViewerData] = useState<ModalData>({
+    text: ["Placeholder Modal"],
+  });
+  const [isModalWithPicturesOpen, setIsModalWithPicturesOpen] =
+    useState<boolean>(false);
+  const [isModalWithPicturesFadingOut, setIsModalWithPicturesFadingOut] =
+    useState<boolean>(false);
+  const [modalWithPicturesBuffer, setModalWithPicturesBuffer] = useState<
+    ModalData[]
+  >([]);
+
   const [windowSize, setWindowSize] = useState<[number, number]>([0, 0]);
   const [portraitNameSize, setPortraitNameSize] = useState<string>("0px");
   const [portraitEmojiSize, setPortraitEmojiSize] = useState<string>("0px");
   const [textBoxNameSize, setTextBoxNameSize] = useState<string>("0px");
   const [textBoxTextSize, setTextBoxTextSize] = useState<string>("0px");
   const [buttonsSize, setButtonsSize] = useState<string>("0px");
+  const [modalWithPicturesTextSize, setModalWithPicturesTextSize] =
+    useState<string>("0px");
+  const [modalWithPicturesButtonSize, setModalWithPicturesButtonSize] =
+    useState<string>("0px");
 
   const userTextRef = useRef<string>("");
   const mainContainerElement = useRef<HTMLDivElement>(null);
   const textareaElementRef = useRef<HTMLTextAreaElement>(null);
   const chatPhaseTimeoutRef = useRef<number>(0);
   const chatFadeOutTimeoutRef = useRef<number>(0);
+  const tutorialWaitTimeoutRef = useRef<number>(0);
+  const modalViewerFadeTimerRef = useRef<number>(0);
 
   const fadeDuration = 1500;
+  // Cuánto tarda en aparecer el tutorial desde que se monta el componente.
+  const tutorialWaitingTime = 2000;
+  const modalWithPicturesFadeDuration = 500;
 
   //Redux
   const dispatch = useAppDispatch();
@@ -71,6 +98,8 @@ function AIChat() {
   const scenarioName = useAppSelector(
     (state) => state.scenarioData.scenarioName
   );
+
+  const tutorialData = useAppSelector((state) => state.tutorialData);
   //Redux Fin
 
   const npcName = npcData ? npcData.name : "";
@@ -83,12 +112,6 @@ function AIChat() {
   const soundScapeToUse = soundScapeReturnedByNpc
     ? aiChatSoundsMap[soundScapeReturnedByNpc]
     : null;
-
-  const portraitNameProportion = 58;
-  const portraitEmojiProportion = 50;
-  const textBoxNameProportion = 40;
-  const textBoxTextProportion = 58;
-  const buttonsProportion = 40;
 
   const generateChatResume = async (
     textToResume: string,
@@ -239,6 +262,16 @@ function AIChat() {
     setChatPhase("userInput");
   };
 
+  //////////////////////////////////////////////////// CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ///////////////////////////////////
+
+  const portraitNameProportion = 58;
+  const portraitEmojiProportion = 50;
+  const textBoxNameProportion = 40;
+  const textBoxTextProportion = 58;
+  const buttonsProportion = 40;
+  const ModalWithPicturesButtonProportion = 30;
+  const ModalWithPicturesTextProportion = 50;
+
   // Calcula la proporción de la pantalla y el tamaño de las fuentes, y establece un listener
   // para que se recalculen si hay un "resize" de la pantalla.
   useLayoutEffect(() => {
@@ -262,6 +295,22 @@ function AIChat() {
       setButtonsSize(
         calcFontSize(mainContainerElement.current, buttonsProportion, 25)
       );
+
+      setModalWithPicturesButtonSize(
+        calcFontSize(
+          mainContainerElement.current,
+          ModalWithPicturesButtonProportion,
+          30
+        )
+      );
+
+      setModalWithPicturesTextSize(
+        calcFontSize(
+          mainContainerElement.current,
+          ModalWithPicturesTextProportion,
+          22
+        )
+      );
     }
 
     function setNewWindowSize() {
@@ -282,6 +331,10 @@ function AIChat() {
       window.removeEventListener("resize", handleResize);
     };
   }, [portraitNameProportion, textBoxNameProportion, textBoxTextProportion]);
+
+  //////////////////////////////////////////////////// FIN CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ////////////////////////////////
+
+  //////////////////////////////////////////////////// CONTROL DE FASES DEL CHAT //////////////////////////////////////////
 
   // Comprueba si el usuario puede abandonar la conversación en este momento.
   useEffect(() => {
@@ -385,87 +438,155 @@ function AIChat() {
     };
   }, [chatPhase, aiResponse, dispatch, npcData, scenarioName, npcName]);
 
-  // Aquí se limpia el timeout del efecto fade-out cuando se desmonta el componente
+  ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS   ///////////////////////////////////////////////////////
+
+  function openModalViewer() {
+    setIsModalWithPicturesOpen(true);
+  }
+
+  function closeModalViewer(callback?: () => void) {
+    setIsModalWithPicturesFadingOut(true);
+
+    modalViewerFadeTimerRef.current = window.setTimeout(() => {
+      setIsModalWithPicturesOpen(false);
+      if (callback) callback();
+    }, modalWithPicturesFadeDuration);
+  }
+
+  function addNewModalToBuffer(modal: ModalData) {
+    setModalWithPicturesBuffer((prevBuffer) => [...prevBuffer, modal]);
+  }
+
+  // Si hay modales en el buffer y no hay ninguno abierto en este momento, abre el más antiguo y lo borra del buffer.
+  useEffect(() => {
+    if (modalWithPicturesBuffer.length > 0 && !isModalWithPicturesOpen) {
+      setModalViewerData(modalWithPicturesBuffer[0]);
+      modalWithPicturesBuffer.shift();
+
+      setIsModalWithPicturesFadingOut(false);
+      openModalViewer();
+    }
+  }, [modalWithPicturesBuffer, isModalWithPicturesOpen]);
+
+  ////////////////////////////////////////////////////   MODAL VIEWER HANDLERS FIN  ////////////////////////////////////////////
+
+  /////////////////////////////////////////////////// TUTORIAL HANDLERS  //////////////////////////////////////////////////////
+
+  useEffect(() => {
+    console.log("Ejecutado");
+    if (tutorialData.isNPCTutorial2Seen) return;
+    console.log("Entra");
+
+    tutorialWaitTimeoutRef.current = window.setTimeout(() => {
+      console.log("Se ejecuta el timer");
+      addNewModalToBuffer(npcTutorial2Modal);
+      addNewModalToBuffer(npcTutorial3Modal);
+      dispatch(setIsNPCTutorial2Seen(true));
+    }, tutorialWaitingTime);
+  }, [dispatch, tutorialData.isNPCTutorial2Seen]);
+
+  console.log(modalWithPicturesBuffer);
+
+  /////////////////////////////////////////////////// TUTORIAL HANDLERS FIN  ///////////////////////////////////////////////////
+
+  // Limpieza de timeouts
   useEffect(() => {
     return () => {
       window.clearTimeout(chatFadeOutTimeoutRef.current);
+      window.clearTimeout(tutorialWaitTimeoutRef.current);
     };
   }, []);
 
   return (
-    <ScreenFader
-      elementReference={mainContainerElement}
-      fadeDuration={fadeDuration}
-      visible={chatPhase !== "endConversation"}
-    >
-      <AIChatSoundManager
-        chatPhase={chatPhase}
-        setChatPhase={setChatPhase}
-        soundData={soundScapeToUse}
-        fadeOutDurationMs={fadeDuration}
-      />
-
-      {(chatPhase === "preloading" || chatPhase === "stopPreviousSounds") && (
-        <AIChatPreloader
+    <>
+      <ScreenFader
+        elementReference={mainContainerElement}
+        fadeDuration={fadeDuration}
+        visible={chatPhase !== "endConversation"}
+      >
+        <AIChatSoundManager
           chatPhase={chatPhase}
           setChatPhase={setChatPhase}
-          jonasPortraitSrc={jonasPortrait}
-          npcPortraitSrc={npcData.portraitSrc}
-          soundsToLoad={soundScapeToUse}
+          soundData={soundScapeToUse}
+          fadeOutDurationMs={fadeDuration}
         />
-      )}
 
-      {chatPhase !== "stopPreviousSounds" && chatPhase !== "preloading" && (
-        <AIChatVista
-          windowSize={windowSize}
-          textareaElementRef={textareaElementRef}
-          portraitNameSize={portraitNameSize}
-          portraitEmojiSize={portraitEmojiSize}
-          textBoxNameSize={textBoxNameSize}
-          textBoxTextSize={textBoxTextSize}
-          buttonsSize={buttonsSize}
-          npcName={npcName}
-          npcNameColor={npcData.nameColor}
-          npcDistortion={npcData.distortion}
-          jonasNameColor={GLOBAL_COLORS.aiChat.playerNameColor}
-          jonasPortraitSrc={jonasPortrait}
-          npcPortraitSrc={npcData.portraitSrc}
-          npcDisposition={npcData.disposition}
-          isNpcThinking={
-            chatPhase === "dialogPhase1" || chatPhase === "dialogPhase2"
-          }
-          chatPhase={chatPhase}
-          aiResponseText={aiResponse.responseText}
-          minimunTextLengthReached={minimunTextLengthReached}
-          canUserEndConversation={canUserEndConversation}
-          handleTextAreaChange={handleTextAreaChange}
-          handleAIResponseComplete={handleAIResponseComplete}
-          onConversationEndClick={onConversationEndClick}
-          onPlayerResponseClick={onPlayerResponseClick}
-          onAIResponseClick={onAIResponseClick}
-        />
-      )}
+        {(chatPhase === "preloading" || chatPhase === "stopPreviousSounds") && (
+          <AIChatPreloader
+            chatPhase={chatPhase}
+            setChatPhase={setChatPhase}
+            jonasPortraitSrc={jonasPortrait}
+            npcPortraitSrc={npcData.portraitSrc}
+            soundsToLoad={soundScapeToUse}
+          />
+        )}
 
-      {chatPhase === "serverErrorModal" && (
-        <ModalOneButton
-          onClick={onServerErrorModalClick}
-          screenDarkenerColor="dark"
-          mainText={serverErrorModalText.mainText}
-          secondaryText={serverErrorModalText.secText}
-          buttonText="Ok"
-        />
-      )}
+        {chatPhase !== "stopPreviousSounds" && chatPhase !== "preloading" && (
+          <AIChatVista
+            windowSize={windowSize}
+            textareaElementRef={textareaElementRef}
+            portraitNameSize={portraitNameSize}
+            portraitEmojiSize={portraitEmojiSize}
+            textBoxNameSize={textBoxNameSize}
+            textBoxTextSize={textBoxTextSize}
+            buttonsSize={buttonsSize}
+            npcName={npcName}
+            npcNameColor={npcData.nameColor}
+            npcDistortion={npcData.distortion}
+            jonasNameColor={GLOBAL_COLORS.aiChat.playerNameColor}
+            jonasPortraitSrc={jonasPortrait}
+            npcPortraitSrc={npcData.portraitSrc}
+            npcDisposition={npcData.disposition}
+            isNpcThinking={
+              chatPhase === "dialogPhase1" || chatPhase === "dialogPhase2"
+            }
+            chatPhase={chatPhase}
+            aiResponseText={aiResponse.responseText}
+            minimunTextLengthReached={minimunTextLengthReached}
+            canUserEndConversation={canUserEndConversation}
+            handleTextAreaChange={handleTextAreaChange}
+            handleAIResponseComplete={handleAIResponseComplete}
+            onConversationEndClick={onConversationEndClick}
+            onPlayerResponseClick={onPlayerResponseClick}
+            onAIResponseClick={onAIResponseClick}
+          />
+        )}
 
-      {chatPhase === "forbiddenTopicModal" && (
-        <ModalOneButton
-          onClick={onForbiddenTopicModalClick}
-          screenDarkenerColor="dark"
-          mainText={forbiddenTopicModalText}
-          secondaryText=""
-          buttonText="Ok"
-        />
-      )}
-    </ScreenFader>
+        {chatPhase === "serverErrorModal" && (
+          <ModalOneButton
+            onClick={onServerErrorModalClick}
+            screenDarkenerColor="dark"
+            mainText={serverErrorModalText.mainText}
+            secondaryText={serverErrorModalText.secText}
+            buttonText="Ok"
+          />
+        )}
+
+        {chatPhase === "forbiddenTopicModal" && (
+          <ModalOneButton
+            onClick={onForbiddenTopicModalClick}
+            screenDarkenerColor="dark"
+            mainText={forbiddenTopicModalText}
+            secondaryText=""
+            buttonText="Ok"
+          />
+        )}
+      </ScreenFader>
+
+      {chatPhase !== "stopPreviousSounds" &&
+        chatPhase !== "preloading" &&
+        isModalWithPicturesOpen && (
+          <ModalWithPictures
+            windowSize={windowSize}
+            modalData={modalViewerData}
+            fadeDuration={modalWithPicturesFadeDuration}
+            isFadingOut={isModalWithPicturesFadingOut}
+            textSize={modalWithPicturesTextSize}
+            buttonSize={modalWithPicturesButtonSize}
+            onOkButtonClick={closeModalViewer}
+          ></ModalWithPictures>
+        )}
+    </>
   );
 }
 
