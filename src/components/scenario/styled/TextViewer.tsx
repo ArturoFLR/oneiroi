@@ -1,11 +1,12 @@
 import AnimatedText from "../../common/text/AnimatedText";
 import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import styled, { css, keyframes } from "styled-components";
+import { useEffect, useRef } from "react";
 
 //////////////////////////////////////////////////   ASSETS   ////////////////////////////////////////////////////////
 
 import arrowButton from "@assets/graphics/icons/scenario/icono-flecha-arriba.webp";
-import { useEffect, useRef } from "react";
+import asfaltBackground from "@assets/graphics/backgrounds/asfalt-light.png";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,41 +46,51 @@ interface MainContainerProps {
 
 const MainContainer = styled.div<MainContainerProps>`
   transform-origin: bottom;
-  padding: 2.7rem 0rem 2rem 0rem;
-  background-image: linear-gradient(
-    to bottom,
-    transparent,
-    ${GLOBAL_COLORS.screenDarkener.dark} 10px
-  );
   z-index: 6;
 
   ${({ $windowWidth, $windowHeight }) => {
-    if ($windowWidth >= $windowHeight) {
+    if ($windowWidth > $windowHeight) {
       return css`
         position: absolute;
         bottom: 0;
         width: 100%;
         height: 20vh;
+        padding: 2.7rem 0rem 2rem 0rem;
+        background-image: linear-gradient(
+          to bottom,
+          transparent,
+          ${GLOBAL_COLORS.screenDarkener.dark} 10px
+        );
       `;
     } else {
       return css`
         width: 98%;
-        height: 33vh;
+        height: 19vh;
         margin: 2vh 0vh 0vh 0vh;
+        padding: 1.5rem 0rem 1.5rem 0rem;
+        border: 1px solid ${GLOBAL_COLORS.orange.highlightedText};
+        border-radius: 10px;
+        background-color: ${GLOBAL_COLORS.scenario.modalBackground};
+
+        &::before {
+          content: "";
+          position: absolute;
+          pointer-events: none;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          background: url(${asfaltBackground});
+          background-blend-mode: saturation;
+          opacity: 0.6;
+          z-index: 1;
+        }
       `;
     }
   }}
 
-  ${({ $windowWidth, $windowHeight }) => {
-    if ($windowWidth < $windowHeight) {
-      return css`
-        border: 1px solid ${GLOBAL_COLORS.orange.text};
-        border-radius: 10px;
-      `;
-    } else return null;
-  }}
-
-		${({ $isOpen, $animationsTimeInMs, $windowWidth, $windowHeight }) => {
+  ${({ $isOpen, $animationsTimeInMs, $windowWidth, $windowHeight }) => {
     if (!$isOpen && $windowWidth >= $windowHeight) {
       return css`
         animation: ${scaleDownAnim} ${$animationsTimeInMs}ms ease-in forwards;
@@ -208,7 +219,10 @@ function TextViewer({
   const relativeContainerElement = useRef<HTMLDivElement>(null);
   const animationsTimeInMs = 800;
   const fontFamily = GLOBAL_FONTS.scenario.textViewer;
-  const textColor = GLOBAL_COLORS.scenario.textViewer;
+  const textColor =
+    windowSize[0] > windowSize[1]
+      ? GLOBAL_COLORS.scenario.textViewer
+      : GLOBAL_COLORS.scenario.textViewerMobile;
 
   // Esta función va generando los componentes "AnimatedText" necesarios, en función del valor de textToShow
   function generateParagraphs() {
