@@ -64,6 +64,8 @@ function AIChat() {
     ModalData[]
   >([]);
 
+  const [fadeOutAiChat, setFadeOutAiChat] = useState<boolean>(false);
+
   const [windowSize, setWindowSize] = useState<[number, number]>([0, 0]);
   const [portraitNameSize, setPortraitNameSize] = useState<string>("0px");
   const [portraitEmojiSize, setPortraitEmojiSize] = useState<string>("0px");
@@ -159,6 +161,8 @@ function AIChat() {
       scenarioName
     );
 
+    setFadeOutAiChat(true);
+
     const chatResume = await generateChatResume(
       npcData.pastConversations,
       npcName,
@@ -169,9 +173,8 @@ function AIChat() {
       npcData.resumedPastConversation = chatResume + " ";
     }
 
-    setChatPhase("endConversation");
-
     chatFadeOutTimeoutRef.current = window.setTimeout(() => {
+      setChatPhase("endConversation");
       if (conversationEndResult.cinematic) {
         dispatch(setCinematicToPlay(conversationEndResult.cinematic));
         dispatch(setMainState("cinematic"));
@@ -227,6 +230,7 @@ function AIChat() {
         npcData.resumedPastConversation = chatResume + " ";
       }
 
+      setFadeOutAiChat(true);
       setChatPhase("endConversation");
     } else {
       setChatPhase("userInput");
@@ -497,7 +501,7 @@ function AIChat() {
       <ScreenFader
         elementReference={mainContainerElement}
         fadeDuration={fadeDuration}
-        visible={chatPhase !== "endConversation"}
+        visible={!fadeOutAiChat}
       >
         <AIChatSoundManager
           chatPhase={chatPhase}
