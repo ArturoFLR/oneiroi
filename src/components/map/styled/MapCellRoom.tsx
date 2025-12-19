@@ -4,8 +4,8 @@ import { GLOBAL_COLORS, GLOBAL_FONTS } from "../../../theme";
 import { BordersToShow } from "../helpers/generateCellBorders";
 import { NamePosition, SomeDoorsToShow } from "../../../classes/map/mapTypes";
 import calcFontSize from "../../../utils/calcFontSize";
-import CustomLightbulbIcon from "../../icons/CustomLightbulbIcon";
-import CustomNpcIcon from "../../icons/CustomNpcIcon";
+import CustomLightbulbIcon from "../../common/icons/CustomLightbulbIcon";
+import CustomNpcIcon from "../../common/icons/CustomNpcIcon";
 
 import spiritImgSrc from "@assets/graphics/icons/map/spirit-icon.png";
 
