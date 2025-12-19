@@ -10,7 +10,7 @@ import ScreenFader from "../common/ScreenFader";
 import { GameMainState, setMainState } from "../../store/slices/mainStateSlice";
 import allScenariosData from "../../data/scenarios/allScenariosData";
 import RoomViewer from "./styled/RoomViewer";
-import IconContainer from "./styled/IconContainer";
+import ClickableIconContainer from "../common/icons/ClickableIconContainer";
 import calcFontSize from "../../utils/calcFontSize";
 import MapGenerator from "../map/MapGenerator";
 import MapCell from "../../classes/map/MapCell";
@@ -40,6 +40,9 @@ import personalImgSrc from "@assets/graphics/icons/scenario/icono-persona.webp";
 import optionsImgSrc from "@assets/graphics/icons/scenario/icono-opciones.webp";
 import inventoryImgSrc from "@assets/graphics/icons/scenario/icono-inventario.webp";
 import powersImgSrc from "@assets/graphics/icons/scenario/icono-hechizos.webp";
+import ExpandableOptionsIcon, {
+  OptionData,
+} from "../common/optionsCombo/ExpandableOptionsIcon";
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -70,9 +73,9 @@ function ScenarioDirector() {
 
   // const [isCharacterMenuOpen, setIsCharacterMenuOpen] =
   //   useState<boolean>(false);
-  // const [isOptionsOpen, setIsOptionsOpen] = useState<boolean>(false);
-  // const [isInventoryOpen, setIsInventoryOpen] = useState<boolean>(false);
-  // const [isSpellListOpen, setIsSpellListOpen] = useState<boolean>(false);
+  const [isOptionsOpen, setIsOptionsOpen] = useState<boolean>(false);
+  const [isInventoryOpen, setIsInventoryOpen] = useState<boolean>(false);
+  const [isPowersMenuOpen, setIsPowersMenuOpen] = useState<boolean>(false);
 
   // const [isRoomObjectsListOpen, setIsRoomObjectsListOpen] =
   //   useState<boolean>(false);
@@ -355,7 +358,7 @@ function ScenarioDirector() {
         )
       );
 
-      setIconsSize(calcFontSize(screenFaderRef.current, iconsProportion, 80));
+      setIconsSize(calcFontSize(screenFaderRef.current, iconsProportion, 60));
 
       setModalWithPicturesButtonSize(
         calcFontSize(
@@ -394,6 +397,47 @@ function ScenarioDirector() {
   ]);
 
   //////////////////////////////////////////////////// FIN CÁLCULO DEL TAMAÑO DE LOS ELEMENTOS ////////////////////////////////
+
+  ////////////////////////////////////////////////////   DATOS PARA ICONO "PERSONA"   ////////////////////////////////////////
+
+  const optionsIconData: OptionData = {
+    iconImgUrl: optionsImgSrc,
+    iconImgAlt: "Opciones",
+    onClick: () => setIsOptionsOpen(true),
+  };
+
+  const inventoryIconData: OptionData = {
+    iconImgUrl: inventoryImgSrc,
+    iconImgAlt: "Inventario",
+    onClick: () => setIsInventoryOpen(true),
+  };
+
+  const powersIconData: OptionData = {
+    iconImgUrl: powersImgSrc,
+    iconImgAlt: "Poderes",
+    onClick: () => setIsPowersMenuOpen(true),
+  };
+
+  const expandablePersonaIconData: OptionData[] = [
+    optionsIconData,
+    inventoryIconData,
+    powersIconData,
+  ];
+
+  const mapIconData: OptionData = {
+    iconImgUrl: mapIconImgSrc,
+    iconImgAlt: "Mapa",
+    onClick: openMap,
+  };
+
+  const expandablePersonaIconDataMobile: OptionData[] = [
+    optionsIconData,
+    inventoryIconData,
+    powersIconData,
+    mapIconData,
+  ];
+
+  ////////////////////////////////////////////////////   DATOS PARA ICONO "PERSONA" FIN  /////////////////////////////////////
 
   // Limpieza de Timers
   useEffect(() => {
@@ -453,18 +497,33 @@ function ScenarioDirector() {
 
         {/* Icono del Mapa */}
         {windowSize[0] > windowSize[1] && (
-          <IconContainer
+          <ClickableIconContainer
             iconUrl={mapIconImgSrc}
             iconImgAlt="Mapa"
             position="absolute"
             top="1%"
-            left="1%"
+            left="9%"
             mobileTop="auto"
             mobileBottom="3%"
             mobileLeft="auto"
             mobileRight="3%"
             width={iconsSize}
             onClick={openMap}
+          />
+        )}
+
+        {/* Icono de Persona */}
+        {windowSize[0] > windowSize[1] && (
+          <ExpandableOptionsIcon
+            mainIconImgUrl={personalImgSrc}
+            mainIconImgAlt="Opciones de Personaje"
+            iconWidth={iconsSize}
+            expansionDirection="down"
+            optionsListData={expandablePersonaIconData}
+            animationDurationMs={700}
+            position="absolute"
+            top="0%"
+            left="1%"
           />
         )}
       </RoomViewer>
@@ -482,20 +541,22 @@ function ScenarioDirector() {
         />
       )}
 
-      {/* Icono del Mapa */}
-      {windowSize[0] < windowSize[1] && (
-        <IconContainer
-          iconUrl={mapIconImgSrc}
-          iconImgAlt="Mapa"
+      {/* Icono de Persona */}
+      {windowSize[0] <= windowSize[1] && (
+        <ExpandableOptionsIcon
+          mainIconImgUrl={personalImgSrc}
+          mainIconImgAlt="Opciones de Personaje"
+          iconWidth={iconsSize}
+          expansionDirection="right"
+          optionsListData={expandablePersonaIconDataMobile}
+          animationDurationMs={700}
           position="absolute"
           top="3%"
           right="4%"
           mobileTop="auto"
           mobileBottom="3%"
-          mobileLeft="auto"
-          mobileRight="3%"
-          width={iconsSize}
-          onClick={openMap}
+          mobileLeft="3%"
+          mobileRight="auto"
         />
       )}
 
