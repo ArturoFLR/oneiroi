@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,7 @@ interface MainContainerProps {
   $mobileBottom?: string;
   $right?: string;
   $mobileRight?: string;
+  $zIndex?: number;
 }
 
 const MainContainer = styled.div<MainContainerProps>`
@@ -28,7 +29,14 @@ const MainContainer = styled.div<MainContainerProps>`
   aspect-ratio: 1 / 1;
   border-radius: 10%;
   cursor: pointer;
+  pointer-events: auto;
   transition: all 0.3s ease;
+
+  ${({ $zIndex }) =>
+    $zIndex &&
+    css`
+      z-index: ${$zIndex};
+    `}
 
   &&:hover {
     opacity: 0.85;
@@ -60,7 +68,7 @@ const IconImage = styled.img`
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-interface IconContainerProps {
+interface ClickableIconContainerProps {
   iconUrl: string;
   iconImgAlt: string;
   width: string;
@@ -74,11 +82,11 @@ interface IconContainerProps {
   mobileBottom?: string;
   right?: string;
   mobileRight?: string;
-
+  zIndex?: number;
   onClick: () => void;
 }
 
-function IconContainer({
+function ClickableIconContainer({
   iconUrl,
   iconImgAlt,
   width,
@@ -92,8 +100,9 @@ function IconContainer({
   mobileBottom,
   right,
   mobileRight,
+  zIndex,
   onClick,
-}: IconContainerProps) {
+}: ClickableIconContainerProps) {
   return (
     <MainContainer
       id="icon-main-container"
@@ -108,6 +117,7 @@ function IconContainer({
       $mobileBottom={mobileBottom}
       $right={right}
       $mobileRight={mobileRight}
+      $zIndex={zIndex}
       onClick={onClick}
     >
       <IconImage src={iconUrl} alt={iconImgAlt} />
@@ -115,4 +125,4 @@ function IconContainer({
   );
 }
 
-export default IconContainer;
+export default ClickableIconContainer;
