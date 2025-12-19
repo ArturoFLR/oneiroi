@@ -161,6 +161,7 @@ interface ExpandableOptionsIconProps {
   mobileBottom?: string;
   right?: string;
   mobileRight?: string;
+  onClickEffect?: () => void; // El componente tiene la lógica necesaria para expandirse, pero a veces nos interesa ejecutar algún efecto cuando se pulse, desde un componente superior.
 }
 
 function ExpandableOptionsIcon({
@@ -180,12 +181,14 @@ function ExpandableOptionsIcon({
   mobileBottom,
   right,
   mobileRight,
+  onClickEffect,
 }: ExpandableOptionsIconProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const iconWidthInPxNumber = Number(iconWidth.replace("px", ""));
 
   function onMainIconClick() {
+    if (onClickEffect) onClickEffect();
     setIsExpanded(!isExpanded);
   }
 
