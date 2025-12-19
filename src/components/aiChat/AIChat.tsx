@@ -473,19 +473,14 @@ function AIChat() {
   /////////////////////////////////////////////////// TUTORIAL HANDLERS  //////////////////////////////////////////////////////
 
   useEffect(() => {
-    console.log("Ejecutado");
     if (tutorialData.isNPCTutorial2Seen) return;
-    console.log("Entra");
 
     tutorialWaitTimeoutRef.current = window.setTimeout(() => {
-      console.log("Se ejecuta el timer");
       addNewModalToBuffer(npcTutorial2Modal);
       addNewModalToBuffer(npcTutorial3Modal);
       dispatch(setIsNPCTutorial2Seen(true));
     }, tutorialWaitingTime);
   }, [dispatch, tutorialData.isNPCTutorial2Seen]);
-
-  console.log(modalWithPicturesBuffer);
 
   /////////////////////////////////////////////////// TUTORIAL HANDLERS FIN  ///////////////////////////////////////////////////
 
