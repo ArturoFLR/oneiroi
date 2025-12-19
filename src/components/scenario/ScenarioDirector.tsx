@@ -1,4 +1,5 @@
 import {
+  use,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -18,18 +19,25 @@ import { setCurrentMapCellId } from "../../store/slices/scenarioSlice";
 import getMainCell from "../../utils/scenario/getMainCell";
 import { NPCName, setCurrentNPCName } from "../../store/slices/aiChatSlice";
 import {
+  setIsInventoryTutorialSeen,
   setIsMapTutorial2Seen,
   setIsMapTutorialSeen,
   setIsNPCTutorialSeen,
+  setIsOptionsTutorialSeen,
   setIsPersonalTutorialSeen,
+  setIsPowersTutorialSeen,
 } from "../../store/slices/tutorialSlice";
 import TextViewer from "./styled/TextViewer";
 import { ModalData } from "./scenarioTypes";
 import {
+  inventoryTutorialModal,
   mapTutorialModal,
   mapTutorialModal2,
   npcTutorialModal,
+  optionsTutorialModal,
   personalTutorialModal,
+  personalTutorialModalMobile,
+  powersTutorialModal,
 } from "../../data/tutorialData/tutorialModalsData";
 import ModalWithPictures from "../common/modals/ModalWithPictures";
 
@@ -73,6 +81,7 @@ function ScenarioDirector() {
 
   // const [isCharacterMenuOpen, setIsCharacterMenuOpen] =
   //   useState<boolean>(false);
+  const [isPersonalOpen, setIsPersonalOpen] = useState<boolean>(false);
   const [isOptionsOpen, setIsOptionsOpen] = useState<boolean>(false);
   const [isInventoryOpen, setIsInventoryOpen] = useState<boolean>(false);
   const [isPowersMenuOpen, setIsPowersMenuOpen] = useState<boolean>(false);
@@ -102,8 +111,6 @@ function ScenarioDirector() {
   const fadeOutRoomViewerTimerRef = useRef<number>(0);
   const modalViewerFadeTimerRef = useRef<number>(0);
   const tutorialWaitingTimerRef = useRef<number>(0);
-  // Se usa la siguiente flag para que el useEffect se ejecute solo una vez a pesar del StrictMode
-  const tutorialUseEffectFlagRef = useRef<boolean>(false);
 
   // Flag que evita que se ejecuten eventos del escenario cuando ya se ha iniciado el fundido que precede al cambio hacia aiChat
   const isNPCProtraitClicked = useRef<boolean>(false);
@@ -285,26 +292,30 @@ function ScenarioDirector() {
 
   ////////////////////////////////////////////////////   TUTORIAL HANDLERS   //////////////////////////////////////////////////
 
-  // Lanza los tutoriales para: NPC, Mapa y Personal
+  // Lanza los tutoriales que se ven nada más entrar en el escenario
   useEffect(() => {
-    if (tutorialUseEffectFlagRef.current) return;
-
     tutorialWaitingTimerRef.current = window.setTimeout(() => {
       if (isNPCProtraitClicked.current) return;
-      tutorialUseEffectFlagRef.current = true;
+      window.clearTimeout(tutorialWaitingTimerRef.current);
 
+      // Diálogo con NPC. Común a móvil y escritorio
       if (!tutorialData.isNPCTutorialSeen) {
         addNewModalToBuffer(npcTutorialModal);
         dispatch(setIsNPCTutorialSeen(true));
       }
 
-      if (!tutorialData.isMapTutorialSeen) {
+      // Mapa. Sólo en escritorio (en móvil está dentro del combo "Persona")
+      if (!tutorialData.isMapTutorialSeen && windowSize[0] > windowSize[1]) {
         addNewModalToBuffer(mapTutorialModal);
         dispatch(setIsMapTutorialSeen(true));
       }
 
+      // Personal. Escritorio y móvil (cambia el texto)
       if (!tutorialData.isPersonalTutorialSeen) {
-        addNewModalToBuffer(personalTutorialModal);
+        if (windowSize[0] > windowSize[1]) {
+          addNewModalToBuffer(personalTutorialModal);
+        } else addNewModalToBuffer(personalTutorialModalMobile);
+
         dispatch(setIsPersonalTutorialSeen(true));
       }
     }, tutorialWaitingTime);
@@ -313,6 +324,7 @@ function ScenarioDirector() {
     tutorialData.isNPCTutorialSeen,
     tutorialData.isMapTutorialSeen,
     tutorialData.isPersonalTutorialSeen,
+    windowSize,
   ]);
 
   // Lanza el tutorial para mapa2 (cuando el usuario pulsa en él)
@@ -324,6 +336,49 @@ function ScenarioDirector() {
       }, tutorialWaitingTime);
     }
   }, [dispatch, tutorialData.isMapTutorial2Seen, isMapOpen]);
+
+  // Se usa para controlar si el combo "Persona" está abierto o cerrado y así poder mostrar tutoriales.
+  function handlePersonalIconClick() {
+    setIsPersonalOpen((prevIsOpen) => !prevIsOpen);
+  }
+
+  // Lanza el tutorial para el desplegable "Persona"
+  useEffect(() => {
+    if (!isPersonalOpen) return;
+
+    tutorialWaitingTimerRef.current = window.setTimeout(() => {
+      // Volvemos a comprobar si el combo está abierto, porque el usuario lo ha podido cerrar antes de que se ejecute el timer.
+      if (isPersonalOpen) {
+        if (!tutorialData.isOptionsTutorialSeen) {
+          addNewModalToBuffer(optionsTutorialModal);
+          dispatch(setIsOptionsTutorialSeen(true));
+        }
+
+        if (!tutorialData.isInventoryTutorialSeen) {
+          addNewModalToBuffer(inventoryTutorialModal);
+          dispatch(setIsInventoryTutorialSeen(true));
+        }
+
+        if (!tutorialData.isPowersTutorialSeen) {
+          addNewModalToBuffer(powersTutorialModal);
+          dispatch(setIsPowersTutorialSeen(true));
+        }
+
+        if (!tutorialData.isMapTutorialSeen && windowSize[0] <= windowSize[1]) {
+          addNewModalToBuffer(mapTutorialModal);
+          dispatch(setIsMapTutorialSeen(true));
+        }
+      }
+    }, tutorialWaitingTime);
+  }, [
+    dispatch,
+    tutorialData.isOptionsTutorialSeen,
+    isPersonalOpen,
+    windowSize,
+    tutorialData.isInventoryTutorialSeen,
+    tutorialData.isPowersTutorialSeen,
+    tutorialData.isMapTutorialSeen,
+  ]);
 
   ////////////////////////////////////////////////////   TUTORIAL HANDLERS FIN  ////////////////////////////////////////////
 
@@ -501,7 +556,7 @@ function ScenarioDirector() {
             iconUrl={mapIconImgSrc}
             iconImgAlt="Mapa"
             position="absolute"
-            top="1%"
+            top="1.5%"
             left="9%"
             mobileTop="auto"
             mobileBottom="3%"
@@ -522,8 +577,9 @@ function ScenarioDirector() {
             optionsListData={expandablePersonaIconData}
             animationDurationMs={700}
             position="absolute"
-            top="0%"
+            top="0.2%"
             left="1%"
+            onClickEffect={handlePersonalIconClick}
           />
         )}
       </RoomViewer>
@@ -557,6 +613,7 @@ function ScenarioDirector() {
           mobileBottom="3%"
           mobileLeft="3%"
           mobileRight="auto"
+          onClickEffect={handlePersonalIconClick}
         />
       )}
 
