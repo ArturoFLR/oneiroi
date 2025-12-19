@@ -7,6 +7,7 @@ import optionsImgSrc from "@assets/graphics/icons/scenario/icono-opciones.webp";
 import inventoryImgSrc from "@assets/graphics/icons/scenario/icono-inventario.webp";
 import powersImgSrc from "@assets/graphics/icons/scenario/icono-hechizos.webp";
 
+// Se muestra al comenzar el juego
 export const npcTutorialModal: ModalData = {
   text: [
     "Cuando haya un personaje cerca de tí podrás ver su retrato en la parte superior derecha de la pantalla.",
@@ -19,14 +20,17 @@ export const npcTutorialModal: ModalData = {
   startImgBorder: true,
 };
 
+// Se muestra al iniciar una conversación por primera vez
 export const npcTutorial2Modal: ModalData = {
   text: [
-    'En esta pantalla puedes hablar con los distintos personajes del juego. Para ello, escribe lo que quieras decir y pulsa "Ok".',
+    "Esta es la pantalla de diálogo.",
+    'Aquí puedes hablar con los distintos personajes del juego. Para ello, escribe lo que quieras decir y pulsa "Continuar".',
     "¡Cuidado! Si no eliges bien tus palabras, puedes cabrear a tu interlocutor y complicarte la vida innecesariamente.",
     "El emoji sobre el retrato del personaje indica su actitud hacia ti.",
   ],
 };
 
+// Se muestra al iniciar una conversación por primera vez
 export const npcTutorial3Modal: ModalData = {
   text: [
     "Hablar con los distintos personajes que te encuentres no sólo te proporcionará información; puedes obtener objetos, desbloquear nuevas zonas...",
@@ -43,6 +47,7 @@ export const mapTutorialModal: ModalData = {
   startImgBorder: false,
 };
 
+// Se muestra la primera vez que se abre el mapa
 export const mapTutorialModal2: ModalData = {
   text: [
     "Este es el mapa del escenario.",
@@ -51,9 +56,22 @@ export const mapTutorialModal2: ModalData = {
   ],
 };
 
+// Se muestra al acceder a scenario la primera vez. Sólo escritorio.
 export const personalTutorialModal: ModalData = {
   text: [
-    "Pulsa en este icono para acceder a tu inventario, poderes especiales y el menú de opciones.",
+    "Pulsando en este icono puedes acceder a tu inventario, poderes especiales y el menú de opciones.",
+  ],
+  startImgUrl: personalImgSrc,
+  startImgAlt: "Icono de persona",
+  startImgIsWide: false,
+  startImgPosition: "center",
+  startImgBorder: false,
+};
+
+// Se muestra al acceder a scenario la primera vez. Sólo mobile.
+export const personalTutorialModalMobile: ModalData = {
+  text: [
+    "Pulsando en este icono puedes acceder al mapa del escenario, tu inventario, poderes especiales y el menú de opciones.",
   ],
   startImgUrl: personalImgSrc,
   startImgAlt: "Icono de persona",
