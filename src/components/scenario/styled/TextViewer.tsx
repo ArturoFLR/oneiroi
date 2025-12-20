@@ -28,13 +28,26 @@ const scaleUpAnim = keyframes`
 	}
 `;
 
-const scaleUpAnimMobile = keyframes`
-	0% {
-		transform: scaleY(0);
-	}
-	100% {
-		transform: scaleY(1);
-	}
+const repositionUpWithOpenInventory = keyframes`
+  0% {
+    top: 0;
+    z-index: 10;
+  }
+  100% {
+    top: -25vh;
+    z-index: 10;
+  }
+`;
+
+const repositionDownWithOpenInventory = keyframes`
+  0% {
+    top: -25vh;
+    z-index: 10;
+  }
+  100% {
+    top: 0;
+    z-index: 10;
+  }
 `;
 
 interface MainContainerProps {
@@ -42,10 +55,13 @@ interface MainContainerProps {
   $windowHeight: number;
   $isOpen: boolean;
   $animationsTimeInMs: number;
+  $isInventoryOpen: boolean;
+  $inventoryHasBeenOpened: boolean;
 }
 
 const MainContainer = styled.div<MainContainerProps>`
   transform-origin: bottom;
+  transition: transform 800ms ease-in-out;
   z-index: 6;
 
   ${({ $windowWidth, $windowHeight }) => {
@@ -64,6 +80,7 @@ const MainContainer = styled.div<MainContainerProps>`
       `;
     } else {
       return css`
+        position: relative;
         width: 98%;
         height: 19vh;
         margin: 2vh 0vh 0vh 0vh;
@@ -90,20 +107,33 @@ const MainContainer = styled.div<MainContainerProps>`
     }
   }}
 
-  ${({ $isOpen, $animationsTimeInMs, $windowWidth, $windowHeight }) => {
-    if (!$isOpen && $windowWidth >= $windowHeight) {
+  ${({
+    $isOpen,
+    $animationsTimeInMs,
+    $windowWidth,
+    $windowHeight,
+    $isInventoryOpen,
+    $inventoryHasBeenOpened,
+  }) => {
+    if ($windowWidth > $windowHeight) {
       return css`
-        animation: ${scaleDownAnim} ${$animationsTimeInMs}ms ease-in forwards;
+        animation: ${$isOpen ? scaleUpAnim : scaleDownAnim}
+          ${$animationsTimeInMs}ms ease-in forwards;
       `;
-    } else if ($isOpen && $windowWidth >= $windowHeight) {
-      return css`
-        animation: ${scaleUpAnim} ${$animationsTimeInMs}ms ease-out forwards;
-      `;
-    } else {
-      return css`
-        animation: ${scaleUpAnimMobile} ${$animationsTimeInMs}ms ease-out
-          forwards;
-      `;
+    } else if ($windowWidth <= $windowHeight) {
+      if (!$isInventoryOpen && $inventoryHasBeenOpened) {
+        return css`
+          animation: ${repositionDownWithOpenInventory} 1000ms ease-in-out
+            forwards;
+        `;
+      }
+
+      if ($isInventoryOpen) {
+        return css`
+          animation: ${repositionUpWithOpenInventory} 1000ms ease-in-out
+            forwards;
+        `;
+      }
     }
   }}
 `;
@@ -202,6 +232,7 @@ interface TextViewerProps {
   animationTime?: number; // Cuántos milisegundos pasan antes de mostrar la siguiente letra.
   textSize: string;
   buttonSize: string;
+  isInventoryOpen: boolean;
   onArrowButtonClick: () => void;
   onTextAnimationEnd: () => void;
 }
@@ -213,9 +244,14 @@ function TextViewer({
   animationTime = 10,
   textSize,
   buttonSize,
+  isInventoryOpen,
   onArrowButtonClick,
   onTextAnimationEnd,
 }: TextViewerProps) {
+  // Esta Ref sirve para saber si el inventario se ha abierto alguna vez, y así permitir la animación de bajada del TextViewer.
+  // Esto se usa en conjunto con un useEffect para evitar que dicha animación se ejecute en cuanto se monta el componente, lo cual no queda bien.
+  const inventoryHasBeenOpenedRef = useRef<boolean>(false);
+
   const relativeContainerElement = useRef<HTMLDivElement>(null);
   const animationsTimeInMs = 800;
   const fontFamily = GLOBAL_FONTS.scenario.textViewer;
@@ -287,6 +323,14 @@ function TextViewer({
     };
   }, []);
 
+  // Actualiza la Ref "inventoryHasBeenOpenedRef" cuando se abre el inventario por primera vez.
+
+  useEffect(() => {
+    if (isInventoryOpen) {
+      inventoryHasBeenOpenedRef.current = true;
+    }
+  }, [isInventoryOpen]);
+
   return (
     <MainContainer
       id="text-main-container"
@@ -294,6 +338,8 @@ function TextViewer({
       $windowHeight={windowSize[1]}
       $isOpen={isOpen}
       $animationsTimeInMs={animationsTimeInMs}
+      $isInventoryOpen={isInventoryOpen}
+      $inventoryHasBeenOpened={inventoryHasBeenOpenedRef.current}
     >
       <RelativeContainer
         id="text-viewer-relative-container"
